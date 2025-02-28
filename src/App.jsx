@@ -5,7 +5,7 @@ import { AuthContext } from './contexts/AuthContext';
 import styled from 'styled-components';
 
 // Pages
-import HomePage from './pages/HomePage';
+import HomePage from './pages/Homepage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
