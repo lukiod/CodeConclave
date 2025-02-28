@@ -1,2 +1,4 @@
 .env
 .env.production
+server
+node_modules
