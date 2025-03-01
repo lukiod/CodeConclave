@@ -1,14 +1,41 @@
-// client/src/components/Editor/NewFileModal.jsx
-import { useState } from 'react';
+// src/components/Editor/NewFileModal.jsx
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaFile, FaFolder } from 'react-icons/fa';
-import { SUPPORTED_LANGUAGES } from '../../config/constants';
+import { FaFile, FaFolder, FaCode } from 'react-icons/fa';
 
 const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
-  const [name, setName] = useState('');
+  const [filename, setFilename] = useState('');
   const [type, setType] = useState('file');
-  const [extension, setExtension] = useState('.js');
   const [error, setError] = useState('');
+  const [fileExtension, setFileExtension] = useState('');
+  const [fileLanguage, setFileLanguage] = useState('');
+  
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      setFilename('');
+      setType('file');
+      setError('');
+      setFileExtension('');
+      setFileLanguage('');
+    }
+  }, [isOpen]);
+  
+  // Parse extension and language whenever filename changes
+  useEffect(() => {
+    if (type === 'file' && filename) {
+      const lastDotIndex = filename.lastIndexOf('.');
+      
+      if (lastDotIndex > 0) {
+        const extension = filename.substring(lastDotIndex);
+        setFileExtension(extension);
+        setFileLanguage(getLanguageFromExtension(extension));
+      } else {
+        setFileExtension('');
+        setFileLanguage('');
+      }
+    }
+  }, [filename, type]);
 
   if (!isOpen) return null;
 
@@ -16,37 +43,105 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
     e.preventDefault();
     
     // Validate input
-    if (!name.trim()) {
+    if (!filename.trim()) {
       setError('Name is required');
       return;
     }
     
-    if (name.includes('/') || name.includes('\\')) {
+    if (filename.includes('/') || filename.includes('\\')) {
       setError('Name cannot contain / or \\');
       return;
     }
     
-    // Create file or directory
-    onCreate({
-      name,
-      type,
-      extension: type === 'file' ? extension : '',
-      content: '',
-      language: type === 'file' ? getLanguageFromExtension(extension) : ''
-    });
+    // For files, ensure there's an extension
+    if (type === 'file' && !fileExtension) {
+      setError('Please include a file extension (e.g., .js, .py, .html)');
+      return;
+    }
     
-    // Reset form
-    setName('');
-    setType('file');
-    setExtension('.js');
-    setError('');
+    if (type === 'file') {
+      // Extract base name (without extension)
+      const baseName = filename.substring(0, filename.lastIndexOf('.'));
+      
+      // Create file
+      onCreate({
+        name: baseName,
+        type,
+        extension: fileExtension,
+        content: '',
+        language: fileLanguage || getLanguageFromExtension(fileExtension)
+      });
+    } else {
+      // Create directory
+      onCreate({
+        name: filename,
+        type,
+        extension: '',
+        content: '',
+        language: ''
+      });
+    }
+    
+    // Close modal
+    onClose();
   };
-
+  
+  // Helper function to get language from extension
   const getLanguageFromExtension = (ext) => {
-    const language = SUPPORTED_LANGUAGES.find(lang => 
-      lang.extensions.includes(ext.toLowerCase())
-    );
-    return language ? language.id : 'plaintext';
+    if (!ext) return 'plaintext';
+    
+    const extension = ext.toLowerCase();
+    
+    switch (extension) {
+      case '.js':
+        return 'javascript';
+      case '.jsx':
+        return 'javascript';
+      case '.ts':
+        return 'typescript';
+      case '.tsx':
+        return 'typescript';
+      case '.py':
+        return 'python';
+      case '.html':
+        return 'html';
+      case '.css':
+        return 'css';
+      case '.json':
+        return 'json';
+      case '.md':
+        return 'markdown';
+      case '.txt':
+        return 'plaintext';
+      case '.java':
+        return 'java';
+      case '.c':
+        return 'c';
+      case '.cpp':
+      case '.cc':
+        return 'cpp';
+      case '.cs':
+        return 'csharp';
+      case '.go':
+        return 'go';
+      case '.rb':
+        return 'ruby';
+      case '.php':
+        return 'php';
+      case '.rust':
+        return 'rust';
+      case '.sql':
+        return 'sql';
+      case '.xml':
+        return 'xml';
+      case '.yaml':
+      case '.yml':
+        return 'yaml';
+      case '.sh':
+        return 'shell';
+      default:
+        return 'plaintext';
+    }
   };
 
   return (
@@ -65,7 +160,7 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
               isSelected={type === 'file'}
               onClick={() => setType('file')}
             >
-              <FaFile />
+              <FaCode />
               <span>File</span>
             </TypeOption>
             <TypeOption
@@ -78,38 +173,31 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
           </TypeSelection>
           
           <FormGroup>
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="filename">
+              {type === 'file' 
+                ? 'Filename (with extension)' 
+                : 'Folder Name'}
+            </Label>
             <Input
-              id="name"
+              id="filename"
               type="text"
-              value={name}
+              value={filename}
               onChange={(e) => {
-                setName(e.target.value);
+                setFilename(e.target.value);
                 if (error) setError('');
               }}
-              placeholder={type === 'file' ? 'filename' : 'folder name'}
+              placeholder={type === 'file' 
+                ? 'example.js, index.html, style.css, etc.' 
+                : 'folder name'
+              }
               autoFocus
             />
+            {type === 'file' && fileExtension && (
+              <DetectedExtension>
+                Detected: {fileExtension} ({fileLanguage || 'plaintext'})
+              </DetectedExtension>
+            )}
           </FormGroup>
-          
-          {type === 'file' && (
-            <FormGroup>
-              <Label htmlFor="extension">Extension</Label>
-              <Select
-                id="extension"
-                value={extension}
-                onChange={(e) => setExtension(e.target.value)}
-              >
-                {SUPPORTED_LANGUAGES.map(lang => 
-                  lang.extensions.map(ext => (
-                    <option key={ext} value={ext}>
-                      {ext} ({lang.name})
-                    </option>
-                  ))
-                )}
-              </Select>
-            </FormGroup>
-          )}
           
           {error && <ErrorMessage>{error}</ErrorMessage>}
           
@@ -223,18 +311,10 @@ const Input = styled.input`
   }
 `;
 
-const Select = styled.select`
-  padding: 8px 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: white;
-  
-  &:focus {
-    outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
-  }
+const DetectedExtension = styled.div`
+  font-size: 12px;
+  color: #718096;
+  margin-top: 4px;
 `;
 
 const ButtonGroup = styled.div`

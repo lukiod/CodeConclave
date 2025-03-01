@@ -1,32 +1,94 @@
-// client/src/components/Shared/ProjectCard.jsx
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+// src/components/Shared/ProjectCard.jsx
+import { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaCode, FaTrash, FaShareAlt, FaEllipsisV, FaLock, FaGlobe, FaUser } from 'react-icons/fa';
+import { 
+  FaCode, FaTrash, FaShareAlt, FaEllipsisV, FaLock, FaGlobe, 
+  FaUser, FaPencilAlt, FaExternalLinkAlt
+} from 'react-icons/fa';
 import { formatDistanceToNow } from 'date-fns';
 
-const ProjectCard = ({ project, onDelete, isOwner }) => {
-  const [showOptions, setShowOptions] = useState(false);
-  const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
+const ProjectCard = ({ project, onDelete, onRename, onShare, isOwner }) => {
+  const [showMenu, setShowMenu] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newName, setNewName] = useState(project.name);
+  const renameInputRef = useRef(null);
+  const menuRef = useRef(null);
+  const navigate = useNavigate();
   
-  const handleOptionsClick = (e) => {
+  // Focus rename input when it becomes visible
+  useEffect(() => {
+    if (isRenaming && renameInputRef.current) {
+      renameInputRef.current.focus();
+      renameInputRef.current.select();
+    }
+  }, [isRenaming]);
+  
+  // Handle clicks outside of menu to close it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+    
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
+
+  const handleMenuClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMenuPosition({
-      top: rect.bottom + window.scrollY,
-      right: window.innerWidth - rect.right - window.scrollX
-    });
-    
-    setShowOptions(!showOptions);
+    setShowMenu(!showMenu);
   };
   
   const handleDeleteClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setShowOptions(false);
-    onDelete();
+    setShowMenu(false);
+    
+    if (window.confirm(`Are you sure you want to delete "${project.name}"? This action cannot be undone.`)) {
+      onDelete(project._id);
+    }
+  };
+  
+  const handleRenameClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowMenu(false);
+    setIsRenaming(true);
+  };
+  
+  const handleRenameSubmit = (e) => {
+    if (e) e.preventDefault();
+    
+    if (newName.trim() && newName !== project.name) {
+      onRename(project._id, newName.trim());
+    }
+    
+    setIsRenaming(false);
+  };
+  
+  const handleShareClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowMenu(false);
+    
+    if (onShare) {
+      onShare(project);
+    }
+  };
+  
+  const handleCardClick = (e) => {
+    // Only navigate if we're not in rename mode
+    if (isRenaming) {
+      e.preventDefault();
+    }
   };
 
   // Format the creation date
@@ -36,30 +98,52 @@ const ProjectCard = ({ project, onDelete, isOwner }) => {
   
   return (
     <CardContainer>
-      <Link to={`/projects/${project._id}`}>
+      <Link to={`/projects/${project._id}`} onClick={handleCardClick}>
         <CardContent>
           <CardHeader>
             <CardIcon>
               <FaCode />
             </CardIcon>
-            <CardTitle>{project.name}</CardTitle>
-            <OptionsButton onClick={handleOptionsClick}>
-              <FaEllipsisV />
-            </OptionsButton>
             
-            {showOptions && (
-              <OptionsMenu style={{ top: menuPosition.top, right: menuPosition.right }}>
-                {isOwner && (
-                  <OptionItem onClick={handleDeleteClick}>
-                    <FaTrash />
-                    Delete
-                  </OptionItem>
-                )}
-                <OptionItem>
+            {isRenaming ? (
+              <RenameForm onSubmit={handleRenameSubmit}>
+                <RenameInput
+                  ref={renameInputRef}
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  onBlur={handleRenameSubmit}
+                  onClick={(e) => e.stopPropagation()}
+                  maxLength={50}
+                />
+              </RenameForm>
+            ) : (
+              <CardTitle>{project.name}</CardTitle>
+            )}
+            
+            {/* This is the 3-dot menu button */}
+            <MenuButton onClick={handleMenuClick} aria-label="Project options">
+              <FaEllipsisV />
+            </MenuButton>
+            
+            {/* Menu with all required options */}
+            {showMenu && (
+              <MenuDropdown ref={menuRef}>
+                               
+                <MenuItem onClick={handleRenameClick}>
+                  <FaPencilAlt />
+                  <span>Rename</span>
+                </MenuItem>
+                
+                <MenuItem onClick={handleShareClick}>
                   <FaShareAlt />
-                  Share
-                </OptionItem>
-              </OptionsMenu>
+                  <span>Share</span>
+                </MenuItem>
+                
+                <MenuItem onClick={handleDeleteClick} danger>
+                  <FaTrash />
+                  <span>Delete</span>
+                </MenuItem>
+              </MenuDropdown>
             )}
           </CardHeader>
           
@@ -84,7 +168,7 @@ const ProjectCard = ({ project, onDelete, isOwner }) => {
               <OwnerName>
                 {isOwner 
                   ? 'You' 
-                  : project.owner.username || 'Unknown User'}
+                  : project.owner?.username || 'Unknown User'}
               </OwnerName>
             </CardOwner>
           </CardFooter>
@@ -101,6 +185,7 @@ const CardContainer = styled.div`
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
   height: 100%;
+  position: relative;
   
   &:hover {
     transform: translateY(-4px);
@@ -139,6 +224,7 @@ const CardIcon = styled.div`
   color: #3182ce;
   border-radius: 8px;
   margin-right: 12px;
+  flex-shrink: 0;
   
   svg {
     font-size: 18px;
@@ -156,14 +242,34 @@ const CardTitle = styled.h3`
   text-overflow: ellipsis;
 `;
 
-const OptionsButton = styled.button`
+const RenameForm = styled.form`
+  flex: 1;
+  margin-right: 10px;
+`;
+
+const RenameInput = styled.input`
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 1px solid #3182ce;
+  border-radius: 4px;
+  outline: none;
+  color: #2d3748;
+`;
+
+// The 3-dot menu button
+const MenuButton = styled.button`
   background-color: transparent;
   border: none;
   color: #a0aec0;
   cursor: pointer;
   padding: 8px;
-  margin: -8px;
   border-radius: 4px;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   &:hover {
     background-color: #f7fafc;
@@ -175,34 +281,45 @@ const OptionsButton = styled.button`
   }
 `;
 
-const OptionsMenu = styled.div`
+// Dropdown menu that appears on click
+const MenuDropdown = styled.div`
   position: absolute;
-  right: 0;
   top: 100%;
+  right: 0;
   background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  width: 150px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  min-width: 150px;
   overflow: hidden;
+  margin-top: 5px;
 `;
 
-const OptionItem = styled.div`
-  padding: 10px 15px;
+const MenuItem = styled.button`
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 10px 15px;
   font-size: 14px;
-  color: #4a5568;
+  color: ${props => props.danger ? '#e53e3e' : '#4a5568'};
   cursor: pointer;
+  transition: 0.2s;
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: ${props => props.danger ? '#FED7D7' : '#f7fafc'};
   }
   
   svg {
     font-size: 14px;
-    color: #718096;
+    color: ${props => props.danger ? '#e53e3e' : '#718096'};
+  }
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
   }
 `;
 

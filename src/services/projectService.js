@@ -1,4 +1,4 @@
-// client/src/services/projectService.js
+// src/services/projectService.js
 import api from './api';
 
 export const getProjects = async () => {
@@ -26,6 +26,16 @@ export const deleteProject = async (projectId) => {
   return response.data;
 };
 
+/**
+ * Clone an existing project
+ * @param {string} projectId - ID of the project to clone
+ * @returns {Promise<Object>} New project data
+ */
+export const cloneProject = async (projectId) => {
+  const response = await api.post(`/projects/${projectId}/clone`);
+  return response.data;
+};
+
 export const getProjectFiles = async (projectId) => {
   const response = await api.get(`/projects/${projectId}/files`);
   return response.data;
@@ -42,7 +52,19 @@ export const getFileContent = async (projectId, fileId) => {
 };
 
 export const updateFileContent = async (projectId, fileId, content) => {
-  const response = await api.put(`/projects/${projectId}/files/${fileId}`, { content });
+  const response = await api.put(`/projects/${projectId}/files/${fileId}/content`, { content });
+  return response.data;
+};
+
+/**
+ * Update file metadata (name, extension, etc.)
+ * @param {string} projectId - Project ID
+ * @param {string} fileId - File ID
+ * @param {Object} fileData - Updated file data
+ * @returns {Promise<Object>} Updated file
+ */
+export const updateFile = async (projectId, fileId, fileData) => {
+  const response = await api.put(`/projects/${projectId}/files/${fileId}`, fileData);
   return response.data;
 };
 

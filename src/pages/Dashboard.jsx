@@ -1,9 +1,10 @@
-// client/src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx
 import { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { getProjects, createProject, deleteProject } from '../services/projectService';
+import { getProjects, createProject, deleteProject, updateProject } from '../services/projectService';
 import ProjectCard from '../components/Shared/ProjectCard';
 import NewProjectModal from '../components/Dashboard/NewProjectModal';
+import ShareModal from '../components/Editor/ShareModal';
 import { FaPlus, FaFilter, FaSearch } from 'react-icons/fa';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -11,7 +12,9 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all'); // 'all', 'owned', 'shared'
   const { currentUser } = useContext(AuthContext);
@@ -38,7 +41,7 @@ const Dashboard = () => {
     try {
       const newProject = await createProject(projectData);
       setProjects([...projects, newProject]);
-      setIsModalOpen(false);
+      setIsNewProjectModalOpen(false);
     } catch (err) {
       console.error('Error creating project:', err);
       setError('Failed to create project. Please try again.');
@@ -46,15 +49,35 @@ const Dashboard = () => {
   };
 
   const handleDeleteProject = async (projectId) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      try {
-        await deleteProject(projectId);
-        setProjects(projects.filter(project => project._id !== projectId));
-      } catch (err) {
-        console.error('Error deleting project:', err);
-        setError('Failed to delete project. Please try again.');
-      }
+    try {
+      await deleteProject(projectId);
+      setProjects(projects.filter(project => project._id !== projectId));
+    } catch (err) {
+      console.error('Error deleting project:', err);
+      setError('Failed to delete project. Please try again.');
     }
+  };
+  
+  const handleRenameProject = async (projectId, newName) => {
+    try {
+      const project = projects.find(p => p._id === projectId);
+      if (!project) return;
+      
+      const updatedProject = await updateProject(projectId, { name: newName });
+      
+      // Update projects state
+      setProjects(projects.map(p => 
+        p._id === projectId ? updatedProject : p
+      ));
+    } catch (err) {
+      console.error('Error renaming project:', err);
+      setError('Failed to rename project. Please try again.');
+    }
+  };
+  
+  const handleShareProject = (project) => {
+    setActiveProject(project);
+    setIsShareModalOpen(true);
   };
 
   // Filter and search projects
@@ -112,7 +135,7 @@ const Dashboard = () => {
               <option value="shared">Shared With Me</option>
             </FilterSelect>
           </FilterGroup>
-          <NewProjectButton onClick={() => setIsModalOpen(true)}>
+          <NewProjectButton onClick={() => setIsNewProjectModalOpen(true)}>
             <FaPlus />
             <span>New Project</span>
           </NewProjectButton>
@@ -129,7 +152,7 @@ const Dashboard = () => {
           ) : (
             <>
               <p>Create your first project to get started!</p>
-              <EmptyStateButton onClick={() => setIsModalOpen(true)}>
+              <EmptyStateButton onClick={() => setIsNewProjectModalOpen(true)}>
                 <FaPlus />
                 <span>Create Project</span>
               </EmptyStateButton>
@@ -142,18 +165,33 @@ const Dashboard = () => {
             <ProjectCard
               key={project._id}
               project={project}
-              onDelete={() => handleDeleteProject(project._id)}
+              onDelete={handleDeleteProject}
+              onRename={handleRenameProject}
+              onShare={handleShareProject}
               isOwner={project.owner._id === currentUser.id}
             />
           ))}
         </ProjectsGrid>
       )}
 
+      {/* Modals */}
       <NewProjectModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isNewProjectModalOpen}
+        onClose={() => setIsNewProjectModalOpen(false)}
         onCreate={handleCreateProject}
       />
+      
+      {isShareModalOpen && activeProject && (
+        <ShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => {
+            setIsShareModalOpen(false);
+            setActiveProject(null);
+          }}
+          project={activeProject}
+          projectId={activeProject._id}
+        />
+      )}
     </DashboardContainer>
   );
 };
