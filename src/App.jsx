@@ -5,6 +5,7 @@ import { AuthContext } from './contexts/AuthContext';
 import styled from 'styled-components';
 
 // Pages
+import LandingPage from './pages/Landingpage';
 import HomePage from './pages/Homepage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -31,12 +32,17 @@ const App = () => {
 
   return (
     <Routes>
-      {/* Home Route - Show HomePage if not logged in, redirect to Dashboard if logged in */}
+      {/* Landing Page - The initial animated page */}
       <Route path="/" element={
+        currentUser ? <Navigate to="/dashboard" replace /> : <LandingPage />
+      } />
+      
+      {/* Home Page - With Login/Register tabs */}
+      <Route path="/home" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <HomePage />
       } />
       
-      {/* Auth Routes (for direct access, but typically accessed through HomePage) */}
+      {/* Auth Routes (for direct access) */}
       <Route path="/login" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <Login />
       } />
