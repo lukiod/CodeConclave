@@ -28,7 +28,7 @@ const LandingPage = () => {
           <LogoIcon>
             <FaCode />
           </LogoIcon>
-          <LogoText>codeX</LogoText>
+          <LogoText>Code Conclave</LogoText>
         </Logo>
         
         <HeadlineWrapper>
@@ -88,6 +88,7 @@ const Container = styled.div`
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  background-color: #0d1117;
 `;
 
 const BackgroundWrapper = styled.div`
@@ -105,7 +106,7 @@ const BackgroundGradient = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, #1a202c, #2d3748, #1a202c);
+  background: linear-gradient(120deg, #0d1117, #161b22, #0d1117);
   background-size: 200% 200%;
   animation: ${gradient} 15s ease infinite;
 `;
@@ -116,8 +117,8 @@ const CodePatternOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233182ce' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2358a6ff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.1;
 `;
 
 const ContentWrapper = styled.div`
@@ -140,16 +141,20 @@ const Logo = styled.div`
 
 const LogoIcon = styled.div`
   font-size: 3rem;
-  color: #3182ce;
+  color: #58a6ff;
   margin-right: 0.5rem;
 `;
 
 const LogoText = styled.h1`
   font-size: 3.5rem;
   font-weight: 900;
-  background: linear-gradient(45deg, #3182ce, #63b3ed);
+  background: linear-gradient(45deg, #58a6ff, #a5d6ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
 `;
 
 const HeadlineWrapper = styled.div`
@@ -163,7 +168,7 @@ const Headline = styled.h2`
   font-size: 3rem;
   font-weight: 800;
   text-align: center;
-  color: white;
+  color: #c9d1d9;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   letter-spacing: -0.5px;
   
@@ -179,23 +184,24 @@ const ButtonWrapper = styled.div`
 `;
 
 const GetStartedButton = styled.button`
-  background: linear-gradient(45deg, #3182ce, #63b3ed);
+  background: linear-gradient(45deg, #238636, #2ea043);
   color: white;
   font-size: 1.2rem;
   font-weight: 600;
   padding: 1rem 2.5rem;
   border: none;
-  border-radius: 50px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 10px 30px rgba(49, 130, 206, 0.3);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  box-shadow: 0 4px 20px rgba(35, 134, 54, 0.3);
   
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(49, 130, 206, 0.4);
+    box-shadow: 0 8px 25px rgba(35, 134, 54, 0.4);
+    background: linear-gradient(45deg, #2ea043, #3fb950);
     
     span {
       transform: translateX(-5px);
@@ -232,14 +238,14 @@ const getShape = shape => {
     case 'circle':
       return 'border-radius: 50%;';
     case 'square':
-      return 'border-radius: 10px; transform: rotate(45deg);';
+      return 'border-radius: 8px; transform: rotate(45deg);';
     case 'triangle':
       return `
         width: 0;
         height: 0;
         border-left: ${props => props.size} solid transparent;
         border-right: ${props => props.size} solid transparent;
-        border-bottom: ${props => props.size} solid rgba(49, 130, 206, 0.15);
+        border-bottom: ${props => props.size} solid rgba(88, 166, 255, 0.08);
         background: transparent;
       `;
     default:
@@ -253,8 +259,7 @@ const FloatingShape = styled.div`
   height: ${props => props.size};
   top: ${props => props.top};
   left: ${props => props.left};
-  background: rgba(49, 130, 206, 0.15);
-  backdrop-filter: blur(5px);
+  background: rgba(88, 166, 255, 0.08);
   animation: ${float} 6s ease-in-out infinite;
   animation-delay: ${props => props.delay}s;
   ${props => getShape(props.shape)}
