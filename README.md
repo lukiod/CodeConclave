@@ -94,14 +94,6 @@ code-editor-project/
 │       ├── services/       # API service calls
 │       └── utils/          # Utility functions
 │
-├── server/                 # Backend Node.js application
-│   ├── config/             # Configuration files
-│   ├── controllers/        # Request handlers
-│   ├── middleware/         # Express middleware
-│   ├── models/             # Database models
-│   ├── routes/             # API routes
-│   ├── services/           # Business logic
-│   └── utils/              # Utility functions
 │
 ├── api/                    # Serverless functions for Vercel
 │   └── index.js            # API entry point
