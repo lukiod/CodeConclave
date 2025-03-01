@@ -52,7 +52,7 @@ export const getFileContent = async (projectId, fileId) => {
 };
 
 export const updateFileContent = async (projectId, fileId, content) => {
-  const response = await api.put(`/projects/${projectId}/files/${fileId}/content`, { content });
+  const response = await api.put(`/projects/${projectId}/files/${fileId}`, { content });
   return response.data;
 };
 
