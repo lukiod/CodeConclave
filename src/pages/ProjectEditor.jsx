@@ -12,6 +12,8 @@ import CodeEditor from '../components/Editor/CodeEditor';
 import NotebookEditor from '../components/Notebook/NotebookEditor';
 import ProjectToolbar from '../components/Editor/ProjectToolbar';
 import ShareModal from '../components/Editor/ShareModal';
+import XTerminal from '../components/Editor/XTerminal';
+import { executeCode, executeSandboxedCode } from '../services/codeRunnerService';
 
 const ProjectEditor = () => {
   const { projectId } = useParams();
@@ -34,6 +36,7 @@ const ProjectEditor = () => {
   } = useProject(projectId);
   
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   
   const fileSystem = useFileSystem(projectId, files, setFiles);
   
@@ -47,6 +50,45 @@ const ProjectEditor = () => {
   // Check if the file is a Jupyter notebook
   const isNotebookFile = (file) => {
     return file && file.extension === '.ipynb';
+  };
+  
+  // Handle the run code button click on the toolbar
+  const handleRunCode = async (file) => {
+    if (!file) return;
+    
+    // Get language from file extension
+    const extension = file.extension?.substring(1).toLowerCase();
+    let language = extension;
+    
+    // Map extension to language name
+    switch (extension) {
+      case 'js':
+      case 'jsx':
+        language = 'javascript';
+        break;
+      case 'py':
+        language = 'python';
+        break;
+      // Add more mappings as needed
+      default:
+        language = extension;
+    }
+    
+    try {
+      // Try server-side execution first
+      return await executeCode(file.content, language);
+    } catch (error) {
+      console.log('Server execution failed, falling back to sandbox:', error);
+      // Fall back to client-side execution
+      return await executeSandboxedCode(file.content, language);
+    }
+  };
+  
+  // Toggle terminal visibility
+  const toggleTerminal = () => {
+    alert('this functionality is under progress')
+    // setIsTerminalOpen(!isTerminalOpen);
+    return;
   };
   
   if (isLoading) {
@@ -73,7 +115,9 @@ const ProjectEditor = () => {
     <EditorContainer>
       <ProjectToolbar 
         project={project} 
-        onShare={() => setIsShareModalOpen(true)} 
+        onShare={() => setIsShareModalOpen(true)}
+        onRunCode={() => handleRunCode(activeFile)}
+        onToggleTerminal={toggleTerminal}
       />
       
       <EditorLayout>
@@ -108,6 +152,12 @@ const ProjectEditor = () => {
         </Split>
       </EditorLayout>
       
+      {/* Terminal */}
+      <XTerminal 
+        isOpen={isTerminalOpen}
+        onClose={() => setIsTerminalOpen(false)}
+      />
+      
       {/* Share Modal */}
       <ShareModal 
         isOpen={isShareModalOpen}
@@ -123,6 +173,7 @@ const EditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
 `;
 
 const EditorLayout = styled.div`

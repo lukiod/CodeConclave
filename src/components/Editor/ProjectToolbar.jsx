@@ -1,11 +1,17 @@
 // client/src/components/Editor/ProjectToolbar.jsx
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaShareAlt, FaSave, FaPlay, FaEllipsisV, FaDownload, FaHome } from 'react-icons/fa';
+import { 
+  FaShareAlt, FaPlay, FaEllipsisV, FaDownload, 
+  FaHome, FaSpinner, FaTerminal
+} from 'react-icons/fa';
+import { EditorContext } from '../../contexts/EditorContext';
 
-const ProjectToolbar = ({ project, onShare }) => {
+const ProjectToolbar = ({ project, onShare, onRunCode, onToggleTerminal }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const { activeFile, unsavedChanges } = useContext(EditorContext);
   const navigate = useNavigate();
   
   if (!project) return null;
@@ -20,8 +26,27 @@ const ProjectToolbar = ({ project, onShare }) => {
   };
   
   const handleRunCode = () => {
-    // Implement code running functionality
-    alert('Run code functionality not implemented yet');
+    if (onRunCode && activeFile) {
+      setIsRunning(true);
+      onRunCode(activeFile)
+        .finally(() => setIsRunning(false));
+    } else {
+      alert('No file is currently active. Please open a file to run code.');
+    }
+  };
+
+  const canRunCode = () => {
+    if (!activeFile) return false;
+    
+    // Extract extension without the dot
+    const extension = activeFile.extension?.substring(1).toLowerCase();
+    
+    // Support JavaScript, Python, and other languages from server
+    return ['js', 'jsx', 'py', 'python'].includes(extension);
+  };
+  
+  const hasUnsavedChanges = () => {
+    return Object.keys(unsavedChanges || {}).length > 0;
   };
   
   return (
@@ -32,15 +57,25 @@ const ProjectToolbar = ({ project, onShare }) => {
           <span>Dashboard</span>
         </DashboardButton>
         <ProjectName>{project.name}</ProjectName>
+        {hasUnsavedChanges() && <UnsavedIndicator>•</UnsavedIndicator>}
       </ToolbarLeft>
       
       <ToolbarRight>
-        <ActionButton onClick={handleRunCode}>
-          <FaPlay />
-          <span>Run</span>
+        <ActionButton 
+          onClick={handleRunCode}
+          disabled={isRunning || !canRunCode()}
+          title={!canRunCode() ? "This file type cannot be run" : "Run current file"}
+        >
+          {isRunning ? <FaSpinner className="spinner" /> : <FaPlay />}
+          <span>{isRunning ? 'Running...' : 'Run'}</span>
         </ActionButton>
         
-        <ActionButton onClick={onShare}>
+        <ActionButton onClick={onToggleTerminal} title="Toggle Terminal">
+          <FaTerminal />
+          <span>Terminal</span>
+        </ActionButton>
+        
+        <ActionButton onClick={onShare} title="Share Project">
           <FaShareAlt />
           <span>Share</span>
         </ActionButton>
@@ -101,7 +136,7 @@ const DashboardButton = styled.button`
     font-size: 16px;
   }
   
-  @media (max-width: 576px) {
+  @media (max-width: 600px) {
     span {
       display: none;
     }
@@ -124,11 +159,30 @@ const ProjectName = styled.h1`
   }
 `;
 
+const UnsavedIndicator = styled.span`
+  color: #3182ce;
+  font-size: 24px;
+  margin-left: 8px;
+  line-height: 0;
+`;
+
 const ToolbarRight = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
   position: relative;
+  
+  @media (max-width: 768px) {
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
 `;
 
 const ActionButton = styled.button`
@@ -142,6 +196,8 @@ const ActionButton = styled.button`
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
+  opacity: ${props => props.disabled ? 0.5 : 1};
+  pointer-events: ${props => props.disabled ? 'none' : 'auto'};
   
   &:hover {
     background-color: #f7fafc;
@@ -151,7 +207,7 @@ const ActionButton = styled.button`
     font-size: 16px;
   }
   
-  @media (max-width: 576px) {
+  @media (max-width: 768px) {
     span {
       display: none;
     }
