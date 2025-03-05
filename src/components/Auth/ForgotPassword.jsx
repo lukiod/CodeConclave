@@ -1,36 +1,36 @@
-// client/src/components/Auth/Login.jsx
-import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthContext';
+// client/src/components/Auth/ForgotPassword.jsx
+import { useState } from 'react';
 import styled from 'styled-components';
+import { isValidEmail } from '../../utils/validators';
+import { requestPasswordReset } from '../../services/authService';
 
-const Login = (props) => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+const ForgotPassword = (props) => {
+  const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login, error, setError } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    // Clear error when user types
-    if (error) setError(null);
-  };
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate email
+    if (!isValidEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
+    setError(null);
+    setMessage(null);
     setIsSubmitting(true);
     
     try {
-      await login(formData);
-      navigate('/dashboard');
+      const response = await requestPasswordReset(email);
+      setMessage('Password reset instructions have been sent to your email');
+      if (props.onSuccess) {
+        props.onSuccess(response.data.token);
+      }
     } catch (err) {
-      console.error('Login error:', err);
+      setError(err.response?.data?.message || 'Failed to request password reset');
     } finally {
       setIsSubmitting(false);
     }
@@ -39,6 +39,8 @@ const Login = (props) => {
   return (
     <FormContainer>
       {error && <ErrorAlert>{error}</ErrorAlert>}
+      {message && <SuccessAlert>{message}</SuccessAlert>}
+      
       <Form onSubmit={handleSubmit}>
         <FormGroup>
           <Label htmlFor="email">Email</Label>
@@ -46,31 +48,25 @@ const Login = (props) => {
             type="email"
             id="email"
             name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder="Enter your email"
+            placeholder="Enter your email address"
           />
         </FormGroup>
-        <FormGroup>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            placeholder="Enter your password"
-          />
-        </FormGroup>
-        <ForgotPassword onClick={props.onForgotPassword}>
-          Forgot password?
-        </ForgotPassword>
+        
+        <FormText>
+          Enter your email address and we'll send you instructions to reset your password.
+        </FormText>
+        
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Logging in...' : 'Log In'}
+          {isSubmitting ? 'Sending...' : 'Reset Password'}
         </Button>
       </Form>
+      
+      <BackToLogin onClick={props.onBack}>
+        ← Back to Login
+      </BackToLogin>
     </FormContainer>
   );
 };
@@ -111,18 +107,10 @@ const Input = styled.input`
   }
 `;
 
-const ForgotPassword = styled.button`
-  background: none;
-  border: none;
+const FormText = styled.p`
   font-size: 0.875rem;
-  color: #3182ce;
-  text-align: right;
+  color: #718096;
   margin-top: -0.5rem;
-  cursor: pointer;
-  
-  &:hover {
-    text-decoration: underline;
-  }
 `;
 
 const Button = styled.button`
@@ -156,4 +144,27 @@ const ErrorAlert = styled.div`
   font-size: 0.9rem;
 `;
 
-export default Login;
+const SuccessAlert = styled.div`
+  background-color: #c6f6d5;
+  color: #2f855a;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+`;
+
+const BackToLogin = styled.button`
+  background: none;
+  border: none;
+  color: #3182ce;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  padding: 0;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export default ForgotPassword;

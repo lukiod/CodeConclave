@@ -15,7 +15,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'https://codeconclaveserver.onrender.com',
+        target: 'http://localhost:5000',//https://codeconclaveserver.onrender.com
         changeOrigin: true,
       },
     },

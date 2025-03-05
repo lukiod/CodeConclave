@@ -95,3 +95,34 @@ export const configureAuthHeader = (token) => {
     delete api.defaults.headers.common['Authorization'];
   }
 };
+
+/**
+ * Request a password reset email
+ * @param {string} email - User's email address
+ * @returns {Promise<Object>} Response data
+ */
+export const requestPasswordReset = async (email) => {
+  return api.post('/password-reset/request', { email });
+};
+
+/**
+ * Verify OTP
+ * @param {string} token - Reset token
+ * @param {string} otp - OTP code
+ * @returns {Promise<Object>} Response data
+ */
+export const verifyOTP = async (token, otp) => {
+  const response = await api.post('/password-reset/verify-token-otp', { token, otp });
+  return response.data;
+};
+
+/**
+ * Reset password
+ * @param {string} token - Reset token
+ * @param {string} password - New password
+ * @returns {Promise<Object>} Response data
+ */
+export const resetPassword = async (token, password) => {
+  const response = await api.post('/password-reset/reset', { token, password });
+  return response.data;
+};

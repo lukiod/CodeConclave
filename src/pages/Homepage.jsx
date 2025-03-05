@@ -3,11 +3,17 @@ import { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Login from '../components/Auth/Login';
 import Register from '../components/Auth/Register';
+import ForgotPassword from '../components/Auth/ForgotPassword';
+import OTPVerification from '../components/Auth/OTPVerification';
 import { FaCode, FaLaptopCode, FaUserFriends, FaLayerGroup, FaFlask } from 'react-icons/fa';
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useState('login');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showOTPVerification, setShowOTPVerification] = useState(false);
+  const [verificationUserId, setVerificationUserId] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [resetToken, setResetToken] = useState(null);
 
   useEffect(() => {
     setTimeout(() => setLoaded(true), 100);
@@ -82,28 +88,51 @@ const HomePage = () => {
         
         <RightPanel>
           <AuthContainer>
-            <TabContainer>
-              <TabButton 
-                isActive={activeTab === 'login'} 
-                onClick={() => setActiveTab('login')}
-              >
-                Log In
-              </TabButton>
-              <TabButton 
-                isActive={activeTab === 'register'} 
-                onClick={() => setActiveTab('register')}
-              >
-                Sign Up
-              </TabButton>
-            </TabContainer>
-            
-            <FormContainer>
-              {activeTab === 'login' ? (
-                <Login />
-              ) : (
-                <Register />
-              )}
-            </FormContainer>
+            {!showForgotPassword && !showOTPVerification ? (
+              <>
+                <TabContainer>
+                  <TabButton 
+                    $isActive={activeTab === 'login'}
+                    onClick={() => setActiveTab('login')}
+                  >
+                    Log In
+                  </TabButton>
+                  <TabButton 
+                    $isActive={activeTab === 'register'}
+                    onClick={() => setActiveTab('register')}
+                  >
+                    Sign Up
+                  </TabButton>
+                </TabContainer>
+                
+                {activeTab === 'login' && (
+                  <Login 
+                    onForgotPassword={() => {
+                      setShowForgotPassword(true);
+                      setActiveTab(null);
+                    }}
+                  />
+                )}
+                {activeTab === 'register' && <Register />}
+              </>
+            ) : showOTPVerification ? (
+              <OTPVerification 
+                resetToken={resetToken}
+                onBack={() => {
+                  setShowOTPVerification(false);
+                  setActiveTab('login');
+                }}
+              />
+            ) : (
+              <ForgotPassword 
+                onBack={() => setShowForgotPassword(false)}
+                onSuccess={(token) => {
+                  setResetToken(token);
+                  setShowForgotPassword(false);
+                  setShowOTPVerification(true);
+                }}
+              />
+            )}
           </AuthContainer>
         </RightPanel>
       </ContentContainer>
@@ -297,15 +326,15 @@ const TabButton = styled.button`
   padding: 1rem;
   font-size: 1rem;
   font-weight: 600;
-  background-color: ${props => props.isActive ? '#238636' : 'transparent'};
-  color: ${props => props.isActive ? 'white' : '#8b949e'};
+  background-color: ${props => props.$isActive ? '#238636' : 'transparent'};
+  color: ${props => props.$isActive ? 'white' : '#8b949e'};
   border: none;
   cursor: pointer;
   transition: all 0.2s;
   
   &:hover {
-    background-color: ${props => props.isActive ? '#2ea043' : 'rgba(88, 166, 255, 0.1)'};
-    color: ${props => props.isActive ? 'white' : '#58a6ff'};
+    background-color: ${props => props.$isActive ? '#2ea043' : 'rgba(88, 166, 255, 0.1)'};
+    color: ${props => props.$isActive ? 'white' : '#58a6ff'};
   }
 `;
 
