@@ -23,6 +23,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    chunkSizeWarningLimit:2000,
   },
   test: {
     globals: true,
