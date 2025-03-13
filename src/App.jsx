@@ -17,7 +17,7 @@ import NotFound from './pages/NotFound';
 // Components
 import ProtectedRoute from './components/Shared/ProtectedRoute';
 import Layout from './components/Shared/Layout';
-
+import ResetPassword from './pages/ResetPassword';
 const App = () => {
   const { loading, currentUser } = useContext(AuthContext);
 
@@ -41,7 +41,7 @@ const App = () => {
       <Route path="/home" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <HomePage />
       } />
-      
+      <Route path="/reset-password" element={<ResetPassword />} />
       {/* Auth Routes (for direct access) */}
       <Route path="/login" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <Login />
