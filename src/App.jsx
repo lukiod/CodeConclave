@@ -13,11 +13,12 @@ import Dashboard from './pages/Dashboard';
 import ProjectEditor from './pages/ProjectEditor';
 import SharedProjects from './pages/SharedProjects';
 import NotFound from './pages/NotFound';
+import ResetPassword from './pages/ResetPassword';
 
 // Components
 import ProtectedRoute from './components/Shared/ProtectedRoute';
 import Layout from './components/Shared/Layout';
-import ResetPassword from './pages/ResetPassword';
+
 const App = () => {
   const { loading, currentUser } = useContext(AuthContext);
 
