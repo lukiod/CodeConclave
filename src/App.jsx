@@ -17,7 +17,7 @@ import NotFound from './pages/NotFound';
 // Components
 import ProtectedRoute from './components/Shared/ProtectedRoute';
 import Layout from './components/Shared/Layout';
-import ResetPassword from './components/Auth/ResetPassword';
+import ResetPassword from './pages/ResetPassword';
 const App = () => {
   const { loading, currentUser } = useContext(AuthContext);
 
