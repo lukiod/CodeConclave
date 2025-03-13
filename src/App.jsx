@@ -41,7 +41,9 @@ const App = () => {
       <Route path="/home" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <HomePage />
       } />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/reset-password" element={
+        currentUser ? <Navigate to="/dashboard" replace /> : <ResetPassword />
+      } />
       {/* Auth Routes (for direct access) */}
       <Route path="/login" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <Login />
