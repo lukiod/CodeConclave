@@ -36,18 +36,16 @@ const App = () => {
       <Route path="/" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <ResetPassword />
       } />
-
-      <Route path="/h" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <LandingPage />
-      } />
       
       {/* Home Page - With Login/Register tabs */}
       <Route path="/home" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <HomePage />
       } />
-      {/* <Route path="/reset-password" element={
+
+
+      <Route path="/reset-password" element={
         currentUser ? <Navigate to="/dashboard" replace /> : <ResetPassword />
-      } /> */}
+      } />
 
       {/* Auth Routes (for direct access) */}
       <Route path="/login" element={
