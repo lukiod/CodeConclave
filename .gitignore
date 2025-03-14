@@ -2,4 +2,3 @@
 .env.production
 server
 node_modules
-dist
