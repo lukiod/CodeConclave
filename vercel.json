@@ -5,30 +5,21 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist",
-        "chunkSizeWarningLimit": 2000
+        "distDir": "dist"
       }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://codeconclaveserver.onrender.com/api/$1",
-      "headers": {
-        "Access-Control-Allow-Origin": "*"
-      }
+      "dest": "https://codeconclaveserver.onrender.com/api/$1"
     },
     {
-      "src": "/_next/static/(.*)",
-      "dest": "/dist/_next/static/$1"
-    },
-    {
-      "src": "/(.*\\.(ico|svg|png|jpg|jpeg|css|js|json))",
-      "dest": "/dist/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/index.html"
+      "dest": "/index.html"
     }
   ]
 }
