@@ -1,22 +1,31 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "CodeConclave/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
+    "version": 2,
+    "builds": [
+      {
+        "src": "package.json",
+        "use": "@vercel/static-build",
+        "config": {
+          "distDir": "dist",
+          "chunkSizeWarningLimit": 2000
+        }
       }
+    ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "https://codeconclaveserver.onrender.com/api/$1",
+            "headers": {
+              "Access-Control-Allow-Origin": "*"
+            }
+          },
+        {
+        "src": "/_next/static/(.*)",
+        "dest": "/dist/_next/static/$1"
+        },
+        {
+            "src": "/(.*\\.(ico|svg|png|jpg|jpeg|css|js|json))",
+            "dest": "/dist/$1"
+        }
+    ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://codeconclaveserver.onrender.com/api/:path*"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/CodeConclave/index.html"
-    }
-  ]
-}
+        
