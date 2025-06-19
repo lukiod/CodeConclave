@@ -125,7 +125,10 @@ const HomePage = () => {
               />
             ) : (
               <ForgotPassword 
-                onBack={() => setShowForgotPassword(false)}
+                onBack={() => {
+                  setShowForgotPassword(false);
+                  setActiveTab('login');
+                }}
                 onSuccess={(token) => {
                   setResetToken(token);
                   setShowForgotPassword(false);
