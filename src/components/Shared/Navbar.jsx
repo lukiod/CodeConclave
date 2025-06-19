@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaCode, FaBars, FaUserCircle, FaSignOutAlt, FaChevronDown } from 'react-icons/fa';
 import { AuthContext } from '../../contexts/AuthContext';
+import ThemeToggle from './ThemeToggle';
 
 const Navbar = ({ toggleSidebar }) => {
   const { currentUser, logout } = useContext(AuthContext);
@@ -30,6 +31,7 @@ const Navbar = ({ toggleSidebar }) => {
       </NavbarLeft>
       
       <NavbarRight>
+        <ThemeToggle />
         <UserDropdown>
           <UserButton onClick={() => setShowUserMenu(!showUserMenu)}>
             <FaUserCircle />
@@ -64,9 +66,10 @@ const NavbarContainer = styled.nav`
   align-items: center;
   height: 60px;
   padding: 0 20px;
-  background-color: #1a202c;
-  color: white;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--color-border);
   position: relative;
   z-index: 10;
 `;
@@ -78,7 +81,7 @@ const NavbarLeft = styled.div`
 
 const MenuButton = styled.button`
   background-color: transparent;
-  color: white;
+  color: var(--color-text-primary);
   border: none;
   font-size: 18px;
   display: flex;
@@ -91,7 +94,7 @@ const MenuButton = styled.button`
   margin-right: 15px;
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--color-background);
   }
 `;
 
@@ -101,7 +104,7 @@ const Logo = styled.div`
   gap: 10px;
   font-size: 18px;
   font-weight: 600;
-  color: white;
+  color: var(--color-primary);
 `;
 
 const LogoText = styled.span`
@@ -113,6 +116,7 @@ const LogoText = styled.span`
 const NavbarRight = styled.div`
   display: flex;
   align-items: center;
+  gap: 12px;
 `;
 
 const UserDropdown = styled.div`
@@ -124,14 +128,14 @@ const UserButton = styled.button`
   align-items: center;
   gap: 8px;
   background-color: transparent;
-  color: white;
+  color: var(--color-text-primary);
   border: none;
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--color-background);
   }
   
   svg:first-child {
@@ -155,7 +159,8 @@ const DropdownMenu = styled.div`
   top: 100%;
   right: 0;
   width: 200px;
-  background-color: white;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-top: 5px;
@@ -170,19 +175,19 @@ const UserInfo = styled.div`
   gap: 5px;
   
   strong {
-    color: #2d3748;
+    color: var(--color-text-primary);
     font-size: 14px;
   }
   
   small {
-    color: #718096;
+    color: var(--color-text-secondary);
     font-size: 12px;
   }
 `;
 
 const DropdownDivider = styled.div`
   height: 1px;
-  background-color: #e2e8f0;
+  background-color: var(--color-border);
 `;
 
 const DropdownItem = styled.button`
@@ -194,17 +199,17 @@ const DropdownItem = styled.button`
   gap: 10px;
   border: none;
   background-color: transparent;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   font-size: 14px;
   cursor: pointer;
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: var(--color-background);
   }
   
   svg {
     font-size: 14px;
-    color: #718096;
+    color: var(--color-text-tertiary);
   }
 `;
 

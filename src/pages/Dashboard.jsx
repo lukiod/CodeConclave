@@ -219,7 +219,7 @@ const Title = styled.h1`
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0;
-  color: #2d3748;
+  color: var(--color-text-primary);
 `;
 
 const Controls = styled.div`
@@ -237,8 +237,8 @@ const SearchBar = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  background-color: white;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 0 10px;
   
@@ -248,7 +248,7 @@ const SearchBar = styled.div`
 `;
 
 const SearchIcon = styled.div`
-  color: #a0aec0;
+  color: var(--color-text-tertiary);
   display: flex;
   align-items: center;
 `;
@@ -259,6 +259,8 @@ const SearchInput = styled.input`
   flex-grow: 1;
   outline: none;
   font-size: 14px;
+  background: transparent;
+  color: var(--color-text-primary);
 `;
 
 const FilterGroup = styled.div`
@@ -271,7 +273,7 @@ const FilterLabel = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   font-size: 14px;
   
   svg {
@@ -280,16 +282,17 @@ const FilterLabel = styled.div`
 `;
 
 const FilterSelect = styled.select`
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 8px 12px;
-  background-color: white;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
   font-size: 14px;
   outline: none;
   cursor: pointer;
   
   &:focus {
-    border-color: #3182ce;
+    border-color: var(--color-primary);
   }
 `;
 
@@ -297,7 +300,7 @@ const NewProjectButton = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #3182ce;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -308,7 +311,7 @@ const NewProjectButton = styled.button`
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: #2c5282;
+    background-color: var(--color-primary-dark);
   }
   
   svg {
@@ -325,20 +328,20 @@ const ProjectsGrid = styled.div`
 const EmptyState = styled.div`
   text-align: center;
   padding: 60px 20px;
-  background-color: #f8f9fa;
+  background-color: var(--color-surface);
   border-radius: 8px;
-  border: 1px dashed #e2e8f0;
+  border: 1px dashed var(--color-border);
   
   h2 {
     margin-top: 0;
     margin-bottom: 10px;
-    color: #2d3748;
+    color: var(--color-text-primary);
     font-weight: 600;
   }
   
   p {
     margin-bottom: 20px;
-    color: #718096;
+    color: var(--color-text-secondary);
   }
 `;
 
@@ -346,7 +349,7 @@ const EmptyStateButton = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #3182ce;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -357,17 +360,17 @@ const EmptyStateButton = styled.button`
   margin: 0 auto;
   
   &:hover {
-    background-color: #2c5282;
+    background-color: var(--color-primary-dark);
   }
 `;
 
 const ErrorMessage = styled.div`
-  background-color: #FFF5F5;
-  color: #C53030;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
   padding: 12px 16px;
   border-radius: 4px;
   margin-bottom: 20px;
-  border-left: 4px solid #C53030;
+  border-left: 4px solid var(--color-danger);
 `;
 
 const LoadingContainer = styled.div`
@@ -376,15 +379,15 @@ const LoadingContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 300px;
-  color: #718096;
+  color: var(--color-text-secondary);
 `;
 
 const LoadingSpinner = styled.div`
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(0, 0, 0, 0.1);
+  border: 4px solid var(--color-border);
   border-radius: 50%;
-  border-top-color: #3182ce;
+  border-top-color: var(--color-primary);
   animation: spin 1s ease-in-out infinite;
   margin-bottom: 16px;
   

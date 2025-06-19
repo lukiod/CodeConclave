@@ -88,7 +88,7 @@ const Container = styled.div`
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-  background-color: #0d1117;
+  background-color: #ffffff;
 `;
 
 const BackgroundWrapper = styled.div`
@@ -106,7 +106,7 @@ const BackgroundGradient = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, #0d1117, #161b22, #0d1117);
+  background: linear-gradient(120deg, #f8fafc, #f1f5f9, #f8fafc);
   background-size: 200% 200%;
   animation: ${gradient} 15s ease infinite;
 `;
@@ -168,8 +168,8 @@ const Headline = styled.h2`
   font-size: 3rem;
   font-weight: 800;
   text-align: center;
-  color: #c9d1d9;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  color: #1e293b;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   letter-spacing: -0.5px;
   
   @media (max-width: 768px) {

@@ -1,15 +1,15 @@
 const theme = {
   colors: {
-    // Modern, developer-friendly color palette
+    // Modern, light mode color palette
     primary: '#6366f1',
     primaryDark: '#4f46e5',
-    background: '#0f172a',
-    surface: '#1e293b',
-    surfaceLight: '#334155',
-    textPrimary: '#f8fafc',
-    textSecondary: '#cbd5e1',
-    textTertiary: '#94a3b8',
-    border: '#334155',
+    background: '#ffffff',
+    surface: '#f8fafc',
+    surfaceLight: '#f1f5f9',
+    textPrimary: '#1e293b',
+    textSecondary: '#475569',
+    textTertiary: '#64748b',
+    border: '#e2e8f0',
     danger: '#ef4444',
     success: '#22c55e',
     warning: '#f59e0b',
@@ -104,13 +104,13 @@ const theme = {
 
   // Editor specific theme
   editor: {
-    background: '#0f172a',
-    foreground: '#f8fafc',
-    lineNumber: '#64748b',
-    lineNumberActive: '#94a3b8',
+    background: '#ffffff',
+    foreground: '#1e293b',
+    lineNumber: '#94a3b8',
+    lineNumberActive: '#64748b',
     selection: 'rgba(99, 102, 241, 0.2)',
-    cursor: '#f8fafc',
-    gutterBackground: '#1e293b',
+    cursor: '#1e293b',
+    gutterBackground: '#f8fafc',
     highlightBackground: 'rgba(99, 102, 241, 0.1)',
   }
 };

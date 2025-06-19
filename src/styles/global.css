@@ -5,13 +5,13 @@
   /* Colors */
   --color-primary: #6366f1;
   --color-primary-dark: #4f46e5;
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-surface-light: #334155;
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #cbd5e1;
-  --color-text-tertiary: #94a3b8;
-  --color-border: #334155;
+  --color-background: #ffffff;
+  --color-surface: #f8fafc;
+  --color-surface-light: #f1f5f9;
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748b;
+  --color-border: #e2e8f0;
   --color-danger: #ef4444;
   --color-success: #22c55e;
   --color-warning: #f59e0b;
@@ -57,6 +57,7 @@ body {
   background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -99,8 +100,8 @@ input, select, textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
-  color: inherit;
-  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  background-color: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0.5rem 0.75rem;
@@ -120,7 +121,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .monaco-editor .margin {
-  background-color: var(--color-surface) !important;
+  background-color: var(--color-surface-light) !important;
 }
 
 /* Split.js Customizations */
@@ -139,11 +140,11 @@ input:focus, select:focus, textarea:focus {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-surface);
+  background: var(--color-surface-light);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-surface-light);
+  background: var(--color-border);
   border-radius: var(--radius-sm);
 }
 

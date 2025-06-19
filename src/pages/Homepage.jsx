@@ -165,8 +165,8 @@ const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  background-color: #0d1117;
-  color: #c9d1d9;
+  background-color: #ffffff;
+  color: #1e293b;
 `;
 
 const BackgroundWrapper = styled.div`
@@ -184,7 +184,7 @@ const BackgroundGradient = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, #0d1117, #161b22, #0d1117);
+  background: linear-gradient(120deg, #f8fafc, #f1f5f9, #f8fafc);
   background-size: 200% 200%;
   animation: ${gradient} 15s ease infinite;
 `;
@@ -214,12 +214,13 @@ const ContentContainer = styled.div`
 
 const LeftPanel = styled.div`
   flex: 5;
-  background-color: rgba(22, 27, 34, 0.7);
+  background-color: rgba(248, 250, 252, 0.9);
   backdrop-filter: blur(10px);
   padding: 3rem;
   display: flex;
   flex-direction: column;
   animation: ${fadeIn} 1s ease forwards;
+  border-right: 1px solid #e2e8f0;
   
   @media (max-width: 992px) {
     padding: 2rem;
@@ -305,14 +306,14 @@ const RightPanel = styled.div`
 `;
 
 const AuthContainer = styled.div`
-  background-color: rgba(13, 17, 23, 0.8);
+  background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border: 1px solid #30363d;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 2rem;
   width: 100%;
   max-width: 450px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 `;
 
 const TabContainer = styled.div`
@@ -321,7 +322,8 @@ const TabContainer = styled.div`
   width: 100%;
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid #30363d;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
 `;
 
 const TabButton = styled.button`
@@ -329,15 +331,15 @@ const TabButton = styled.button`
   padding: 1rem;
   font-size: 1rem;
   font-weight: 600;
-  background-color: ${props => props.$isActive ? '#238636' : 'transparent'};
-  color: ${props => props.$isActive ? 'white' : '#8b949e'};
+  background-color: ${props => props.$isActive ? '#6366f1' : 'transparent'};
+  color: ${props => props.$isActive ? 'white' : '#64748b'};
   border: none;
   cursor: pointer;
   transition: all 0.2s;
   
   &:hover {
-    background-color: ${props => props.$isActive ? '#2ea043' : 'rgba(88, 166, 255, 0.1)'};
-    color: ${props => props.$isActive ? 'white' : '#58a6ff'};
+    background-color: ${props => props.$isActive ? '#4f46e5' : 'rgba(99, 102, 241, 0.1)'};
+    color: ${props => props.$isActive ? 'white' : '#6366f1'};
   }
 `;
 
@@ -348,13 +350,13 @@ const FormContainer = styled.div`
 const Footer = styled.footer`
   text-align: center;
   padding: 1.5rem;
-  background-color: #161b22;
-  border-top: 1px solid #30363d;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
   z-index: 1;
 `;
 
 const FooterText = styled.p`
-  color: #8b949e;
+  color: #64748b;
   font-size: 0.9rem;
   margin: 0;
 `;

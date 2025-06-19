@@ -12,6 +12,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import ProjectEditor from './pages/ProjectEditor';
 import SharedProjects from './pages/SharedProjects';
+import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 import ResetPassword from './pages/ResetPassword';
 
@@ -65,6 +66,7 @@ const App = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="projects/:projectId" element={<ProjectEditor />} />
         <Route path="shared" element={<SharedProjects />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
       
       <Route path="*" element={<NotFound />} />
@@ -78,7 +80,7 @@ const LoadingScreen = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
 `;
 
 const Spinner = styled.div`

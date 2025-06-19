@@ -3,6 +3,7 @@ import { useRef, useEffect, useContext, useState } from 'react';
 import styled from 'styled-components';
 import Editor from '@monaco-editor/react';
 import { EditorContext } from '../../contexts/EditorContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { SUPPORTED_LANGUAGES } from '../../config/constants';
 import { FaPlay, FaSpinner } from 'react-icons/fa';
 import { executeSandboxedCode, executeCode } from '../../services/codeRunnerService';
@@ -11,6 +12,7 @@ import ExecutionResult from './ExecutionResult';
 const CodeEditor = ({ file }) => {
   const editorRef = useRef(null);
   const { handleFileChange } = useContext(EditorContext);
+  const { isDarkMode } = useTheme();
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
   
@@ -123,7 +125,7 @@ const CodeEditor = ({ file }) => {
           height="100%"
           language={getLanguage()}
           value={file.content}
-          theme="vs-dark"
+          theme={isDarkMode ? "vs-dark" : "light"}
           onChange={value => handleFileChange(value)}
           onMount={handleEditorDidMount}
           options={{
@@ -161,7 +163,8 @@ const EditorContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
   border-radius: 4px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
 `;
 
 const EditorWrapper = styled.div`
@@ -174,8 +177,8 @@ const EditorToolbar = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  background-color: #2d3748;
-  border-bottom: 1px solid #4a5568;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   
   @media (max-width: 600px) {
     flex-direction: column;
@@ -190,30 +193,24 @@ const FileInfo = styled.div`
 `;
 
 const FileName = styled.div`
-  color: #e2e8f0;
+  color: var(--color-text-primary);
   font-size: 14px;
   font-weight: 500;
 `;
 
 const FileLanguage = styled.div`
-  color: #a0aec0;
+  color: var(--color-text-secondary);
   font-size: 12px;
   margin-left: 8px;
   padding: 2px 6px;
-  background-color: #4a5568;
-  border-radius: 4px;
-  text-transform: capitalize;
+  background-color: var(--color-background);
+  border-radius: 3px;
+  border: 1px solid var(--color-border);
 `;
 
 const ToolbarActions = styled.div`
   display: flex;
-  align-items: center;
   gap: 8px;
-  
-  @media (max-width: 600px) {
-    width: 100%;
-    justify-content: flex-end;
-  }
 `;
 
 const RunButton = styled.button`
@@ -221,18 +218,17 @@ const RunButton = styled.button`
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background-color: ${props => props.disabled ? '#718096' : '#38A169'};
-  color: white;
+  background-color: ${props => props.disabled ? 'var(--color-border)' : 'var(--color-primary)'};
+  color: ${props => props.disabled ? 'var(--color-text-tertiary)' : 'white'};
   border: none;
   border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  opacity: ${props => props.disabled ? 0.7 : 1};
+  font-size: 12px;
+  font-weight: 500;
   transition: background-color 0.2s;
-  
-  &:hover:not(:disabled) {
-    background-color: #2F855A;
+
+  &:hover {
+    background-color: ${props => props.disabled ? 'var(--color-border)' : 'var(--color-primary-dark)'};
   }
   
   .spinner {
@@ -240,20 +236,23 @@ const RunButton = styled.button`
   }
   
   @keyframes spin {
-    100% {
-      transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 `;
 
 const EmptyState = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  background-color: #f8f9fa;
-  color: #718096;
-  font-size: 1.1rem;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  
+  p {
+    margin: 0;
+  }
 `;
 
 export default CodeEditor;

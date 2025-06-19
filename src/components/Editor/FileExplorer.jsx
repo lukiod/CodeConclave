@@ -365,8 +365,8 @@ const ExplorerContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
   overflow: hidden;
 `;
 
@@ -375,15 +375,15 @@ const ExplorerHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid #e2e8f0;
-  background-color: #edf2f7;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface-light);
 `;
 
 const Title = styled.h3`
   font-size: 14px;
   font-weight: 600;
   margin: 0;
-  color: #4a5568;
+  color: var(--color-text-primary);
 `;
 
 const AddButton = styled.button`
@@ -393,12 +393,12 @@ const AddButton = styled.button`
   background-color: transparent;
   border: none;
   border-radius: 4px;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   cursor: pointer;
   padding: 4px;
   
   &:hover {
-    background-color: #e2e8f0;
+    background-color: var(--color-background);
   }
 `;
 
@@ -421,11 +421,11 @@ const FileItem = styled.li`
   padding: 6px 12px;
   cursor: pointer;
   position: relative;
-  background-color: ${props => props.isActive ? '#e6f7ff' : 'transparent'};
-  border-left: 3px solid ${props => props.isActive ? '#1890ff' : 'transparent'};
+  background-color: ${props => props.isActive ? 'var(--color-surface-light)' : 'transparent'};
+  border-left: 3px solid ${props => props.isActive ? 'var(--color-primary)' : 'transparent'};
   
   &:hover {
-    background-color: ${props => props.isActive ? '#e6f7ff' : '#f0f0f0'};
+    background-color: ${props => props.isActive ? 'var(--color-surface-light)' : 'var(--color-background)'};
   }
 `;
 
@@ -433,7 +433,7 @@ const FileIconWrapper = styled.span`
   display: flex;
   align-items: center;
   margin-right: 8px;
-  color: ${props => props.isFolder ? '#e3a008' : '#4a5568'};
+  color: ${props => props.isFolder ? 'var(--color-warning)' : 'var(--color-text-secondary)'};
   
   svg {
     width: 14px;
@@ -443,7 +443,7 @@ const FileIconWrapper = styled.span`
 
 const FileName = styled.span`
   font-size: 13px;
-  color: #4a5568;
+  color: var(--color-text-primary);
   word-break: break-all;
   flex: 1;
 `;
@@ -452,16 +452,17 @@ const RenameInput = styled.input`
   flex: 1;
   padding: 2px 4px;
   font-size: 13px;
-  border: 1px solid #3182ce;
+  border: 1px solid var(--color-primary);
   border-radius: 2px;
-  background-color: white;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
   outline: none;
 `;
 
 const ContextMenu = styled.div`
   position: fixed;
-  background-color: white;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -475,18 +476,19 @@ const ContextMenuItem = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--color-text-primary);
   
   svg {
     font-size: 12px;
-    color: #718096;
+    color: var(--color-text-secondary);
   }
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: var(--color-background);
   }
   
   &:not(:last-child) {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--color-border);
   }
 `;
 
@@ -500,13 +502,13 @@ const EmptyState = styled.div`
   text-align: center;
   
   p {
-    color: #718096;
+    color: var(--color-text-secondary);
     margin-bottom: 15px;
   }
 `;
 
 const EmptyStateButton = styled.button`
-  background-color: #3182ce;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -515,7 +517,7 @@ const EmptyStateButton = styled.button`
   cursor: pointer;
   
   &:hover {
-    background-color: #2c5282;
+    background-color: var(--color-primary-dark);
   }
 `;
 
@@ -524,7 +526,7 @@ const LoadingIndicator = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #718096;
+  color: var(--color-text-secondary);
   font-size: 14px;
 `;
 
