@@ -64,7 +64,7 @@ const Login = (props) => {
             placeholder="Enter your password"
           />
         </FormGroup>
-        <ForgotPassword onClick={props.onForgotPassword}>
+        <ForgotPassword type="button" onClick={props.onForgotPassword}>
           Forgot password?
         </ForgotPassword>
         <Button type="submit" disabled={isSubmitting}>
