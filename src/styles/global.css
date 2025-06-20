@@ -2,21 +2,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Colors */
-  --color-primary: #6366f1;
-  --color-primary-dark: #4f46e5;
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-surface-light: #334155;
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #cbd5e1;
-  --color-text-tertiary: #94a3b8;
-  --color-border: #334155;
+  /* Beautiful Blue Color Palette */
+  --color-primary: #60a5fa;
+  --color-primary-dark: #3b82f6;
+  --color-background: #ffffff;
+  --color-surface: #f8fafc;
+  --color-surface-light: #f1f5f9;
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748b;
+  --color-border: #e2e8f0;
   --color-danger: #ef4444;
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-info: #3b82f6;
-  --color-accent: #8b5cf6;
+  --color-accent: #60a5fa;
+  --color-error: #ef4444;
+  --color-error-light: #fef2f2;
+  --color-error-dark: #991b1b;
+  --color-success-light: #f0fdf4;
+  --color-success-dark: #166534;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -36,6 +41,15 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-code: 'JetBrains Mono', 'Fira Code', monospace;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.25s ease-in-out;
+  --transition-slow: 0.35s ease-in-out;
 }
 
 *, *::before, *::after {
@@ -57,6 +71,7 @@ body {
   background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -99,8 +114,8 @@ input, select, textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
-  color: inherit;
-  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  background-color: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0.5rem 0.75rem;
@@ -110,7 +125,7 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
 }
 
 /* Monaco Editor Customizations */
@@ -120,7 +135,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .monaco-editor .margin {
-  background-color: var(--color-surface) !important;
+  background-color: var(--color-surface-light) !important;
 }
 
 /* Split.js Customizations */
@@ -139,11 +154,11 @@ input:focus, select:focus, textarea:focus {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-surface);
+  background: var(--color-surface-light);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-surface-light);
+  background: var(--color-border);
   border-radius: var(--radius-sm);
 }
 

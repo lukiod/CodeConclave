@@ -179,7 +179,8 @@ const ProjectCard = ({ project, onDelete, onRename, onShare, isOwner }) => {
 };
 
 const CardContainer = styled.div`
-  background-color: white;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -220,8 +221,8 @@ const CardIcon = styled.div`
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: #ebf8ff;
-  color: #3182ce;
+  background-color: var(--color-surface-light);
+  color: var(--color-primary);
   border-radius: 8px;
   margin-right: 12px;
   flex-shrink: 0;
@@ -235,7 +236,7 @@ const CardTitle = styled.h3`
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--color-text-primary);
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -252,17 +253,18 @@ const RenameInput = styled.input`
   padding: 6px 8px;
   font-size: 16px;
   font-weight: 600;
-  border: 1px solid #3182ce;
+  border: 1px solid var(--color-primary);
   border-radius: 4px;
   outline: none;
-  color: #2d3748;
+  color: var(--color-text-primary);
+  background: var(--color-background);
 `;
 
 // The 3-dot menu button
 const MenuButton = styled.button`
   background-color: transparent;
   border: none;
-  color: #a0aec0;
+  color: var(--color-text-tertiary);
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
@@ -272,8 +274,8 @@ const MenuButton = styled.button`
   justify-content: center;
   
   &:hover {
-    background-color: #f7fafc;
-    color: #4a5568;
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
   }
   
   svg {
@@ -286,7 +288,8 @@ const MenuDropdown = styled.div`
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: white;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
   z-index: 100;
@@ -305,27 +308,27 @@ const MenuItem = styled.button`
   border: none;
   padding: 10px 15px;
   font-size: 14px;
-  color: ${props => props.danger ? '#e53e3e' : '#4a5568'};
+  color: ${props => props.danger ? 'var(--color-danger)' : 'var(--color-text-secondary)'};
   cursor: pointer;
   transition: 0.2s;
   
   &:hover {
-    background-color: ${props => props.danger ? '#FED7D7' : '#f7fafc'};
+    background-color: ${props => props.danger ? 'rgba(239, 68, 68, 0.1)' : 'var(--color-surface)'};
   }
   
   svg {
     font-size: 14px;
-    color: ${props => props.danger ? '#e53e3e' : '#718096'};
+    color: ${props => props.danger ? 'var(--color-danger)' : 'var(--color-text-tertiary)'};
   }
   
   &:not(:last-child) {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--color-border);
   }
 `;
 
 const CardDescription = styled.p`
   margin: 0 0 20px;
-  color: #718096;
+  color: var(--color-text-secondary);
   font-size: 14px;
   line-height: 1.5;
   flex: 1;
@@ -355,8 +358,8 @@ const VisibilityBadge = styled.div`
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: ${props => props.isPublic ? '#38a169' : '#718096'};
-  background-color: ${props => props.isPublic ? '#f0fff4' : '#f7fafc'};
+  color: ${props => props.isPublic ? 'var(--color-success)' : 'var(--color-text-secondary)'};
+  background-color: ${props => props.isPublic ? 'rgba(34, 197, 94, 0.1)' : 'var(--color-surface)'};
   padding: 4px 8px;
   border-radius: 4px;
   
@@ -367,7 +370,7 @@ const VisibilityBadge = styled.div`
 
 const CreatedDate = styled.div`
   font-size: 12px;
-  color: #a0aec0;
+  color: var(--color-text-tertiary);
 `;
 
 const CardOwner = styled.div`
@@ -380,11 +383,11 @@ const OwnerAvatar = styled.div`
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: #edf2f7;
+  background-color: var(--color-surface-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #718096;
+  color: var(--color-text-secondary);
   
   svg {
     font-size: 12px;
@@ -393,7 +396,7 @@ const OwnerAvatar = styled.div`
 
 const OwnerName = styled.div`
   font-size: 12px;
-  color: #718096;
+  color: var(--color-text-secondary);
 `;
 
 export default ProjectCard;

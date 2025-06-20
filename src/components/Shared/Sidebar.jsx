@@ -47,13 +47,14 @@ const SidebarContainer = styled.div`
   left: 0;
   bottom: 0;
   width: 250px;
-  background-color: #f8f9fa;
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s;
   z-index: 5;
   transform: translateX(${props => props.isOpen ? '0' : '-100%'});
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
 `;
 
 const SidebarNav = styled.ul`
@@ -68,29 +69,29 @@ const NavItem = styled.li`
     display: flex;
     align-items: center;
     padding: 12px 20px;
-    color: #4a5568;
+    color: var(--color-text-secondary);
     text-decoration: none;
     font-size: 14px;
     
     &:hover {
-      background-color: #edf2f7;
+      background-color: var(--color-background);
     }
     
     &.active {
-      color: #3182ce;
-      background-color: #ebf8ff;
-      border-left: 3px solid #3182ce;
+      color: var(--color-primary);
+      background-color: var(--color-surface-light);
+      border-left: 3px solid var(--color-primary);
       padding-left: 17px; /* 20px - 3px border */
       
       svg {
-        color: #3182ce;
+        color: var(--color-primary);
       }
     }
     
     svg {
       font-size: 16px;
       margin-right: 12px;
-      color: #718096;
+      color: var(--color-text-tertiary);
     }
   }
 `;
@@ -103,18 +104,18 @@ const NavText = styled.span`
 
 const NavDivider = styled.div`
   height: 1px;
-  background-color: #e2e8f0;
+  background-color: var(--color-border);
   margin: 10px 0;
 `;
 
 const SidebarFooter = styled.div`
   padding: 15px 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
 `;
 
 const FooterText = styled.div`
   font-size: 12px;
-  color: #a0aec0;
+  color: var(--color-text-tertiary);
   text-align: center;
 `;
 

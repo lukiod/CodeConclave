@@ -65,10 +65,10 @@ const ExecutionResult = ({ result, onClose, language }) => {
 };
 
 const ResultContainer = styled.div`
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   overflow: hidden;
-  background-color: #fff;
+  background-color: var(--color-surface);
   margin-top: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   max-height: ${props => (props.isExpanded ? 'none' : '300px')};
@@ -86,9 +86,9 @@ const ResultHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 10px 16px;
-  background-color: ${props => (props.success ? '#C6F6D5' : '#FED7D7')};
-  color: ${props => (props.success ? '#22543D' : '#822727')};
-  border-bottom: 1px solid ${props => (props.success ? '#9AE6B4' : '#FEB2B2')};
+  background-color: ${props => (props.success ? 'var(--color-success-light)' : 'var(--color-error-light)')};
+  color: ${props => (props.success ? 'var(--color-success-dark)' : 'var(--color-error-dark)')};
+  border-bottom: 1px solid ${props => (props.success ? 'var(--color-success)' : 'var(--color-error)')};
 `;
 
 const HeaderTitle = styled.div`
@@ -123,7 +123,7 @@ const ActionButton = styled.button`
   border-radius: 4px;
   
   &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -131,6 +131,7 @@ const ResultContent = styled.div`
   padding: 12px 16px;
   overflow: auto;
   max-height: 250px;
+  background: var(--color-surface);
 `;
 
 const OutputSection = styled.div`
@@ -140,13 +141,13 @@ const OutputSection = styled.div`
 const OutputTitle = styled.h4`
   font-size: 14px;
   margin: 0 0 8px 0;
-  color: #4A5568;
+  color: var(--color-text-secondary);
 `;
 
 const OutputText = styled.pre`
   margin: 0;
   padding: 12px;
-  background-color: #F7FAFC;
+  background-color: var(--color-background);
   border-radius: 4px;
   font-family: 'Fira Code', monospace;
   font-size: 13px;
@@ -154,7 +155,8 @@ const OutputText = styled.pre`
   word-break: break-word;
   overflow: auto;
   max-height: 300px;
-  border: 1px solid #EDF2F7;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
 `;
 
 const ErrorSection = styled.div`
@@ -164,26 +166,26 @@ const ErrorSection = styled.div`
 const ErrorTitle = styled.h4`
   font-size: 14px;
   margin: 0 0 8px 0;
-  color: #E53E3E;
+  color: var(--color-error);
 `;
 
 const ErrorText = styled.pre`
   margin: 0;
   padding: 12px;
-  background-color: #FFF5F5;
+  background-color: var(--color-error-light);
   border-radius: 4px;
   font-family: 'Fira Code', monospace;
   font-size: 13px;
-  color: #C53030;
+  color: var(--color-error-dark);
   white-space: pre-wrap;
   word-break: break-word;
   overflow: auto;
   max-height: 300px;
-  border: 1px solid #FED7D7;
+  border: 1px solid var(--color-error);
 `;
 
 const NoOutputText = styled.div`
-  color: #718096;
+  color: var(--color-text-secondary);
   font-style: italic;
   font-size: 14px;
   text-align: center;

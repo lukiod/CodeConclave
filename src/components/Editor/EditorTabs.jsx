@@ -74,8 +74,8 @@ const EditorTabs = () => {
 
 const TabsContainer = styled.div`
   display: flex;
-  background-color: #edf2f7;
-  border-bottom: 1px solid #e2e8f0;
+  background-color: var(--color-surface-light);
+  border-bottom: 1px solid var(--color-border);
   height: 40px;
   overflow-x: auto;
   position: relative;
@@ -101,9 +101,9 @@ const Tab = styled.div`
   height: 100%;
   min-width: 120px;
   max-width: 200px;
-  background-color: ${props => props.isActive ? 'white' : '#edf2f7'};
-  border-right: 1px solid #e2e8f0;
-  border-bottom: 1px solid ${props => props.isActive ? 'white' : '#e2e8f0'};
+  background-color: ${props => props.isActive ? 'var(--color-background)' : 'var(--color-surface-light)'};
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid ${props => props.isActive ? 'var(--color-background)' : 'var(--color-border)'};
   margin-bottom: ${props => props.isActive ? '-1px' : '0'};
   cursor: pointer;
   user-select: none;
@@ -111,7 +111,7 @@ const Tab = styled.div`
   white-space: nowrap;
   
   &:hover {
-    background-color: ${props => props.isActive ? 'white' : '#f7fafc'};
+    background-color: ${props => props.isActive ? 'var(--color-background)' : 'var(--color-surface)'};
   }
 `;
 
@@ -119,7 +119,7 @@ const TabIcon = styled.span`
   display: flex;
   align-items: center;
   margin-right: 8px;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   
   svg {
     width: 14px;
@@ -129,14 +129,14 @@ const TabIcon = styled.span`
 
 const TabName = styled.span`
   font-size: 13px;
-  color: #4a5568;
+  color: var(--color-text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   flex: 1;
 `;
 
 const UnsavedIndicator = styled.span`
-  color: #3182ce;
+  color: var(--color-primary);
   font-size: 14px;
   margin-right: 6px;
 `;
@@ -148,7 +148,7 @@ const CloseButton = styled.button`
   background-color: transparent;
   border: none;
   border-radius: 50%;
-  color: #a0aec0;
+  color: var(--color-text-tertiary);
   cursor: pointer;
   padding: 2px;
   
@@ -158,8 +158,8 @@ const CloseButton = styled.button`
   }
   
   &:hover {
-    background-color: #e2e8f0;
-    color: #4a5568;
+    background-color: var(--color-border);
+    color: var(--color-text-secondary);
   }
 `;
 
@@ -168,9 +168,9 @@ const EmptyTabs = styled.div`
   align-items: center;
   justify-content: center;
   height: 40px;
-  background-color: #edf2f7;
-  border-bottom: 1px solid #e2e8f0;
-  color: #a0aec0;
+  background-color: var(--color-surface-light);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-tertiary);
   font-size: 13px;
 `;
 
@@ -179,9 +179,9 @@ const SavingIndicator = styled.div`
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #718096;
+  color: var(--color-text-secondary);
   font-size: 12px;
-  background-color: #edf2f7;
+  background-color: var(--color-surface-light);
   padding: 2px 6px;
   border-radius: 4px;
 `;

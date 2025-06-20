@@ -106,8 +106,8 @@ const ToolbarContainer = styled.div`
   align-items: center;
   height: 50px;
   padding: 0 16px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 `;
 
@@ -122,14 +122,14 @@ const DashboardButton = styled.button`
   gap: 8px;
   background-color: transparent;
   border: none;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   font-size: 14px;
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: var(--color-background);
   }
   
   svg {
@@ -146,10 +146,10 @@ const DashboardButton = styled.button`
 const ProjectName = styled.h1`
   font-size: 16px;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--color-text-primary);
   margin: 0 0 0 16px;
   padding-left: 16px;
-  border-left: 1px solid #e2e8f0;
+  border-left: 1px solid var(--color-border);
   
   @media (max-width: 576px) {
     max-width: 150px;
@@ -160,7 +160,7 @@ const ProjectName = styled.h1`
 `;
 
 const UnsavedIndicator = styled.span`
-  color: #3182ce;
+  color: var(--color-primary);
   font-size: 24px;
   margin-left: 8px;
   line-height: 0;
@@ -191,7 +191,7 @@ const ActionButton = styled.button`
   gap: 8px;
   background-color: transparent;
   border: none;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   font-size: 14px;
   padding: 8px 12px;
   border-radius: 4px;
@@ -200,7 +200,7 @@ const ActionButton = styled.button`
   pointer-events: ${props => props.disabled ? 'none' : 'auto'};
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: var(--color-background);
   }
   
   svg {
@@ -220,16 +220,16 @@ const MenuButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${props => props.isActive ? '#f7fafc' : 'transparent'};
+  background-color: ${props => props.isActive ? 'var(--color-background)' : 'transparent'};
   border: none;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   width: 32px;
   height: 32px;
   border-radius: 4px;
   cursor: pointer;
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: var(--color-background);
   }
 `;
 
@@ -238,7 +238,8 @@ const MenuDropdown = styled.div`
   top: 100%;
   right: 0;
   margin-top: 4px;
-  background-color: white;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 100;
@@ -255,16 +256,16 @@ const MenuItem = styled.button`
   border: none;
   padding: 10px 16px;
   font-size: 14px;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   cursor: pointer;
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: var(--color-background);
   }
   
   svg {
     font-size: 14px;
-    color: #718096;
+    color: var(--color-text-tertiary);
   }
 `;
 

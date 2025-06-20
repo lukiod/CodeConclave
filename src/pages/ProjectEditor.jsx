@@ -174,6 +174,7 @@ const EditorContainer = styled.div`
   flex-direction: column;
   height: 100%;
   position: relative;
+  background: var(--color-background);
 `;
 
 const EditorLayout = styled.div`
@@ -186,7 +187,7 @@ const EditorLayout = styled.div`
   }
   
   .gutter {
-    background-color: #eee;
+    background-color: var(--color-border);
     background-repeat: no-repeat;
     background-position: 50%;
   }
@@ -198,25 +199,31 @@ const EditorLayout = styled.div`
 
 const FileExplorerContainer = styled.div`
   height: 100%;
-  overflow: auto;
-  background-color: #f5f5f5;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
 `;
 
 const EditorSection = styled.div`
-  height: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  background: var(--color-background);
 `;
 
 const NoFileSelected = styled.div`
-  flex: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background-color: #f9f9f9;
-  color: #666;
+  justify-content: center;
+  height: 100%;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 16px;
   text-align: center;
-  padding: 2rem;
+  
+  p {
+    margin: 0;
+    padding: 20px;
+  }
 `;
 
 const LoadingContainer = styled.div`
@@ -224,18 +231,19 @@ const LoadingContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  padding: 2rem;
+  height: 100vh;
+  color: var(--color-text-secondary);
+  background: var(--color-background);
 `;
 
 const LoadingSpinner = styled.div`
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(0, 0, 0, 0.1);
+  border: 4px solid var(--color-border);
   border-radius: 50%;
-  border-top-color: #3182ce;
+  border-top-color: var(--color-primary);
   animation: spin 1s ease-in-out infinite;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
   
   @keyframes spin {
     to {
@@ -249,31 +257,34 @@ const ErrorContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  padding: 2rem;
+  height: 100vh;
+  padding: 20px;
+  background: var(--color-background);
 `;
 
 const ErrorMessage = styled.div`
-  background-color: #fed7d7;
-  color: #c53030;
-  padding: 1rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  max-width: 500px;
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  padding: 16px 24px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--color-error);
   text-align: center;
+  max-width: 500px;
 `;
 
 const BackButton = styled.button`
-  padding: 0.75rem 1.5rem;
-  background-color: #3182ce;
+  background: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 4px;
-  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
   
   &:hover {
-    background-color: #2c5282;
+    background: var(--color-primary-dark);
   }
 `;
 
