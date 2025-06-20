@@ -69,28 +69,70 @@ const darkTheme = {
   }
 };
 
+// Function to detect system color scheme preference
+const getSystemTheme = () => {
+  if (typeof window !== 'undefined') {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches 
+      ? 'dark' 
+      : 'light';
+  }
+  return 'light'; // Default fallback
+};
+
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
+  const [themeMode, setThemeMode] = useState(() => {
     // Check localStorage for saved theme preference
     const saved = localStorage.getItem('theme');
-    return saved === 'dark';
+    return saved || 'auto'; // Default to auto if nothing is saved
   });
 
+  const [systemTheme, setSystemTheme] = useState(getSystemTheme);
+
+  // Determine the actual theme to use
+  const actualTheme = themeMode === 'auto' ? systemTheme : themeMode;
+  const isDarkMode = actualTheme === 'dark';
   const theme = isDarkMode ? darkTheme : lightTheme;
 
+  // Listen for system theme changes when in auto mode
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e) => {
+      setSystemTheme(e.matches ? 'dark' : 'light');
+    };
+
+    // Set initial value
+    setSystemTheme(mediaQuery.matches ? 'dark' : 'light');
+
+    // Listen for changes
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
   const toggleTheme = () => {
-    setIsDarkMode(prev => {
-      const newMode = !prev;
-      localStorage.setItem('theme', newMode ? 'dark' : 'light');
+    setThemeMode(prev => {
+      let newMode;
+      if (prev === 'light') {
+        newMode = 'dark';
+      } else if (prev === 'dark') {
+        newMode = 'auto';
+      } else {
+        newMode = 'light';
+      }
+      localStorage.setItem('theme', newMode);
       return newMode;
     });
   };
 
   const setTheme = (themeName) => {
-    const newIsDark = themeName === 'dark';
-    setIsDarkMode(newIsDark);
+    setThemeMode(themeName);
     localStorage.setItem('theme', themeName);
   };
 
@@ -125,7 +167,10 @@ export const ThemeProvider = ({ children }) => {
     isDarkMode,
     toggleTheme,
     setTheme,
-    currentTheme: isDarkMode ? 'dark' : 'light'
+    currentTheme: actualTheme,
+    themeMode, // 'light', 'dark', or 'auto'
+    systemTheme, // The detected system theme
+    isAutoMode: themeMode === 'auto'
   };
 
   return (
