@@ -216,13 +216,14 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background-color: white;
+  background-color: var(--color-background);
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   width: 100%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
+  border: 1px solid var(--color-border);
 `;
 
 const ModalHeader = styled.div`
@@ -230,13 +231,13 @@ const ModalHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 `;
 
 const ModalTitle = styled.h3`
   font-weight: 600;
   font-size: 18px;
-  color: #2d3748;
+  color: var(--color-text-primary);
   margin: 0;
 `;
 
@@ -244,11 +245,11 @@ const CloseButton = styled.button`
   background-color: transparent;
   border: none;
   font-size: 24px;
-  color: #a0aec0;
+  color: var(--color-text-tertiary);
   cursor: pointer;
   
   &:hover {
-    color: #4a5568;
+    color: var(--color-text-primary);
   }
 `;
 
@@ -259,7 +260,7 @@ const ModalBody = styled.div`
 const SectionTitle = styled.h4`
   font-size: 16px;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--color-text-primary);
   margin: 20px 0 10px;
   
   &:first-child {
@@ -270,8 +271,8 @@ const SectionTitle = styled.h4`
 const ShareLinkContainer = styled.div`
   display: flex;
   align-items: center;
-  background-color: #f7fafc;
-  border: 1px solid #e2e8f0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   padding: 8px 12px;
   margin-bottom: 15px;
@@ -280,7 +281,7 @@ const ShareLinkContainer = styled.div`
 const ShareLink = styled.div`
   flex: 1;
   font-size: 14px;
-  color: #4a5568;
+  color: var(--color-text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -289,14 +290,14 @@ const ShareLink = styled.div`
 const CopyButton = styled.button`
   background-color: transparent;
   border: none;
-  color: ${props => props.copied ? '#38a169' : '#4a5568'};
+  color: ${props => props.copied ? 'var(--color-success)' : 'var(--color-text-secondary)'};
   cursor: pointer;
   padding: 4px 8px;
   display: flex;
   align-items: center;
   
   &:hover {
-    color: #3182ce;
+    color: var(--color-primary);
   }
 `;
 
@@ -316,17 +317,17 @@ const VisibilityOption = styled.div`
   gap: 12px;
   align-items: flex-start;
   padding: 12px;
-  border: 1px solid ${props => props.isSelected ? '#3182ce' : '#e2e8f0'};
+  border: 1px solid ${props => props.isSelected ? 'var(--color-primary)' : 'var(--color-border)'};
   border-radius: 6px;
-  background-color: ${props => props.isSelected ? '#ebf8ff' : 'white'};
+  background-color: ${props => props.isSelected ? 'rgba(96, 165, 250, 0.1)' : 'var(--color-background)'};
   cursor: pointer;
   transition: all 0.2s;
   opacity: ${props => props.disabled ? 0.7 : 1};
   pointer-events: ${props => props.disabled ? 'none' : 'auto'};
   
   &:hover {
-    border-color: ${props => props.isSelected ? '#3182ce' : '#cbd5e0'};
-    background-color: ${props => props.isSelected ? '#ebf8ff' : '#f7fafc'};
+    border-color: ${props => props.isSelected ? 'var(--color-primary)' : 'var(--color-text-tertiary)'};
+    background-color: ${props => props.isSelected ? 'rgba(96, 165, 250, 0.1)' : 'var(--color-surface)'};
   }
 `;
 
@@ -337,8 +338,8 @@ const VisibilityIcon = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: ${props => props.isPublic ? '#c6f6d5' : '#e2e8f0'};
-  color: ${props => props.isPublic ? '#38a169' : '#4a5568'};
+  background-color: ${props => props.isPublic ? 'var(--color-success-light)' : 'var(--color-surface)'};
+  color: ${props => props.isPublic ? 'var(--color-success)' : 'var(--color-text-secondary)'};
   
   svg {
     font-size: 16px;
@@ -349,13 +350,13 @@ const OptionTitle = styled.h4`
   margin: 0 0 4px 0;
   font-size: 14px;
   font-weight: 500;
-  color: #2d3748;
+  color: var(--color-text-primary);
 `;
 
 const OptionDescription = styled.p`
   margin: 0;
   font-size: 12px;
-  color: #718096;
+  color: var(--color-text-tertiary);
 `;
 
 const ShareForm = styled.form`
@@ -380,29 +381,41 @@ const FormRow = styled.div`
 const EmailInput = styled.input`
   flex: 1;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 14px;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+  }
+  
+  &::placeholder {
+    color: var(--color-text-tertiary);
   }
 `;
 
 const RoleSelect = styled.select`
   width: 120px;
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 14px;
-  background-color: white;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+  }
+  
+  option {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
   }
   
   @media (max-width: 576px) {
@@ -412,7 +425,7 @@ const RoleSelect = styled.select`
 
 const ShareButton = styled.button`
   padding: 10px 16px;
-  background-color: #3182ce;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -422,11 +435,11 @@ const ShareButton = styled.button`
   transition: background-color 0.2s;
   
   &:hover:not(:disabled) {
-    background-color: #2c5282;
+    background-color: var(--color-primary-dark);
   }
   
   &:disabled {
-    background-color: #a0aec0;
+    background-color: var(--color-text-tertiary);
     cursor: not-allowed;
   }
 `;
@@ -444,7 +457,8 @@ const CollaboratorItem = styled.div`
   gap: 10px;
   padding: 10px;
   border-radius: 4px;
-  background-color: #f7fafc;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
 `;
 
 const CollaboratorInfo = styled.div`
@@ -454,19 +468,19 @@ const CollaboratorInfo = styled.div`
 const CollaboratorName = styled.div`
   font-size: 14px;
   font-weight: 500;
-  color: #2d3748;
+  color: var(--color-text-primary);
 `;
 
 const CollaboratorEmail = styled.div`
   font-size: 12px;
-  color: #718096;
+  color: var(--color-text-tertiary);
 `;
 
 const CollaboratorRole = styled.div`
   font-size: 12px;
   font-weight: 500;
-  color: #4a5568;
-  background-color: #edf2f7;
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface-light);
   padding: 4px 8px;
   border-radius: 4px;
 `;
@@ -474,7 +488,7 @@ const CollaboratorRole = styled.div`
 const RemoveButton = styled.button`
   background-color: transparent;
   border: none;
-  color: #a0aec0;
+  color: var(--color-text-tertiary);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -482,7 +496,7 @@ const RemoveButton = styled.button`
   justify-content: center;
   
   &:hover {
-    color: #e53e3e;
+    color: var(--color-danger);
   }
   
   svg {
@@ -499,37 +513,37 @@ const ButtonGroup = styled.div`
 
 const CancelButton = styled.button`
   padding: 10px 16px;
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  color: #4a5568;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
   border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: var(--color-surface);
   }
 `;
 
 const ErrorMessage = styled.div`
-  color: #e53e3e;
-  background-color: #FFF5F5;
+  color: var(--color-danger);
+  background-color: var(--color-error-light);
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 16px;
   font-size: 14px;
-  border-left: 3px solid #e53e3e;
+  border-left: 3px solid var(--color-danger);
 `;
 
 const SuccessMessage = styled.div`
-  color: #38a169;
-  background-color: #F0FFF4;
+  color: var(--color-success);
+  background-color: var(--color-success-light);
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 16px;
   font-size: 14px;
-  border-left: 3px solid #38a169;
+  border-left: 3px solid var(--color-success);
 `;
 
 export default ShareModal;

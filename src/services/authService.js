@@ -126,3 +126,17 @@ export const resetPassword = async (token, password) => {
   const response = await api.post('/password-reset/reset', { token, password });
   return response.data;
 };
+
+/**
+ * Change password for authenticated user
+ * @param {string} currentPassword - Current password
+ * @param {string} newPassword - New password
+ * @returns {Promise<Object>} Response data
+ */
+export const changePassword = async (currentPassword, newPassword) => {
+  const response = await api.post('/auth/change-password', { 
+    currentPassword, 
+    newPassword 
+  });
+  return response.data;
+};

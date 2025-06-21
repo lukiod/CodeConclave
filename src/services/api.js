@@ -25,10 +25,18 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle token expiration
+    // Handle token expiration/invalid authentication
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      const errorMessage = error.response?.data?.message || '';
+      const isPasswordError = errorMessage.includes('Current password is incorrect') ||
+                             errorMessage.includes('password') ||
+                             error.config?.url?.includes('/change-password');
+      
+      // Only redirect for actual authentication issues, not password validation
+      if (!isPasswordError) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
