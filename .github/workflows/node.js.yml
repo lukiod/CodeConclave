@@ -1,31 +1,64 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# .github/workflows/ci.yml
 
-name: Node.js CI
+# Name of the workflow, displayed in the "Actions" tab on GitHub.
+name: Frontend CI
 
+# --- Triggers ---
+# Defines when the workflow will run.
 on:
+  # Run on every push to any branch.
   push:
-    branches: [ "main" ]
+    branches: [ "**" ]
+  
+  # Also run on pull requests targeting the 'main' branch.
   pull_request:
     branches: [ "main" ]
 
-jobs:
-  build:
+  # Allows manual triggering from the GitHub Actions UI.
+  workflow_dispatch:
 
+# --- Jobs ---
+# A workflow is made up of one or more jobs.
+jobs:
+  # The single job in this workflow is named "build-and-test".
+  build-and-test:
+    # The type of virtual machine to run the job on.
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    # A job is a sequence of steps.
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      # --- 1. Checkout Code ---
+      # Checks out your repository's code so the workflow can access it.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # --- 2. Setup Node.js Environment ---
+      # Installs a specific version of Node.js on the runner.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Using a specific major version is recommended.
+          # Automatically cache npm dependencies for faster builds.
+          cache: 'npm'
+
+      # --- 3. Install Dependencies ---
+      # Runs "npm install" to install all packages from package.json and package-lock.json.
+      - name: Install dependencies
+        run: npm ci # 'npm ci' is often faster and more reliable for CI environments than 'npm install'.
+
+      # --- 4. Run Linter ---
+      # Executes the "lint" script defined in your package.json to check for code quality.
+      - name: Run linter
+        run: npm run lint
+
+      # --- 5. Run Tests ---
+      # Executes the "test" script defined in your package.json.
+      # This runs your Vitest suite and will fail the workflow if any tests fail.
+      - name: Run tests
+        run: npm run test
+
+      # --- 6. Build for Production ---
+      # Executes the "build" script. This is a crucial step to ensure that the
+      # application is actually buildable and ready for deployment.
+      - name: Build application
+        run: npm run build
