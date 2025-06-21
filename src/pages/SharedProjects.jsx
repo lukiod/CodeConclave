@@ -19,14 +19,10 @@ const SharedProjects = () => {
       try {
         const data = await getProjects();
         // Filter only projects shared with the current user
-        const userId = currentUser.id || currentUser._id;
-        
-        const sharedProjects = data.filter(project => {
-          // Since the API only returns projects where user is owner OR collaborator,
-          // shared projects are simply those where the user is NOT the owner
-          return String(project.owner._id) !== String(userId);
-        });
-        
+        const sharedProjects = data.filter(project => 
+          project.owner._id !== currentUser.id && 
+          (project.collaborators.some(c => c.user._id === currentUser.id) || project.isPublic)
+        );
         setProjects(sharedProjects);
         setError(null);
       } catch (err) {
@@ -38,7 +34,7 @@ const SharedProjects = () => {
     };
 
     fetchProjects();
-  }, [currentUser.id, currentUser._id]);
+  }, [currentUser.id]);
 
   // Filter projects by search term
   const filteredProjects = projects.filter(project => {
