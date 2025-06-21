@@ -88,7 +88,7 @@ const Container = styled.div`
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background-color: #ffffff;
 `;
 
 const BackgroundWrapper = styled.div`
@@ -106,7 +106,7 @@ const BackgroundGradient = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, #0f172a, #1e293b, #0f172a);
+  background: linear-gradient(120deg, #f8fafc, #f1f5f9, #f8fafc);
   background-size: 200% 200%;
   animation: ${gradient} 15s ease infinite;
 `;
@@ -117,7 +117,7 @@ const CodePatternOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2358a6ff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   opacity: 0.1;
 `;
 
@@ -141,15 +141,16 @@ const Logo = styled.div`
 
 const LogoIcon = styled.div`
   font-size: 3rem;
-  color: #60a5fa;
+  color: #58a6ff;
   margin-right: 0.5rem;
 `;
 
 const LogoText = styled.h1`
   font-size: 3.5rem;
   font-weight: 900;
-  color: #60a5fa;
-  margin: 0;
+  background: linear-gradient(45deg, #58a6ff, #a5d6ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   
   @media (max-width: 768px) {
     font-size: 2.5rem;
@@ -167,10 +168,9 @@ const Headline = styled.h2`
   font-size: 3rem;
   font-weight: 800;
   text-align: center;
-  color: #f8fafc;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  color: #1e293b;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   letter-spacing: -0.5px;
-  margin: 0;
   
   @media (max-width: 768px) {
     font-size: 2.2rem;
@@ -199,22 +199,28 @@ const GetStartedButton = styled.button`
   box-shadow: 0 4px 20px rgba(35, 134, 54, 0.3);
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(35, 134, 54, 0.4);
-    background: linear-gradient(45deg, #1f7e34, #28a745);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(35, 134, 54, 0.4);
+    background: linear-gradient(45deg, #2ea043, #3fb950);
+    
+    span {
+      transform: translateX(-5px);
+    }
+    
+    svg {
+      transform: translateX(5px);
+    }
   }
   
-  &:active {
-    transform: translateY(0);
+  span {
+    transition: transform 0.3s;
   }
 `;
 
-const ArrowIcon = styled.div`
+const ArrowIcon = styled.span`
+  display: flex;
+  align-items: center;
   transition: transform 0.3s;
-  
-  ${GetStartedButton}:hover & {
-    transform: translateX(3px);
-  }
 `;
 
 const FloatingElements = styled.div`
@@ -223,9 +229,29 @@ const FloatingElements = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
   pointer-events: none;
+  z-index: 0;
 `;
+
+const getShape = shape => {
+  switch(shape) {
+    case 'circle':
+      return 'border-radius: 50%;';
+    case 'square':
+      return 'border-radius: 8px; transform: rotate(45deg);';
+    case 'triangle':
+      return `
+        width: 0;
+        height: 0;
+        border-left: ${props => props.size} solid transparent;
+        border-right: ${props => props.size} solid transparent;
+        border-bottom: ${props => props.size} solid rgba(88, 166, 255, 0.08);
+        background: transparent;
+      `;
+    default:
+      return 'border-radius: 50%;';
+  }
+};
 
 const FloatingShape = styled.div`
   position: absolute;
@@ -233,31 +259,10 @@ const FloatingShape = styled.div`
   height: ${props => props.size};
   top: ${props => props.top};
   left: ${props => props.left};
-  opacity: 0.1;
-  animation: ${float} 3s ease-in-out infinite;
+  background: rgba(88, 166, 255, 0.08);
+  animation: ${float} 6s ease-in-out infinite;
   animation-delay: ${props => props.delay}s;
-  
-  ${props => {
-    if (props.shape === 'circle') {
-      return `
-        border-radius: 50%;
-        background: linear-gradient(45deg, #60a5fa, #93c5fd);
-      `;
-    } else if (props.shape === 'square') {
-      return `
-        background: linear-gradient(45deg, #22c55e, #34d399);
-        border-radius: 8px;
-      `;
-    } else if (props.shape === 'triangle') {
-      return `
-        width: 0;
-        height: 0;
-        border-left: ${parseInt(props.size) / 2}px solid transparent;
-        border-right: ${parseInt(props.size) / 2}px solid transparent;
-        border-bottom: ${props.size} solid #60a5fa;
-      `;
-    }
-  }}
+  ${props => getShape(props.shape)}
 `;
 
 export default LandingPage;

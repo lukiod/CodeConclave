@@ -1,8 +1,8 @@
 const theme = {
   colors: {
-    // Modern, light mode color palette with beautiful blue theme
-    primary: '#60a5fa',
-    primaryDark: '#3b82f6',
+    // Modern, light mode color palette
+    primary: '#6366f1',
+    primaryDark: '#4f46e5',
     background: '#ffffff',
     surface: '#f8fafc',
     surfaceLight: '#f1f5f9',
@@ -14,7 +14,7 @@ const theme = {
     success: '#22c55e',
     warning: '#f59e0b',
     info: '#3b82f6',
-    accent: '#60a5fa',
+    accent: '#8b5cf6',
   },
   
   typography: {
@@ -108,10 +108,10 @@ const theme = {
     foreground: '#1e293b',
     lineNumber: '#94a3b8',
     lineNumberActive: '#64748b',
-    selection: 'rgba(96, 165, 250, 0.2)',
+    selection: 'rgba(99, 102, 241, 0.2)',
     cursor: '#1e293b',
     gutterBackground: '#f8fafc',
-    highlightBackground: 'rgba(96, 165, 250, 0.1)',
+    highlightBackground: 'rgba(99, 102, 241, 0.1)',
   }
 };
 

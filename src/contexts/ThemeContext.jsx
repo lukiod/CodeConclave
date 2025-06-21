@@ -3,8 +3,8 @@ import { createContext, useState, useContext, useEffect } from 'react';
 // Theme configurations
 const lightTheme = {
   colors: {
-    primary: '#60a5fa',
-    primaryDark: '#3b82f6',
+    primary: '#6366f1',
+    primaryDark: '#4f46e5',
     background: '#ffffff',
     surface: '#f8fafc',
     surfaceLight: '#f1f5f9',
@@ -16,7 +16,7 @@ const lightTheme = {
     success: '#22c55e',
     warning: '#f59e0b',
     info: '#3b82f6',
-    accent: '#60a5fa',
+    accent: '#8b5cf6',
     error: '#ef4444',
     errorLight: '#fef2f2',
     errorDark: '#991b1b',
@@ -28,17 +28,17 @@ const lightTheme = {
     foreground: '#1e293b',
     lineNumber: '#94a3b8',
     lineNumberActive: '#64748b',
-    selection: 'rgba(96, 165, 250, 0.2)',
+    selection: 'rgba(99, 102, 241, 0.2)',
     cursor: '#1e293b',
     gutterBackground: '#f8fafc',
-    highlightBackground: 'rgba(96, 165, 250, 0.1)',
+    highlightBackground: 'rgba(99, 102, 241, 0.1)',
   }
 };
 
 const darkTheme = {
   colors: {
-    primary: '#60a5fa',
-    primaryDark: '#3b82f6',
+    primary: '#6366f1',
+    primaryDark: '#4f46e5',
     background: '#0f172a',
     surface: '#1e293b',
     surfaceLight: '#334155',
@@ -50,7 +50,7 @@ const darkTheme = {
     success: '#22c55e',
     warning: '#f59e0b',
     info: '#3b82f6',
-    accent: '#60a5fa',
+    accent: '#8b5cf6',
     error: '#ef4444',
     errorLight: '#7f1d1d',
     errorDark: '#fca5a5',
@@ -62,10 +62,10 @@ const darkTheme = {
     foreground: '#f8fafc',
     lineNumber: '#64748b',
     lineNumberActive: '#94a3b8',
-    selection: 'rgba(96, 165, 250, 0.2)',
+    selection: 'rgba(99, 102, 241, 0.2)',
     cursor: '#f8fafc',
     gutterBackground: '#1e293b',
-    highlightBackground: 'rgba(96, 165, 250, 0.1)',
+    highlightBackground: 'rgba(99, 102, 241, 0.1)',
   }
 };
 

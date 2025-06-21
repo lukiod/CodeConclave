@@ -165,8 +165,8 @@ const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #1e293b;
 `;
 
 const BackgroundWrapper = styled.div`
@@ -184,7 +184,7 @@ const BackgroundGradient = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, #0f172a, #1e293b, #0f172a);
+  background: linear-gradient(120deg, #f8fafc, #f1f5f9, #f8fafc);
   background-size: 200% 200%;
   animation: ${gradient} 15s ease infinite;
 `;
@@ -195,7 +195,7 @@ const CodePatternOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2358a6ff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   opacity: 0.1;
 `;
 
@@ -214,49 +214,44 @@ const ContentContainer = styled.div`
 
 const LeftPanel = styled.div`
   flex: 5;
-  background-color: rgba(30, 41, 59, 0.8);
+  background-color: rgba(248, 250, 252, 0.9);
   backdrop-filter: blur(10px);
   padding: 3rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
   animation: ${fadeIn} 1s ease forwards;
-  border-right: 1px solid rgba(99, 102, 241, 0.2);
+  border-right: 1px solid #e2e8f0;
   
   @media (max-width: 992px) {
     padding: 2rem;
-    border-right: none;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
   }
 `;
 
 const LogoContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   margin-bottom: 3rem;
 `;
 
 const LogoIcon = styled.div`
   font-size: 2.5rem;
   margin-right: 1rem;
-  color: #60a5fa;
+  color: #58a6ff;
 `;
 
 const LogoText = styled.h1`
   font-size: 2rem;
   font-weight: bold;
   margin: 0;
-  color: #60a5fa;
+  background: linear-gradient(45deg, #58a6ff, #a5d6ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const FeaturesList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  width: 100%;
-  max-width: 500px;
 `;
 
 const Feature = styled.div`
@@ -265,13 +260,12 @@ const Feature = styled.div`
   gap: 1.5rem;
   animation: ${fadeIn} 1s ease forwards;
   animation-delay: ${props => 0.2 + props.index * 0.1}s;
-  text-align: left;
 `;
 
 const FeatureIcon = styled.div`
   font-size: 1.8rem;
-  color: #60a5fa;
-  background-color: rgba(96, 165, 250, 0.1);
+  color: #58a6ff;
+  background-color: rgba(88, 166, 255, 0.1);
   width: 50px;
   height: 50px;
   border-radius: 12px;
@@ -288,13 +282,12 @@ const FeatureContent = styled.div`
 const FeatureName = styled.h3`
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #f8fafc;
+  color: #e6edf3;
 `;
 
 const FeatureDescription = styled.p`
-  color: #94a3b8;
+  color: #8b949e;
   line-height: 1.5;
-  margin: 0;
 `;
 
 const RightPanel = styled.div`
@@ -313,14 +306,14 @@ const RightPanel = styled.div`
 `;
 
 const AuthContainer = styled.div`
-  background-color: rgba(30, 41, 59, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 2rem;
   width: 100%;
   max-width: 450px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 `;
 
 const TabContainer = styled.div`
@@ -329,8 +322,8 @@ const TabContainer = styled.div`
   width: 100%;
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
 `;
 
 const TabButton = styled.button`
@@ -338,15 +331,15 @@ const TabButton = styled.button`
   padding: 1rem;
   font-size: 1rem;
   font-weight: 600;
-  background-color: ${props => props.$isActive ? '#60a5fa' : 'transparent'};
-  color: ${props => props.$isActive ? 'white' : '#cbd5e1'};
+  background-color: ${props => props.$isActive ? '#6366f1' : 'transparent'};
+  color: ${props => props.$isActive ? 'white' : '#64748b'};
   border: none;
   cursor: pointer;
   transition: all 0.2s;
   
   &:hover {
-    background-color: ${props => props.$isActive ? '#3b82f6' : 'rgba(96, 165, 250, 0.1)'};
-    color: ${props => props.$isActive ? 'white' : '#60a5fa'};
+    background-color: ${props => props.$isActive ? '#4f46e5' : 'rgba(99, 102, 241, 0.1)'};
+    color: ${props => props.$isActive ? 'white' : '#6366f1'};
   }
 `;
 
@@ -357,13 +350,13 @@ const FormContainer = styled.div`
 const Footer = styled.footer`
   text-align: center;
   padding: 1.5rem;
-  background-color: rgba(15, 23, 42, 0.5);
-  border-top: 1px solid rgba(99, 102, 241, 0.1);
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
   z-index: 1;
 `;
 
 const FooterText = styled.p`
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.9rem;
   margin: 0;
 `;

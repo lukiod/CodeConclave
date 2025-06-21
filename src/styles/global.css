@@ -2,9 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Beautiful Blue Color Palette */
-  --color-primary: #60a5fa;
-  --color-primary-dark: #3b82f6;
+  /* Colors */
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
   --color-background: #ffffff;
   --color-surface: #f8fafc;
   --color-surface-light: #f1f5f9;
@@ -16,12 +16,7 @@
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-info: #3b82f6;
-  --color-accent: #60a5fa;
-  --color-error: #ef4444;
-  --color-error-light: #fef2f2;
-  --color-error-dark: #991b1b;
-  --color-success-light: #f0fdf4;
-  --color-success-dark: #166534;
+  --color-accent: #8b5cf6;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -41,15 +36,6 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
-
-  /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-family-code: 'JetBrains Mono', 'Fira Code', monospace;
-  
-  /* Transitions */
-  --transition-fast: 0.15s ease-in-out;
-  --transition-normal: 0.25s ease-in-out;
-  --transition-slow: 0.35s ease-in-out;
 }
 
 *, *::before, *::after {
@@ -125,7 +111,7 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 /* Monaco Editor Customizations */
