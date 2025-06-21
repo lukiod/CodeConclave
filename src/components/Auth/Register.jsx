@@ -134,6 +134,27 @@ const Register = () => {
             isInvalid={!!errors.password}
           />
           {errors.password && <ErrorText>{errors.password}</ErrorText>}
+          
+          <PasswordRequirements>
+            <RequirementTitle>Password must contain:</RequirementTitle>
+            <RequirementList>
+              <RequirementItem $valid={formData.password.length >= 8}>
+                • At least 8 characters
+              </RequirementItem>
+              <RequirementItem $valid={/[a-z]/.test(formData.password)}>
+                • One lowercase letter (a-z)
+              </RequirementItem>
+              <RequirementItem $valid={/[A-Z]/.test(formData.password)}>
+                • One uppercase letter (A-Z)
+              </RequirementItem>
+              <RequirementItem $valid={/[0-9]/.test(formData.password)}>
+                • One number (0-9)
+              </RequirementItem>
+              <RequirementItem $valid={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password)}>
+                • One special character (!@#$%^&*()_+-=[]{'{}'}|;:,.{'<>'}?)
+              </RequirementItem>
+            </RequirementList>
+          </PasswordRequirements>
         </FormGroup>
         
         <FormGroup>
@@ -233,6 +254,32 @@ const ErrorAlert = styled.div`
   border-radius: 0.25rem;
   margin-bottom: 1rem;
   font-size: 0.875rem;
+`;
+
+const PasswordRequirements = styled.div`
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid ${props => props.isInvalid ? '#e53e3e' : '#e2e8f0'};
+  border-radius: 0.25rem;
+  background-color: #2d3748;
+`;
+
+const RequirementTitle = styled.h3`
+  font-weight: 600;
+  font-size: 1rem;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+`;
+
+const RequirementList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const RequirementItem = styled.li`
+  margin-bottom: 0.25rem;
+  color: ${props => props.$valid ? '#48bb78' : '#e53e3e'};
 `;
 
 export default Register;
