@@ -46,13 +46,10 @@ const ProjectList = ({ filter = 'all', searchTerm = '' }) => {
     .filter(project => {
       // Apply filter
       if (filter === 'owned') {
-        const userId = currentUser.id || currentUser._id;
-        return String(project.owner._id) === String(userId);
+        return project.owner._id === currentUser.id;
       } else if (filter === 'shared') {
-        const userId = currentUser.id || currentUser._id;
-        // Since API only returns projects user has access to,
-        // shared projects are simply those where user is NOT the owner
-        return String(project.owner._id) !== String(userId);
+        return project.owner._id !== currentUser.id && 
+               (project.collaborators.some(c => c.user._id === currentUser.id) || project.isPublic);
       }
       return true; // 'all' filter
     })
@@ -98,7 +95,7 @@ const ProjectList = ({ filter = 'all', searchTerm = '' }) => {
           key={project._id}
           project={project}
           onDelete={() => handleDeleteProject(project._id)}
-          isOwner={String(project.owner._id) === String(currentUser.id || currentUser._id)}
+          isOwner={project.owner._id === currentUser.id}
         />
       ))}
     </ProjectGrid>
