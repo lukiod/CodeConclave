@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
+import { changePassword } from '../../services/authService';
+import { validatePassword } from '../../utils/validators';
 import styled from 'styled-components';
 import { 
   FaUser, 
@@ -32,6 +34,16 @@ const Settings = () => {
     }
   });
 
+  // Add password state management
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
   // Sync form data with current theme when theme changes
   React.useEffect(() => {
     setFormData(prev => ({
@@ -62,6 +74,69 @@ const Settings = () => {
         ...prev,
         [name]: type === 'checkbox' ? checked : value
       }));
+    }
+  };
+
+  // Add password change handlers
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear errors when user types
+    if (passwordError) setPasswordError('');
+    if (passwordSuccess) setPasswordSuccess('');
+  };
+
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!passwordData.currentPassword) {
+      setPasswordError('Current password is required');
+      return;
+    }
+    
+    // Validate new password
+    const passwordValidation = validatePassword(passwordData.newPassword);
+    if (!passwordValidation.isValid) {
+      setPasswordError(passwordValidation.message);
+      return;
+    }
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+    
+    if (passwordData.currentPassword === passwordData.newPassword) {
+      setPasswordError('New password must be different from current password');
+      return;
+    }
+    
+    setIsUpdatingPassword(true);
+    setPasswordError('');
+    
+    try {
+      await changePassword(passwordData.currentPassword, passwordData.newPassword);
+      
+      setPasswordSuccess('Password updated successfully!');
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (error) {
+      setPasswordError(error.response?.data?.message || error.message || 'Failed to update password');
+      // Clear password fields on error for security
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -190,34 +265,72 @@ const Settings = () => {
     <SectionContent>
       <SectionTitle>Security Settings</SectionTitle>
       
-      <FormGroup>
-        <Label>Current Password</Label>
-        <Input
-          type="password"
-          placeholder="Enter current password"
-        />
-      </FormGroup>
+      {passwordError && <ErrorAlert>{passwordError}</ErrorAlert>}
+      {passwordSuccess && <SuccessAlert>{passwordSuccess}</SuccessAlert>}
       
-      <FormGroup>
-        <Label>New Password</Label>
-        <Input
-          type="password"
-          placeholder="Enter new password"
-        />
-      </FormGroup>
-      
-      <FormGroup>
-        <Label>Confirm New Password</Label>
-        <Input
-          type="password"
-          placeholder="Confirm new password"
-        />
-      </FormGroup>
-      
-      <SaveButton>
-        <FaSave />
-        Update Password
-      </SaveButton>
+      <form onSubmit={handlePasswordUpdate}>
+        <FormGroup>
+          <Label>Current Password</Label>
+          <Input
+            type="password"
+            name="currentPassword"
+            value={passwordData.currentPassword}
+            onChange={handlePasswordChange}
+            placeholder="Enter current password"
+            required
+          />
+        </FormGroup>
+        
+        <FormGroup>
+          <Label>New Password</Label>
+          <Input
+            type="password"
+            name="newPassword"
+            value={passwordData.newPassword}
+            onChange={handlePasswordChange}
+            placeholder="Enter new password"
+            required
+            minLength="8"
+          />
+          <PasswordRequirements>
+            <RequirementTitle>Password must contain:</RequirementTitle>
+            <RequirementList>
+              <RequirementItem $valid={passwordData.newPassword.length >= 8}>
+                • At least 8 characters
+              </RequirementItem>
+              <RequirementItem $valid={/[a-z]/.test(passwordData.newPassword)}>
+                • One lowercase letter (a-z)
+              </RequirementItem>
+              <RequirementItem $valid={/[A-Z]/.test(passwordData.newPassword)}>
+                • One uppercase letter (A-Z)
+              </RequirementItem>
+              <RequirementItem $valid={/[0-9]/.test(passwordData.newPassword)}>
+                • One number (0-9)
+              </RequirementItem>
+              <RequirementItem $valid={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(passwordData.newPassword)}>
+                • One special character (!@#$%^&*()_+-=[]{'{}'}|;:,.{'<>'}?)
+              </RequirementItem>
+            </RequirementList>
+          </PasswordRequirements>
+        </FormGroup>
+        
+        <FormGroup>
+          <Label>Confirm New Password</Label>
+          <Input
+            type="password"
+            name="confirmPassword"
+            value={passwordData.confirmPassword}
+            onChange={handlePasswordChange}
+            placeholder="Confirm new password"
+            required
+          />
+        </FormGroup>
+        
+        <SaveButton type="submit" disabled={isUpdatingPassword}>
+          <FaSave />
+          {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+        </SaveButton>
+      </form>
     </SectionContent>
   );
 
@@ -593,6 +706,47 @@ const SaveButton = styled.button`
   svg {
     font-size: 14px;
   }
+`;
+
+// Add error and success alert styled components
+const ErrorAlert = styled.div`
+  background-color: #fed7d7;
+  color: #c53030;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+`;
+
+const SuccessAlert = styled.div`
+  background-color: #c6f6d5;
+  color: #2f855a;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+`;
+
+const PasswordRequirements = styled.div`
+  margin-top: 8px;
+`;
+
+const RequirementTitle = styled.h3`
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+`;
+
+const RequirementList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const RequirementItem = styled.li`
+  margin-bottom: 4px;
+  color: ${props => props.$valid ? 'var(--color-text-primary)' : 'var(--color-text-secondary)'};
 `;
 
 export default Settings; 

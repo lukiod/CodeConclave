@@ -91,7 +91,7 @@ const FormGroup = styled.div`
 const Label = styled.label`
   font-weight: 600;
   font-size: 0.9rem;
-  color: #4a5568;
+  color: #e2e8f0;
 `;
 
 const Input = styled.input`
@@ -99,6 +99,12 @@ const Input = styled.input`
   border: 1px solid #e2e8f0;
   border-radius: 0.25rem;
   font-size: 1rem;
+  background-color: #2d3748;
+  color: #e2e8f0;
+  
+  &::placeholder {
+    color: #a0aec0;
+  }
   
   &:focus {
     outline: none;
@@ -109,7 +115,7 @@ const Input = styled.input`
 
 const FormText = styled.p`
   font-size: 0.875rem;
-  color: #718096;
+  color: #a0aec0;
   margin-top: -0.5rem;
 `;
 
