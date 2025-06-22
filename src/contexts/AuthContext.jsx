@@ -1,5 +1,6 @@
 // client/src/contexts/AuthContext.jsx
 import { createContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { API_URL } from '../config/constants';
@@ -11,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Configure axios
   axios.defaults.baseURL = API_URL;
@@ -57,6 +59,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', res.data.token);
       setToken(res.data.token);
       setCurrentUser(res.data.user);
+      
+      // Redirect to connect Google Drive on first login
+      if (res.data.user && !res.data.user.isGoogleDriveConnected) {
+        navigate('/settings', { state: { from: 'login' } });
+      }
+
       return res.data;
     } catch (err) {
       setError(
@@ -75,6 +83,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', res.data.token);
       setToken(res.data.token);
       setCurrentUser(res.data.user);
+      
+      // Redirect to connect Google Drive on first login
+      if (res.data.user && !res.data.user.isGoogleDriveConnected) {
+        navigate('/settings', { state: { from: 'login' } });
+      }
+
       return res.data;
     } catch (err) {
       setError(
