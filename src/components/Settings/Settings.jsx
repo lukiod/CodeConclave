@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { changePassword } from '../../services/authService';
+import { googleDriveService } from '../../services/googleDriveService';
 import { validatePassword } from '../../utils/validators';
 import styled from 'styled-components';
 import { 
@@ -12,14 +13,24 @@ import {
   FaCode, 
   FaGlobe,
   FaSave,
-  FaEdit
+  FaEdit,
+  FaGoogle,
+  FaCloud,
+  FaLink,
+  FaUnlink,
+  FaUpload,
+  FaDownload,
+  FaList
 } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
 
 const Settings = () => {
   const { currentUser } = useContext(AuthContext);
   const { currentTheme, setTheme } = useTheme();
+  const location = useLocation();
   const [activeSection, setActiveSection] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
+  const [showConnectPrompt, setShowConnectPrompt] = useState(false);
   const [formData, setFormData] = useState({
     username: currentUser?.username || '',
     email: currentUser?.email || '',
@@ -44,6 +55,17 @@ const Settings = () => {
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
+  // Google Drive state management
+  const [googleDriveStatus, setGoogleDriveStatus] = useState({
+    isConnected: false,
+    tokenExpiry: null
+  });
+  const [isLoadingGoogleDrive, setIsLoadingGoogleDrive] = useState(false);
+  const [googleDriveError, setGoogleDriveError] = useState('');
+  const [googleDriveSuccess, setGoogleDriveSuccess] = useState('');
+  const [googleDriveFiles, setGoogleDriveFiles] = useState([]);
+  const [isLoadingFiles, setIsLoadingFiles] = useState(false);
+
   // Sync form data with current theme when theme changes
   React.useEffect(() => {
     setFormData(prev => ({
@@ -51,6 +73,123 @@ const Settings = () => {
       theme: currentTheme
     }));
   }, [currentTheme]);
+
+  // Load Google Drive status on component mount
+  useEffect(() => {
+    const initializeSettings = async () => {
+      // First, handle any OAuth callback from Google
+      const wasCallback = await handleGoogleDriveCallback();
+      
+      // Fetch the latest connection status
+      const status = await loadGoogleDriveStatus();
+      
+      // If we were redirected from login, and we are not already connected,
+      // and we didn't just handle a callback, then show a prompt.
+      if (location.state?.from === 'login' && status && !status.isConnected && !wasCallback) {
+        setActiveSection('integrations');
+        setShowConnectPrompt(true);
+      }
+    };
+
+    initializeSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run this initialization logic only once on mount
+
+  // Load Google Drive files when connected
+  useEffect(() => {
+    if (googleDriveStatus.isConnected) {
+      loadGoogleDriveFiles();
+    }
+  }, [googleDriveStatus.isConnected]);
+
+  const loadGoogleDriveStatus = async () => {
+    try {
+      setIsLoadingGoogleDrive(true);
+      const status = await googleDriveService.getConnectionStatus();
+      setGoogleDriveStatus(status);
+      return status;
+    } catch (error) {
+      setGoogleDriveError('Failed to load Google Drive status');
+      return null;
+    } finally {
+      setIsLoadingGoogleDrive(false);
+    }
+  };
+
+  const loadGoogleDriveFiles = async () => {
+    try {
+      setIsLoadingFiles(true);
+      const files = await googleDriveService.listFiles();
+      setGoogleDriveFiles(files);
+    } catch (error) {
+      setGoogleDriveError('Failed to load Google Drive files');
+    } finally {
+      setIsLoadingFiles(false);
+    }
+  };
+
+  const handleGoogleDriveConnect = async () => {
+    setIsLoadingGoogleDrive(true);
+    setGoogleDriveError('');
+    try {
+      const authUrl = await googleDriveService.getAuthUrl();
+      if (authUrl) {
+        window.location.href = authUrl;
+      } else {
+        throw new Error('Did not receive a valid authorization URL.');
+      }
+    } catch (error) {
+      setGoogleDriveError('Failed to start Google Drive connection.');
+      setIsLoadingGoogleDrive(false);
+    }
+  };
+
+  const handleGoogleDriveDisconnect = async () => {
+    try {
+      setIsLoadingGoogleDrive(true);
+      setGoogleDriveError('');
+      await googleDriveService.disconnect();
+      setGoogleDriveStatus({ isConnected: false, tokenExpiry: null });
+      setGoogleDriveFiles([]);
+      setGoogleDriveSuccess('Google Drive disconnected successfully');
+    } catch (error) {
+      setGoogleDriveError('Failed to disconnect Google Drive');
+    } finally {
+      setIsLoadingGoogleDrive(false);
+    }
+  };
+
+  const handleGoogleDriveCallback = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const googleDriveStatusParam = urlParams.get('googleDrive');
+    const tokensParam = urlParams.get('tokens');
+
+    if (googleDriveStatusParam === 'connected' && tokensParam) {
+      try {
+        const tokens = JSON.parse(decodeURIComponent(tokensParam));
+        await googleDriveService.saveTokens(
+          tokens.access_token,
+          tokens.refresh_token,
+          tokens.expiry_date
+        );
+        
+        setGoogleDriveSuccess('Google Drive connected successfully!');
+        setGoogleDriveStatus({ isConnected: true, tokenExpiry: tokens.expiry_date });
+        
+        // Clear URL parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return true; // It was a callback
+      } catch (error) {
+        setGoogleDriveError('Failed to save Google Drive tokens');
+      }
+    } else if (googleDriveStatusParam === 'error') {
+      setGoogleDriveError('Failed to connect to Google Drive');
+      // Clear URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return true; // It was a callback, though a failed one
+    }
+    return false; // Not a callback
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -152,6 +291,7 @@ const Settings = () => {
     { id: 'security', label: 'Security', icon: FaLock },
     { id: 'appearance', label: 'Appearance', icon: FaPalette },
     { id: 'editor', label: 'Editor', icon: FaCode },
+    { id: 'integrations', label: 'Integrations', icon: FaCloud },
     { id: 'general', label: 'General', icon: FaGlobe }
   ];
 
@@ -389,6 +529,104 @@ const Settings = () => {
     </SectionContent>
   );
 
+  const renderIntegrationsSection = () => (
+    <SectionContent>
+      <SectionTitle>Google Drive Integration</SectionTitle>
+      
+      {showConnectPrompt && (
+        <ConnectPrompt>
+          <PromptText>
+            <strong>Welcome!</strong> Connect your Google Drive to sync and back up your projects.
+          </PromptText>
+          <ConnectButton onClick={handleGoogleDriveConnect} disabled={isLoadingGoogleDrive}>
+            <FaLink />
+            {isLoadingGoogleDrive ? 'Connecting...' : 'Connect Now'}
+          </ConnectButton>
+        </ConnectPrompt>
+      )}
+
+      {googleDriveError && <ErrorAlert>{googleDriveError}</ErrorAlert>}
+      {googleDriveSuccess && <SuccessAlert>{googleDriveSuccess}</SuccessAlert>}
+      
+      <FormGroup>
+        <Label>Google Drive Connection</Label>
+        <IntegrationCard>
+          <IntegrationHeader>
+            <IntegrationIcon>
+              <FaGoogle />
+            </IntegrationIcon>
+            <IntegrationInfo>
+              <IntegrationName>Google Drive</IntegrationName>
+              <IntegrationDescription>
+                Sync your projects with Google Drive for backup and collaboration
+              </IntegrationDescription>
+            </IntegrationInfo>
+            <IntegrationStatus $connected={googleDriveStatus.isConnected}>
+              {googleDriveStatus.isConnected ? 'Connected' : 'Not Connected'}
+            </IntegrationStatus>
+          </IntegrationHeader>
+          
+          {!googleDriveStatus.isConnected ? (
+            <ConnectButton onClick={handleGoogleDriveConnect} disabled={isLoadingGoogleDrive}>
+              <FaLink />
+              {isLoadingGoogleDrive ? 'Connecting...' : 'Connect Google Drive'}
+            </ConnectButton>
+          ) : (
+            <IntegrationActions>
+              <IntegrationActionButton onClick={loadGoogleDriveFiles} disabled={isLoadingFiles}>
+                <FaList />
+                {isLoadingFiles ? 'Loading...' : 'Refresh Files'}
+              </IntegrationActionButton>
+              <DisconnectButton onClick={handleGoogleDriveDisconnect} disabled={isLoadingGoogleDrive}>
+                <FaUnlink />
+                {isLoadingGoogleDrive ? 'Disconnecting...' : 'Disconnect'}
+              </DisconnectButton>
+            </IntegrationActions>
+          )}
+        </IntegrationCard>
+      </FormGroup>
+      
+      {googleDriveStatus.isConnected && googleDriveFiles.length > 0 && (
+        <FormGroup>
+          <Label>Recent Files</Label>
+          <FileList>
+            {googleDriveFiles.slice(0, 5).map(file => (
+              <FileItem key={file.id}>
+                <FileIcon>
+                  {file.mimeType === 'application/vnd.google-apps.folder' ? <FaCloud /> : <FaCode />}
+                </FileIcon>
+                <FileInfo>
+                  <FileName>{file.name}</FileName>
+                  <FileMeta>
+                    {file.size ? `${(file.size / 1024).toFixed(1)} KB` : 'Folder'} • 
+                    {new Date(file.modifiedTime).toLocaleDateString()}
+                  </FileMeta>
+                </FileInfo>
+                <FileActions>
+                  <FileActionButton>
+                    <FaDownload />
+                  </FileActionButton>
+                </FileActions>
+              </FileItem>
+            ))}
+          </FileList>
+        </FormGroup>
+      )}
+      
+      {googleDriveStatus.isConnected && googleDriveFiles.length === 0 && !isLoadingFiles && (
+        <FormGroup>
+          <EmptyState>
+            <FaCloud />
+            <EmptyStateText>No files found in Google Drive</EmptyStateText>
+            <EmptyStateDescription>
+              Upload files to your Google Drive to see them here
+            </EmptyStateDescription>
+          </EmptyState>
+        </FormGroup>
+      )}
+    </SectionContent>
+  );
+
   const renderGeneralSection = () => (
     <SectionContent>
       <SectionTitle>General Settings</SectionTitle>
@@ -422,6 +660,7 @@ const Settings = () => {
       case 'security': return renderSecuritySection();
       case 'appearance': return renderAppearanceSection();
       case 'editor': return renderEditorSection();
+      case 'integrations': return renderIntegrationsSection();
       case 'general': return renderGeneralSection();
       default: return renderProfileSection();
     }
@@ -747,6 +986,198 @@ const RequirementList = styled.ul`
 const RequirementItem = styled.li`
   margin-bottom: 4px;
   color: ${props => props.$valid ? 'var(--color-text-primary)' : 'var(--color-text-secondary)'};
+`;
+
+const IntegrationCard = styled.div`
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const IntegrationHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const IntegrationIcon = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+`;
+
+const IntegrationInfo = styled.div`
+  flex: 1;
+`;
+
+const IntegrationName = styled.h3`
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+`;
+
+const IntegrationDescription = styled.p`
+  color: var(--color-text-secondary);
+  margin: 0;
+`;
+
+const IntegrationStatus = styled.span`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${props => props.$connected ? 'var(--color-primary)' : 'var(--color-text-secondary)'};
+`;
+
+const ConnectButton = styled.button`
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: var(--color-primary);
+  }
+`;
+
+const IntegrationActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const IntegrationActionButton = styled.button`
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: var(--color-primary);
+  }
+`;
+
+const DisconnectButton = styled.button`
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: var(--color-primary);
+  }
+`;
+
+const FileList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+`;
+
+const FileItem = styled.li`
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const FileIcon = styled.div`
+  width: 24px;
+  height: 24px;
+  margin-right: 16px;
+`;
+
+const FileInfo = styled.div`
+  flex: 1;
+`;
+
+const FileName = styled.h3`
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+`;
+
+const FileMeta = styled.p`
+  color: var(--color-text-secondary);
+  margin: 0;
+`;
+
+const FileActions = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const FileActionButton = styled.button`
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: var(--color-primary);
+  }
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  text-align: center;
+`;
+
+const EmptyStateText = styled.h3`
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 20px 0 8px 0;
+`;
+
+const EmptyStateDescription = styled.p`
+  color: var(--color-text-secondary);
+  margin: 0;
+`;
+
+const ConnectPrompt = styled.div`
+  background-color: var(--color-surface-light);
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const PromptText = styled.p`
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 14px;
 `;
 
 export default Settings; 
