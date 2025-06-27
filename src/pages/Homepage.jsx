@@ -1,4 +1,3 @@
-// client/src/pages/HomePage.jsx
 import { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Login from '../components/Auth/Login';

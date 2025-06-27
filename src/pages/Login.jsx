@@ -1,4 +1,3 @@
-// client/src/pages/Login.jsx
 import LoginComponent from '../components/Auth/Login';
 
 const Login = () => {

@@ -1,4 +1,3 @@
-// client/src/components/Notebook/NotebookEditor.jsx
 import { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { EditorContext } from '../../contexts/EditorContext';
@@ -79,7 +78,7 @@ const NotebookEditor = ({ file }) => {
 
   const deleteCell = (cellIndex) => {
     if (cells.length <= 1) {
-      return; // Don't delete the last cell
+      return; 
     }
     
     // Remove the cell

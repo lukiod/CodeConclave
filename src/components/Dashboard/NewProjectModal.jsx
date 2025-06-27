@@ -1,4 +1,3 @@
-// client/src/components/Dashboard/NewProjectModal.jsx
 import { useState } from 'react';
 import styled from 'styled-components';
 import { FaCode, FaGlobe, FaLock } from 'react-icons/fa';

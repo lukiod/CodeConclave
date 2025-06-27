@@ -1,4 +1,3 @@
-// client/src/components/Auth/Login.jsx
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -18,7 +17,6 @@ const Login = (props) => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    // Clear error when user types
     if (error) setError(null);
   };
 
@@ -75,7 +73,6 @@ const Login = (props) => {
   );
 };
 
-// Styled components
 const FormContainer = styled.div`
   width: 100%;
 `;

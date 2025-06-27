@@ -1,4 +1,3 @@
-// client/src/pages/SharedProjects.jsx
 import { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { FaSearch, FaFilter } from 'react-icons/fa';

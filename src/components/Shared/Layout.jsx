@@ -1,4 +1,3 @@
-// client/src/components/Shared/Layout.jsx
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';

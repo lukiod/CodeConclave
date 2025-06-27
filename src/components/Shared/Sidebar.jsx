@@ -1,4 +1,3 @@
-// client/src/components/Shared/Sidebar.jsx
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaHome, FaShareAlt, FaBook, FaCog, FaQuestionCircle } from 'react-icons/fa';

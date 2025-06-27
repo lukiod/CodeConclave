@@ -1,4 +1,3 @@
-// client/src/components/Shared/ProtectedRoute.jsx
 import { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';

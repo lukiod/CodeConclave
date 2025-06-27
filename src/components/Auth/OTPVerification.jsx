@@ -102,7 +102,6 @@ const OTPVerification = ({ resetToken, onBack }) => {
   );
 };
 
-// Reuse existing styled components from ForgotPassword.jsx
 const FormContainer = styled.div`
   width: 100%;
 `;
@@ -121,8 +120,6 @@ const BackButton = styled.button`
   }
 `;
 
-// Include other styled components (Form, FormGroup, Label, Input, Button, etc.) 
-// similar to ForgotPassword.jsx
 
 const Form = styled.form`
   display: flex;

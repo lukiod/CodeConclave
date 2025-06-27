@@ -1,4 +1,3 @@
-// client/src/pages/LandingPage.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';

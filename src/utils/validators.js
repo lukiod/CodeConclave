@@ -1,5 +1,3 @@
-// client/src/utils/validators.js
-
 /**
  * Validate an email address
  * @param {string} email - Email address to validate

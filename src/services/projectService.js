@@ -1,4 +1,3 @@
-// src/services/projectService.js
 import api from './api';
 
 export const getProjects = async () => {

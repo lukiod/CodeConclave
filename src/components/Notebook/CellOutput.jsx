@@ -1,4 +1,3 @@
-// client/src/components/Notebook/CellOutput.jsx
 import styled from 'styled-components';
 import React from 'react';
 
@@ -7,7 +6,6 @@ const CellOutput = ({ outputs }) => {
     return null;
   }
 
-  // Render different output types
   const renderOutput = (output, index) => {
     if (output.output_type === 'stream') {
       return (
@@ -36,7 +34,7 @@ const CellOutput = ({ outputs }) => {
       );
     }
     
-    // Fallback for other output types
+
     return (
       <UnknownOutput key={index}>
         {JSON.stringify(output, null, 2)}

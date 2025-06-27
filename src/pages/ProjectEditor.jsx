@@ -1,4 +1,3 @@
-// client/src/pages/ProjectEditor.jsx
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';

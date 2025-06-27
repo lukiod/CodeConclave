@@ -187,11 +187,16 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
                 if (error) setError('');
               }}
               placeholder={type === 'file' 
-                ? 'example.js, index.html, style.css, etc.' 
+                ? 'example.py' 
                 : 'folder name'
               }
               autoFocus
             />
+            {type === 'file' && (
+              <NoticeText>
+                Note: Currently, only Python files (.py) are supported. Support for other languages coming soon.
+              </NoticeText>
+            )}
             {type === 'file' && fileExtension && (
               <DetectedExtension>
                 Detected: {fileExtension} ({fileLanguage || 'plaintext'})
@@ -359,6 +364,15 @@ const ErrorMessage = styled.div`
   padding: 8px 12px;
   border-radius: 4px;
   border-left: 3px solid #e53e3e;
+`;
+
+const NoticeText = styled.div`
+  font-size: 12px;
+  color: #4a5568;
+  margin-top: 4px;
+  padding: 4px 8px;
+  background-color: #EDF2F7;
+  border-radius: 4px;
 `;
 
 export default NewFileModal;

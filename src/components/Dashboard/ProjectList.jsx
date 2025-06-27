@@ -1,4 +1,3 @@
-// client/src/components/Dashboard/ProjectList.jsx
 import { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { getProjects, deleteProject } from '../../services/projectService';

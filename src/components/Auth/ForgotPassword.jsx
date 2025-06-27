@@ -1,4 +1,3 @@
-// client/src/components/Auth/ForgotPassword.jsx
 import { useState } from 'react';
 import styled from 'styled-components';
 import { isValidEmail } from '../../utils/validators';
@@ -13,7 +12,6 @@ const ForgotPassword = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate email
     if (!isValidEmail(email)) {
       setError('Please enter a valid email address');
       return;
@@ -71,7 +69,6 @@ const ForgotPassword = (props) => {
   );
 };
 
-// Styled components
 const FormContainer = styled.div`
   width: 100%;
 `;

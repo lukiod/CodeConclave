@@ -1,4 +1,3 @@
-// client/.eslintrc.js
 module.exports = {
     root: true,
     env: {

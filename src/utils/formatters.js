@@ -1,4 +1,3 @@
-// client/src/utils/formatters.js
 import { format, formatDistanceToNow, isValid } from 'date-fns';
 
 /**

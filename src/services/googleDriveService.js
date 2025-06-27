@@ -1,4 +1,3 @@
-// client/src/services/googleDriveService.js
 import api from './api';
 
 export const googleDriveService = {

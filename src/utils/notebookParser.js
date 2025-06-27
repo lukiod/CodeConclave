@@ -1,5 +1,3 @@
-// client/src/utils/notebookParser.js
-
 /**
  * Parse a Jupyter notebook from JSON string
  * @param {string} content - JSON string content of notebook file

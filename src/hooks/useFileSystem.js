@@ -1,4 +1,3 @@
-// client/src/hooks/useFileSystem.js
 import { useCallback } from 'react';
 import { 
   createFile, 

@@ -1,4 +1,3 @@
-// client/src/contexts/EditorContext.jsx
 import { createContext, useState, useCallback } from 'react';
 import { updateFileContent } from '../services/projectService';
 import { debounce } from 'lodash';

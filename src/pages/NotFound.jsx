@@ -1,4 +1,3 @@
-// client/src/pages/NotFound.jsx
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaHome, FaExclamationTriangle } from 'react-icons/fa';

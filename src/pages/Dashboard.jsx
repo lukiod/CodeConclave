@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { getProjects, createProject, deleteProject, updateProject } from '../services/projectService';

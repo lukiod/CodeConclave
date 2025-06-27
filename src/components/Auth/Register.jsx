@@ -1,4 +1,3 @@
-// client/src/components/Auth/Register.jsx
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -25,7 +24,6 @@ const Register = () => {
       [name]: value
     });
     
-    // Clear errors when user types
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -41,18 +39,17 @@ const Register = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Validate username
+
     const usernameResult = validateUsername(formData.username);
     if (!usernameResult.isValid) {
       newErrors.username = usernameResult.message;
     }
     
-    // Validate email
     if (!isValidEmail(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
     
-    // Validate password
+
     const passwordResult = validatePassword(formData.password);
     if (!passwordResult.isValid) {
       newErrors.password = passwordResult.message;

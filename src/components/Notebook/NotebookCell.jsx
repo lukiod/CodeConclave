@@ -1,4 +1,4 @@
-// client/src/components/Notebook/NotebookCell.jsx
+
 import { useState } from 'react';
 import styled from 'styled-components';
 import Editor from '@monaco-editor/react';
