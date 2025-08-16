@@ -183,24 +183,27 @@ const ButtonWrapper = styled.div`
 `;
 
 const GetStartedButton = styled.button`
-  background: linear-gradient(45deg, #238636, #2ea043);
+  background: linear-gradient(135deg, #FF512F, #DD2476, #9333EA);
   color: white;
-  font-size: 1.2rem;
   font-weight: 600;
-  padding: 1rem 2.5rem;
+  padding: 12px 28px;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-  box-shadow: 0 4px 20px rgba(35, 134, 54, 0.3);
-  
+  border-radius: 999px; /* pill shape */
+  font-size: 1.1rem;
+  transition: all 0.4s ease;
+  background-size: 200% 200%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(35, 134, 54, 0.4);
     background: linear-gradient(45deg, #1f7e34, #28a745);
+    background-position: right center; /* gradient slide */
+  transform: translateY(-3px) scale(1.07);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.9),
+               0 0 16px rgba(221, 36, 118, 0.8),
+               0 0 24px rgba(147, 51, 234, 0.7);
   }
   
   &:active {

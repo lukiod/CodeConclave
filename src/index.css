@@ -81,3 +81,22 @@ p {
     transform: translateY(0);
   }
 }
+
+button.get-started {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light), var(--color-primary-dark));
+  color: white;
+  font-weight: 600;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 999px; /* pill shape */
+  font-size: 1.1rem;
+  transition: all 0.4s ease;
+  background-size: 200% 200%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+button.get-started:hover {
+  background-position: right center; /* smooth gradient slide */
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
