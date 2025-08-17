@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import styled from 'styled-components';
 import { useTheme } from '../../contexts/ThemeContext';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import styled from 'styled-components';
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
