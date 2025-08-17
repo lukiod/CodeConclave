@@ -5,6 +5,8 @@ import { FaCode, FaBars, FaUserCircle, FaSignOutAlt, FaChevronDown } from 'react
 import { AuthContext } from '../../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
+
+
 const Navbar = ({ toggleSidebar }) => {
   const { currentUser, logout } = useContext(AuthContext);
   const [showUserMenu, setShowUserMenu] = useState(false);
