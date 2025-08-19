@@ -213,6 +213,12 @@ const Input = styled.input`
   border: 1px solid #e2e8f0;
   border-radius: 4px;
   font-size: 14px;
+  color: #2d3748;
+  background-color: white;
+  
+  &::placeholder {
+    color: #a0aec0;
+  }
   
   &:focus {
     outline: none;
@@ -228,6 +234,12 @@ const Textarea = styled.textarea`
   font-size: 14px;
   resize: vertical;
   min-height: 80px;
+  color: #2d3748;
+  background-color: white;
+  
+  &::placeholder {
+    color: #a0aec0;
+  }
   
   &:focus {
     outline: none;
