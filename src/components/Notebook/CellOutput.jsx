@@ -165,7 +165,7 @@ const ImageOutput = styled.div`
   text-align: center;
   
   img {
-    max-width: 100%;
+    max-width: 10px;
   }
 `;
 

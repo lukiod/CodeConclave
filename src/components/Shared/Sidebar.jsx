@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaHome, FaShareAlt, FaBook, FaCog, FaQuestionCircle } from 'react-icons/fa';
+import { FaHome, FaShareAlt, FaCog, FaQuestionCircle } from 'react-icons/fa';
 
 const Sidebar = ({ isOpen }) => {
   return (
@@ -32,7 +32,7 @@ const Sidebar = ({ isOpen }) => {
           </NavLink>
         </NavItem>
       </SidebarNav>
-      
+
       <SidebarFooter>
         <FooterText>Code Editor v1.0.0</FooterText>
       </SidebarFooter>
@@ -50,10 +50,17 @@ const SidebarContainer = styled.div`
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
   z-index: 5;
-  transform: translateX(${props => props.isOpen ? '0' : '-100%'});
+  transform: translateX(${props => (props.isOpen ? '0' : '-100%')});
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+
+  /* Desktop: always visible */
+  @media (min-width: 768px) {
+    transform: translateX(0);
+    position: static;
+    box-shadow: none;
+  }
 `;
 
 const SidebarNav = styled.ul`
@@ -71,22 +78,22 @@ const NavItem = styled.li`
     color: var(--color-text-secondary);
     text-decoration: none;
     font-size: 14px;
-    
+
     &:hover {
       background-color: var(--color-background);
     }
-    
+
     &.active {
       color: var(--color-primary);
       background-color: var(--color-surface-light);
       border-left: 3px solid var(--color-primary);
-      padding-left: 17px; /* 20px - 3px border */
-      
+      padding-left: 17px;
+
       svg {
         color: var(--color-primary);
       }
     }
-    
+
     svg {
       font-size: 16px;
       margin-right: 12px;
