@@ -2,26 +2,70 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import styled from 'styled-components';
+import { isValidEmail } from '../../utils/validators';
+import { FaTimesCircle } from 'react-icons/fa';
+
+
 
 const Login = (props) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [formErrors, setFormErrors] = useState({ email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login, error, setError } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
     if (error) setError(null);
+
+    if (name === 'email') {
+      if (value.length > 0 && !isValidEmail(value)) {
+        setFormErrors({ ...formErrors, email: 'Please enter a valid email address.' });
+      } else {
+        setFormErrors({ ...formErrors, email: '' });
+      }
+    } else if (name === 'password') {
+      if (value.length === 0) {
+        setFormErrors({ ...formErrors, password: 'Password is required.' });
+      } else {
+        setFormErrors({ ...formErrors, password: '' });
+      }
+    } else if (formErrors[name]) {
+      setFormErrors({ ...formErrors, [name]: '' });
+    }
+
+  };
+
+
+  const validateForm = () => {
+    const newErrors = { email: '', password: '' };
+    let isValid = true;
+
+    if (!isValidEmail(formData.email)) {
+      newErrors.email = 'Please enter a  email address.';
+      isValid = false;
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required.';
+      isValid = false;
+    }
+
+    setFormErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     setIsSubmitting(true);
     
     try {
@@ -33,6 +77,7 @@ const Login = (props) => {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <FormContainer>
@@ -46,10 +91,19 @@ const Login = (props) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            required
             placeholder="Enter your email"
+            $hasError={!!formErrors.email}
           />
+
+
+          {formErrors.email && (
+            <ErrorWrapper>
+              <FaTimesCircle />
+              <InlineError>{formErrors.email}</InlineError>
+            </ErrorWrapper>
+          )}
         </FormGroup>
+
         <FormGroup>
           <Label htmlFor="password">Password</Label>
           <Input
@@ -58,10 +112,18 @@ const Login = (props) => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            required
             placeholder="Enter your password"
+            $hasError={!!formErrors.password}
           />
+
+          {formErrors.password && (
+            <ErrorWrapper>
+              <FaTimesCircle />
+              <InlineError>{formErrors.password}</InlineError>
+            </ErrorWrapper>
+          )}
         </FormGroup>
+
         <ForgotPassword type="button" onClick={props.onForgotPassword}>
           Forgot password?
         </ForgotPassword>
@@ -97,8 +159,9 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => (props.$hasError ? '#fc8181' : '#e2e8f0')};
   border-radius: 0.25rem;
+
   font-size: 1rem;
   background-color: #2d3748;
   color: #e2e8f0;
@@ -109,10 +172,12 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
+    border-color: ${props => (props.$hasError ? '#fc8181' : '#3182ce')};
     box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
   }
+
 `;
+
 
 const ForgotPassword = styled.button`
   background: none;
@@ -158,5 +223,18 @@ const ErrorAlert = styled.div`
   margin-bottom: 1rem;
   font-size: 0.9rem;
 `;
+
+const ErrorWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  color: #fc8181;
+`;
+
+const InlineError = styled.span`
+  font-size: 0.8rem;
+`;
+
 
 export default Login;
