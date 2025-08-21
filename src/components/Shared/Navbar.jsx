@@ -9,12 +9,12 @@ const Navbar = ({ toggleSidebar }) => {
   const { currentUser, logout } = useContext(AuthContext);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleLogout = () => {
     logout();
     navigate('/home');
   };
-  
+
   return (
     <NavbarContainer>
       <NavbarLeft>
@@ -28,18 +28,16 @@ const Navbar = ({ toggleSidebar }) => {
           </Logo>
         </Link>
       </NavbarLeft>
-      
+
       <NavbarRight>
         <ThemeToggle />
         <UserDropdown>
           <UserButton onClick={() => setShowUserMenu(!showUserMenu)}>
             <FaUserCircle />
-            <UserName>
-              {currentUser?.username || 'User'}
-            </UserName>
+            <UserName>{currentUser?.username || 'User'}</UserName>
             <FaChevronDown size={12} />
           </UserButton>
-          
+
           {showUserMenu && (
             <DropdownMenu>
               <UserInfo>
@@ -91,9 +89,13 @@ const MenuButton = styled.button`
   height: 40px;
   border-radius: 4px;
   margin-right: 15px;
-  
+
   &:hover {
     background-color: var(--color-background);
+  }
+
+  @media (min-width: 768px) {
+    display: none; /* hide on desktop */
   }
 `;
 
@@ -132,11 +134,11 @@ const UserButton = styled.button`
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
-  
+
   &:hover {
     background-color: var(--color-background);
   }
-  
+
   svg:first-child {
     font-size: 20px;
   }
@@ -147,7 +149,7 @@ const UserName = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  
+
   @media (max-width: 600px) {
     display: none;
   }
@@ -172,12 +174,12 @@ const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
-  
+
   strong {
     color: var(--color-text-primary);
     font-size: 14px;
   }
-  
+
   small {
     color: var(--color-text-secondary);
     font-size: 12px;
@@ -201,11 +203,11 @@ const DropdownItem = styled.button`
   color: var(--color-text-secondary);
   font-size: 14px;
   cursor: pointer;
-  
+
   &:hover {
     background-color: var(--color-background);
   }
-  
+
   svg {
     font-size: 14px;
     color: var(--color-text-tertiary);
