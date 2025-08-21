@@ -2,8 +2,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { FaCode, FaGlobe, FaLock } from 'react-icons/fa';
 import { validateProjectName } from '../../utils/validators';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
+  const { theme, isDarkMode } = useTheme();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -21,14 +23,12 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
       [name]: type === 'checkbox' ? checked : value
     });
     
-    // Clear error when user types
     if (error) setError('');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validate form
     const validationResult = validateProjectName(formData.name);
     if (!validationResult.isValid) {
       setError(validationResult.message);
@@ -37,11 +37,9 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
     
     setIsSubmitting(true);
     
-    // Create project
     try {
       onCreate(formData);
       
-      // Reset form
       setFormData({
         name: '',
         description: '',
@@ -55,19 +53,19 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
   };
 
   return (
-    <ModalOverlay onClick={onClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
-        <ModalHeader>
-          <ModalTitle>Create New Project</ModalTitle>
-          <CloseButton onClick={onClose}>&times;</CloseButton>
+    <ModalOverlay onClick={onClose} theme={theme}>
+      <ModalContent onClick={(e) => e.stopPropagation()} theme={theme}>
+        <ModalHeader theme={theme}>
+          <ModalTitle theme={theme}>Create New Project</ModalTitle>
+          <CloseButton onClick={onClose} theme={theme}>&times;</CloseButton>
         </ModalHeader>
         
         <ModalBody>
-          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {error && <ErrorMessage theme={theme}>{error}</ErrorMessage>}
           
           <Form onSubmit={handleSubmit}>
             <FormGroup>
-              <Label htmlFor="name">Project Name</Label>
+              <Label htmlFor="name" theme={theme}>Project Name</Label>
               <Input
                 type="text"
                 id="name"
@@ -76,11 +74,12 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
                 onChange={handleChange}
                 placeholder="Enter project name"
                 autoFocus
+                theme={theme}
               />
             </FormGroup>
             
             <FormGroup>
-              <Label htmlFor="description">Description (optional)</Label>
+              <Label htmlFor="description" theme={theme}>Description (optional)</Label>
               <Textarea
                 id="description"
                 name="description"
@@ -88,6 +87,7 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
                 onChange={handleChange}
                 placeholder="Enter project description"
                 rows={3}
+                theme={theme}
               />
             </FormGroup>
             
@@ -96,11 +96,12 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
                 <VisibilityOption
                   isSelected={!formData.isPublic}
                   onClick={() => setFormData({ ...formData, isPublic: false })}
+                  theme={theme}
                 >
                   <FaLock />
                   <div>
-                    <OptionTitle>Private</OptionTitle>
-                    <OptionDescription>
+                    <OptionTitle theme={theme}>Private</OptionTitle>
+                    <OptionDescription theme={theme}>
                       Only you and people you share with can access
                     </OptionDescription>
                   </div>
@@ -109,11 +110,12 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
                 <VisibilityOption
                   isSelected={formData.isPublic}
                   onClick={() => setFormData({ ...formData, isPublic: true })}
+                  theme={theme}
                 >
                   <FaGlobe />
                   <div>
-                    <OptionTitle>Public</OptionTitle>
-                    <OptionDescription>
+                    <OptionTitle theme={theme}>Public</OptionTitle>
+                    <OptionDescription theme={theme}>
                       Anyone with the link can view this project
                     </OptionDescription>
                   </div>
@@ -122,10 +124,10 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
             </FormGroup>
             
             <ButtonGroup>
-              <CancelButton type="button" onClick={onClose}>
+              <CancelButton type="button" onClick={onClose} theme={theme}>
                 Cancel
               </CancelButton>
-              <CreateButton type="submit" disabled={isSubmitting}>
+              <CreateButton type="submit" disabled={isSubmitting} theme={theme}>
                 {isSubmitting ? 'Creating...' : 'Create Project'}
               </CreateButton>
             </ButtonGroup>
@@ -136,13 +138,14 @@ const NewProjectModal = ({ isOpen, onClose, onCreate }) => {
   );
 };
 
+// Styled components using theme colors
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, ${props => props.theme.colors.background === '#0f172a' ? '0.8' : '0.5'});
   display: flex;
   align-items: center;
   justify-content: center;
@@ -150,13 +153,16 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => props.theme.colors.background === '#0f172a' 
+    ? '0 8px 32px rgba(0, 0, 0, 0.4)' 
+    : '0 4px 6px rgba(0, 0, 0, 0.1)'};
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+  border: 1px solid ${props => props.theme.colors.border};
 `;
 
 const ModalHeader = styled.div`
@@ -164,13 +170,13 @@ const ModalHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid ${props => props.theme.colors.border};
 `;
 
 const ModalTitle = styled.h3`
   font-weight: 600;
   font-size: 18px;
-  color: #2d3748;
+  color: ${props => props.theme.colors.textPrimary};
   margin: 0;
 `;
 
@@ -178,11 +184,12 @@ const CloseButton = styled.button`
   background-color: transparent;
   border: none;
   font-size: 24px;
-  color: #a0aec0;
+  color: ${props => props.theme.colors.textTertiary};
   cursor: pointer;
+  transition: color 0.2s ease;
   
   &:hover {
-    color: #4a5568;
+    color: ${props => props.theme.colors.textSecondary};
   }
 `;
 
@@ -205,34 +212,48 @@ const FormGroup = styled.div`
 const Label = styled.label`
   font-size: 14px;
   font-weight: 500;
-  color: #4a5568;
+  color: ${props => props.theme.colors.textSecondary};
 `;
 
 const Input = styled.input`
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 4px;
   font-size: 14px;
+  color: ${props => props.theme.colors.textPrimary};
+  background-color: ${props => props.theme.colors.background};
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  
+  &::placeholder {
+    color: ${props => props.theme.colors.textTertiary};
+  }
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: ${props => props.theme.colors.primary};
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
   }
 `;
 
 const Textarea = styled.textarea`
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 4px;
   font-size: 14px;
   resize: vertical;
   min-height: 80px;
+  color: ${props => props.theme.colors.textPrimary};
+  background-color: ${props => props.theme.colors.background};
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  
+  &::placeholder {
+    color: ${props => props.theme.colors.textTertiary};
+  }
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: ${props => props.theme.colors.primary};
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
   }
 `;
 
@@ -252,21 +273,35 @@ const VisibilityOption = styled.div`
   gap: 12px;
   align-items: flex-start;
   padding: 12px;
-  border: 1px solid ${props => props.isSelected ? '#3182ce' : '#e2e8f0'};
+  border: 1px solid ${props => 
+    props.isSelected ? props.theme.colors.primary : props.theme.colors.border};
   border-radius: 6px;
-  background-color: ${props => props.isSelected ? '#ebf8ff' : 'white'};
+  background-color: ${props => 
+    props.isSelected ? 
+      (props.theme.colors.background === '#0f172a' ? '#1e3a8a' : '#eff6ff') : 
+      props.theme.colors.background};
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   
   &:hover {
-    border-color: ${props => props.isSelected ? '#3182ce' : '#cbd5e0'};
-    background-color: ${props => props.isSelected ? '#ebf8ff' : '#f7fafc'};
+    border-color: ${props => 
+      props.isSelected ? 
+        props.theme.colors.primary : 
+        props.theme.colors.textTertiary};
+    background-color: ${props => 
+      props.isSelected ? 
+        (props.theme.colors.background === '#0f172a' ? '#1e3a8a' : '#eff6ff') : 
+        props.theme.colors.surfaceLight};
   }
   
   svg {
-    color: ${props => props.isSelected ? '#3182ce' : '#718096'};
+    color: ${props => 
+      props.isSelected ? 
+        props.theme.colors.primary : 
+        props.theme.colors.textTertiary};
     font-size: 18px;
     margin-top: 2px;
+    transition: color 0.2s ease;
   }
 `;
 
@@ -274,13 +309,13 @@ const OptionTitle = styled.h4`
   margin: 0 0 4px 0;
   font-size: 14px;
   font-weight: 500;
-  color: #2d3748;
+  color: ${props => props.theme.colors.textPrimary};
 `;
 
 const OptionDescription = styled.p`
   margin: 0;
   font-size: 12px;
-  color: #718096;
+  color: ${props => props.theme.colors.textTertiary};
 `;
 
 const ButtonGroup = styled.div`
@@ -296,41 +331,43 @@ const Button = styled.button`
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
 `;
 
 const CancelButton = styled(Button)`
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  color: #4a5568;
+  background-color: ${props => props.theme.colors.background};
+  border: 1px solid ${props => props.theme.colors.border};
+  color: ${props => props.theme.colors.textSecondary};
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: ${props => props.theme.colors.surfaceLight};
+    border-color: ${props => props.theme.colors.textTertiary};
   }
 `;
 
 const CreateButton = styled(Button)`
-  background-color: #3182ce;
+  background-color: ${props => props.theme.colors.primary};
   border: none;
   color: white;
   
-  &:hover {
-    background-color: #2c5282;
+  &:hover:not(:disabled) {
+    background-color: ${props => props.theme.colors.primaryDark};
   }
   
   &:disabled {
-    background-color: #a0aec0;
+    background-color: ${props => props.theme.colors.textTertiary};
     cursor: not-allowed;
   }
 `;
 
 const ErrorMessage = styled.div`
-  color: #e53e3e;
-  background-color: #FFF5F5;
+  color: ${props => props.theme.colors.error};
+  background-color: ${props => props.theme.colors.errorLight};
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 16px;
   font-size: 14px;
-  border-left: 3px solid #e53e3e;
+  border-left: 3px solid ${props => props.theme.colors.error};
 `;
 
 export default NewProjectModal;
