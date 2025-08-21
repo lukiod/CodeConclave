@@ -1,9 +1,10 @@
-// src/components/Editor/NewFileModal.jsx
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaFile, FaFolder, FaCode } from 'react-icons/fa';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
+  const { theme, isDarkMode } = useTheme();
   const [filename, setFilename] = useState('');
   const [type, setType] = useState('file');
   const [error, setError] = useState('');
@@ -145,9 +146,9 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
   };
 
   return (
-    <ModalOverlay onClick={onClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
-        <ModalHeader>
+    <ModalOverlay onClick={onClose} theme={theme}>
+      <ModalContent onClick={(e) => e.stopPropagation()} theme={theme}>
+        <ModalHeader theme={theme}>
           {folder 
             ? `New File in ${folder.name}`
             : 'Create New'
@@ -155,10 +156,11 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
         </ModalHeader>
         
         <Form onSubmit={handleSubmit}>
-          <TypeSelection>
+          <TypeSelection theme={theme}>
             <TypeOption
               isSelected={type === 'file'}
               onClick={() => setType('file')}
+              theme={theme}
             >
               <FaCode />
               <span>File</span>
@@ -166,6 +168,7 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
             <TypeOption
               isSelected={type === 'directory'}
               onClick={() => setType('directory')}
+              theme={theme}
             >
               <FaFolder />
               <span>Folder</span>
@@ -173,7 +176,7 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
           </TypeSelection>
           
           <FormGroup>
-            <Label htmlFor="filename">
+            <Label htmlFor="filename" theme={theme}>
               {type === 'file' 
                 ? 'Filename (with extension)' 
                 : 'Folder Name'}
@@ -191,26 +194,27 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
                 : 'folder name'
               }
               autoFocus
+              theme={theme}
             />
             {type === 'file' && (
-              <NoticeText>
+              <NoticeText theme={theme}>
                 Note: Currently, only Python files (.py) are supported. Support for other languages coming soon.
               </NoticeText>
             )}
             {type === 'file' && fileExtension && (
-              <DetectedExtension>
+              <DetectedExtension theme={theme}>
                 Detected: {fileExtension} ({fileLanguage || 'plaintext'})
               </DetectedExtension>
             )}
           </FormGroup>
           
-          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {error && <ErrorMessage theme={theme}>{error}</ErrorMessage>}
           
           <ButtonGroup>
-            <CancelButton type="button" onClick={onClose}>
+            <CancelButton type="button" onClick={onClose} theme={theme}>
               Cancel
             </CancelButton>
-            <CreateButton type="submit">
+            <CreateButton type="submit" theme={theme}>
               Create {type === 'file' ? 'File' : 'Folder'}
             </CreateButton>
           </ButtonGroup>
@@ -220,13 +224,14 @@ const NewFileModal = ({ isOpen, onClose, onCreate, folder }) => {
   );
 };
 
+// Styled components using theme colors
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, ${props => props.theme.colors.background === '#0f172a' ? '0.8' : '0.5'});
   display: flex;
   align-items: center;
   justify-content: center;
@@ -234,21 +239,24 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.colors.surface};
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: ${props => props.theme.colors.background === '#0f172a' 
+    ? '0 8px 32px rgba(0, 0, 0, 0.4)' 
+    : '0 4px 6px rgba(0, 0, 0, 0.1)'};
   width: 100%;
   max-width: 400px;
   max-height: 90vh;
   overflow-y: auto;
+  border: 1px solid ${props => props.theme.colors.border};
 `;
 
 const ModalHeader = styled.div`
   padding: 15px 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid ${props => props.theme.colors.border};
   font-weight: 600;
   font-size: 16px;
-  color: #2d3748;
+  color: ${props => props.theme.colors.textPrimary};
 `;
 
 const Form = styled.form`
@@ -260,7 +268,7 @@ const Form = styled.form`
 
 const TypeSelection = styled.div`
   display: flex;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 10px;
@@ -274,9 +282,18 @@ const TypeOption = styled.div`
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  background-color: ${props => props.isSelected ? '#ebf8ff' : 'transparent'};
-  color: ${props => props.isSelected ? '#3182ce' : '#4a5568'};
-  border-bottom: 2px solid ${props => props.isSelected ? '#3182ce' : 'transparent'};
+  background-color: ${props => 
+    props.isSelected ? 
+      (props.theme.colors.background === '#0f172a' ? '#1e3a8a' : '#ebf8ff') : 
+      'transparent'};
+  color: ${props => 
+    props.isSelected ? 
+      props.theme.colors.primary : 
+      props.theme.colors.textSecondary};
+  border-bottom: 2px solid ${props => 
+    props.isSelected ? 
+      props.theme.colors.primary : 
+      'transparent'};
   
   svg {
     font-size: 18px;
@@ -287,7 +304,10 @@ const TypeOption = styled.div`
   }
   
   &:hover {
-    background-color: ${props => props.isSelected ? '#ebf8ff' : '#f7fafc'};
+    background-color: ${props => 
+      props.isSelected ? 
+        (props.theme.colors.background === '#0f172a' ? '#1e3a8a' : '#ebf8ff') : 
+        props.theme.colors.surfaceLight};
   }
 `;
 
@@ -300,25 +320,32 @@ const FormGroup = styled.div`
 const Label = styled.label`
   font-size: 14px;
   font-weight: 500;
-  color: #4a5568;
+  color: ${props => props.theme.colors.textSecondary};
 `;
 
 const Input = styled.input`
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 4px;
   font-size: 14px;
+  color: ${props => props.theme.colors.textPrimary};
+  background-color: ${props => props.theme.colors.background};
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  
+  &::placeholder {
+    color: ${props => props.theme.colors.textTertiary};
+  }
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: ${props => props.theme.colors.primary};
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
   }
 `;
 
 const DetectedExtension = styled.div`
   font-size: 12px;
-  color: #718096;
+  color: ${props => props.theme.colors.textTertiary};
   margin-top: 4px;
 `;
 
@@ -335,43 +362,45 @@ const Button = styled.button`
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
 `;
 
 const CancelButton = styled(Button)`
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  color: #4a5568;
+  background-color: ${props => props.theme.colors.background};
+  border: 1px solid ${props => props.theme.colors.border};
+  color: ${props => props.theme.colors.textSecondary};
   
   &:hover {
-    background-color: #f7fafc;
+    background-color: ${props => props.theme.colors.surfaceLight};
+    border-color: ${props => props.theme.colors.textTertiary};
   }
 `;
 
 const CreateButton = styled(Button)`
-  background-color: #3182ce;
+  background-color: ${props => props.theme.colors.primary};
   border: none;
   color: white;
   
   &:hover {
-    background-color: #2c5282;
+    background-color: ${props => props.theme.colors.primaryDark};
   }
 `;
 
 const ErrorMessage = styled.div`
-  color: #e53e3e;
-  font-size: 14px;
-  background-color: #FFF5F5;
+  color: ${props => props.theme.colors.error};
+  background-color: ${props => props.theme.colors.errorLight};
   padding: 8px 12px;
   border-radius: 4px;
-  border-left: 3px solid #e53e3e;
+  border-left: 3px solid ${props => props.theme.colors.error};
+  font-size: 14px;
 `;
 
 const NoticeText = styled.div`
   font-size: 12px;
-  color: #4a5568;
+  color: ${props => props.theme.colors.textSecondary};
   margin-top: 4px;
   padding: 4px 8px;
-  background-color: #EDF2F7;
+  background-color: ${props => props.theme.colors.surfaceLight};
   border-radius: 4px;
 `;
 
