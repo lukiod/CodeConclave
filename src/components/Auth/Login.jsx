@@ -4,7 +4,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import styled from 'styled-components';
 import { isValidEmail } from '../../utils/validators';
 import { FaTimesCircle } from 'react-icons/fa';
-
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 
 const Login = (props) => {
@@ -14,6 +14,7 @@ const Login = (props) => {
   });
   const [formErrors, setFormErrors] = useState({ email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login, error, setError } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -42,13 +43,16 @@ const Login = (props) => {
 
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const validateForm = () => {
     const newErrors = { email: '', password: '' };
     let isValid = true;
 
     if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Please enter a  email address.';
+      newErrors.email = 'Please enter a valid email address.';
       isValid = false;
     }
 
@@ -95,7 +99,6 @@ const Login = (props) => {
             $hasError={!!formErrors.email}
           />
 
-
           {formErrors.email && (
             <ErrorWrapper>
               <FaTimesCircle />
@@ -106,15 +109,24 @@ const Login = (props) => {
 
         <FormGroup>
           <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter your password"
-            $hasError={!!formErrors.password}
-          />
+          <PasswordInputWrapper>
+            <PasswordInput
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              $hasError={!!formErrors.password}
+            />
+            <PasswordToggle
+              type="button"
+              onClick={togglePasswordVisibility}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+            </PasswordToggle>
+          </PasswordInputWrapper>
 
           {formErrors.password && (
             <ErrorWrapper>
@@ -161,7 +173,6 @@ const Input = styled.input`
   padding: 0.75rem;
   border: 1px solid ${props => (props.$hasError ? '#fc8181' : '#e2e8f0')};
   border-radius: 0.25rem;
-
   font-size: 1rem;
   background-color: #2d3748;
   color: #e2e8f0;
@@ -175,9 +186,40 @@ const Input = styled.input`
     border-color: ${props => (props.$hasError ? '#fc8181' : '#3182ce')};
     box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
   }
-
 `;
 
+const PasswordInputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const PasswordInput = styled(Input)`
+  padding-right: 3rem;
+  width: 100%;
+`;
+
+const PasswordToggle = styled.button`
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    color: #e2e8f0;
+  }
+  
+  &:focus {
+    outline: none;
+    color: #3182ce;
+  }
+`;
 
 const ForgotPassword = styled.button`
   background: none;
@@ -214,7 +256,6 @@ const Button = styled.button`
     cursor: not-allowed;
   }
 `;
-
 const ErrorAlert = styled.div`
   background-color: #fed7d7;
   color: #c53030;
@@ -223,7 +264,6 @@ const ErrorAlert = styled.div`
   margin-bottom: 1rem;
   font-size: 0.9rem;
 `;
-
 const ErrorWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -231,10 +271,8 @@ const ErrorWrapper = styled.div`
   margin-top: 0.25rem;
   color: #fc8181;
 `;
-
 const InlineError = styled.span`
   font-size: 0.8rem;
 `;
-
 
 export default Login;

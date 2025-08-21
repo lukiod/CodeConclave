@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import styled from 'styled-components';
 import { validateUsername, validatePassword, isValidEmail } from '../../utils/validators';
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const Register = () => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register, error, setError } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -36,10 +39,17 @@ const Register = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   const validateForm = () => {
     const newErrors = {};
     
-
     const usernameResult = validateUsername(formData.username);
     if (!usernameResult.isValid) {
       newErrors.username = usernameResult.message;
@@ -49,7 +59,6 @@ const Register = () => {
       newErrors.email = 'Please enter a valid email address';
     }
     
-
     const passwordResult = validatePassword(formData.password);
     if (!passwordResult.isValid) {
       newErrors.password = passwordResult.message;
@@ -121,15 +130,24 @@ const Register = () => {
         
         <FormGroup>
           <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Create a password"
-            isInvalid={!!errors.password}
-          />
+          <PasswordInputWrapper>
+            <PasswordInput
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a password"
+              isInvalid={!!errors.password}
+            />
+            <PasswordToggle
+              type="button"
+              onClick={togglePasswordVisibility}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+            </PasswordToggle>
+          </PasswordInputWrapper>
           {errors.password && <ErrorText>{errors.password}</ErrorText>}
           
           <PasswordRequirements>
@@ -156,15 +174,24 @@ const Register = () => {
         
         <FormGroup>
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder="Confirm your password"
-            isInvalid={!!errors.confirmPassword}
-          />
+          <PasswordInputWrapper>
+            <PasswordInput
+              type={showConfirmPassword ? "text" : "password"}
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm your password"
+              isInvalid={!!errors.confirmPassword}
+            />
+            <PasswordToggle
+              type="button"
+              onClick={toggleConfirmPasswordVisibility}
+              aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+            >
+              {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+            </PasswordToggle>
+          </PasswordInputWrapper>
           {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
         </FormGroup>
         
@@ -214,6 +241,39 @@ const Input = styled.input`
     outline: none;
     border-color: ${props => props.isInvalid ? '#e53e3e' : '#3182ce'};
     box-shadow: 0 0 0 3px ${props => props.isInvalid ? 'rgba(229, 62, 62, 0.2)' : 'rgba(49, 130, 206, 0.2)'};
+  }
+`;
+
+const PasswordInputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const PasswordInput = styled(Input)`
+  padding-right: 3rem;
+  width: 100%;
+`;
+
+const PasswordToggle = styled.button`
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    color: #e2e8f0;
+  }
+  
+  &:focus {
+    outline: none;
+    color: #3182ce;
   }
 `;
 
