@@ -1,3 +1,5 @@
+[![OSCI-Project-Banner.png](https://i.postimg.cc/76mJvBmF/OSCI-Project-Banner.png)](https://postimg.cc/8JfzMb84)
+
 # Multi-Language Code Editor
 
 A full-stack web application for editing and sharing code with support for multiple languages and Jupyter notebooks (.ipynb files).
