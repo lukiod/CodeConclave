@@ -24,7 +24,7 @@ const Navbar = ({ toggleSidebar }) => {
         <Link to="/">
           <Logo>
             <FaCode />
-            <LogoText>Code Editor</LogoText>
+            <LogoText>CodeConclave</LogoText>
           </Logo>
         </Link>
       </NavbarLeft>
