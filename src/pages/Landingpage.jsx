@@ -283,12 +283,6 @@ const ModalHeader = styled.div`
   border-bottom: 1px solid #e5e7eb;
 `
 
-const ModalTitle = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
-`
-
 const CloseButton = styled.button`
   background: none;
   border: none;
@@ -449,7 +443,7 @@ export default function LandingPage() {
       <CTASection>
         <Container>
           <CTATitle>Ready to Start Coding?</CTATitle>
-          <CTADescription>Join developers worldwide using our multi-language code editor</CTADescription>
+          <CTADescription>Join developers worldwide using our Code Conclave</CTADescription>
           <CTAButton size="lg" onClick={handleHome}>Get Started Now</CTAButton>
         </Container>
       </CTASection>
@@ -458,8 +452,10 @@ export default function LandingPage() {
         <Container>
           <FooterContent>
             <FooterLogo>
-              <Code size={24} />
-              <span>Multi-Language Code Editor</span>
+              <Logo>
+                <FaCode size={24} color="#3b82f6" />
+                <LogoText>Code Conclave</LogoText>
+              </Logo>
             </FooterLogo>
             <FooterText>Built with ❤️ for developers everywhere</FooterText>
           </FooterContent>
@@ -469,7 +465,10 @@ export default function LandingPage() {
         <ModalOverlay onClick={closeModal}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <ModalHeader>
-              <ModalTitle>Code Conclave</ModalTitle>
+              <Logo>
+                <FaCode size={24} color="#3b82f6" />
+                <LogoText>Code Conclave</LogoText>
+              </Logo>
               <CloseButton onClick={closeModal}>
                 <X size={24} />
               </CloseButton>
@@ -478,7 +477,7 @@ export default function LandingPage() {
               <VideoContainer>
                 <iframe
                   src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                  title="Multi-Language Code Editor Demo"
+                  title="Code Conclave Demo"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
