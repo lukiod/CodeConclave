@@ -1,139 +1,393 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled, { keyframes } from 'styled-components';
 
-const LandingPage = () => {
-  const navigate = useNavigate();
-  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoaded(true);
-      console.log("Loaded state changed to true");
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
+import styled from "styled-components"
+import { Code, FileText, Users, Zap, Database, Shield } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { FaCode } from "react-icons/fa"
 
-  const handleTryFree = () => {
-    navigate('/home');
-  };
-
-  return (
-    <Container>
-      <ContentWrapper loaded={loaded}>
-        
-        <HeadlineWrapper>
-          <Headline>Run like you sleep</Headline>
-        </HeadlineWrapper>
-        
-        <Description>
-          Empower your teams with AI software engineers who clear the backlog with your laptop closed. Multiply engineering output, all inside your VPC.
-        </Description>
-        
-        <ButtonWrapper>
-          <TryButton onClick={handleTryFree}>Try for free</TryButton>
-        </ButtonWrapper>
-        
-        <VideoSection>
-          <h2>Educational Video</h2>
-          <p>Learn more about coding and projects with this video:</p>
-          <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/Kk5tS2fcfhs"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title="Educational Video"
-          ></iframe>
-        </VideoSection>
-      </ContentWrapper>
-    </Container>
-  );
-};
-
-// Animations
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-// Styled Components
 const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+`
+
+const Header = styled.header`
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 0;
+`
+
+const HeaderContent = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-`;
+  justify-content: space-between;
+`
 
-const ContentWrapper = styled.div`
+const Logo = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  z-index: 1;
-  opacity: ${props => (props.loaded ? 1 : 0)};
-  transform: translateY(${props => (props.loaded ? 0 : '30px')});
-  transition: opacity 1.2s ease, transform 1.2s ease;
-`;
+  gap: 0.5rem;
+`
 
-const HeadlineWrapper = styled.div`
-  margin-bottom: 1rem;
-`;
+const LogoText = styled.h1`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+`
 
-const Headline = styled.h2`
-  font-size: 2.5rem;
-  font-weight: 800;
+const Button = styled.button`
+  padding: ${(props) => (props.size === "lg" ? "0.75rem 2rem" : "0.5rem 1rem")};
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  ${(props) =>
+    props.variant === "outline"
+      ? `
+    background: transparent;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    
+    &:hover {
+      background: #f9fafb;
+    }
+  `
+      : `
+    background: #3b82f6;
+    border: 1px solid #3b82f6;
+    color: white;
+    
+    &:hover {
+      background: #2563eb;
+    }
+  `}
+`
+
+const HeroSection = styled.section`
+  padding: 5rem 0;
   text-align: center;
-  color: #333;
-  margin: 0;
+`
 
-  @media (max-width: 768px) {
-    font-size: 1.8rem;
+const HeroTitle = styled.h2`
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+  
+  @media (min-width: 768px) {
+    font-size: 4rem;
   }
-`;
+`
 
-const Description = styled.p`
-  font-size: 1.1rem;
-  color: #666;
-  max-width: 600px;
-  margin: 0 auto 2rem;
-  text-align: center;
-`;
+const HeroDescription = styled.p`
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+`
 
-const ButtonWrapper = styled.div`
-  margin-top: 1rem;
+const ButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
-`;
+  justify-content: center;
+  flex-wrap: wrap;
+`
 
-const TryButton = styled.button`
-  padding: 10px 20px;
-  background-color: white;
-  border: 1px solid #007bff;
-  color: #007bff;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+const FeaturesSection = styled.section`
+  padding: 4rem 0;
+  background: #f9fafb;
+`
 
-  &:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
-    background-color: #e6f0fa;
-    border-color: #0056b3;
-    color: #0056b3;
-  }
-`;
-
-const VideoSection = styled.div`
-  max-width: 800px;
-  margin: 2rem auto;
+const SectionTitle = styled.h3`
+  font-size: 2rem;
+  font-weight: bold;
   text-align: center;
-  color: #666;
-`;
+  margin-bottom: 3rem;
+  color: #1f2937;
+`
 
-export default LandingPage;
+const FeaturesGrid = styled.div`
+  display: grid;
+  gap: 1.5rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+`
+
+const FeatureCard = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`
+
+const FeatureIcon = styled.div`
+  color: #3b82f6;
+  margin-bottom: 0.5rem;
+`
+
+const FeatureTitle = styled.h4`
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+`
+
+const FeatureDescription = styled.p`
+  color: #6b7280;
+  line-height: 1.5;
+`
+
+const TechSection = styled.section`
+  padding: 4rem 0;
+`
+
+const TechGrid = styled.div`
+  display: grid;
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`
+
+const TechCard = styled.div`
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+`
+
+const TechTitle = styled.h4`
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+`
+
+const TechDescription = styled.p`
+  color: #6b7280;
+  margin-bottom: 1rem;
+`
+
+const BadgeContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`
+
+const Badge = styled.span`
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+`
+
+const CTASection = styled.section`
+  padding: 5rem 0;
+  background: #3b82f6;
+  color: white;
+  text-align: center;
+`
+
+const CTATitle = styled.h3`
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+`
+
+const CTADescription = styled.p`
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+`
+
+const CTAButton = styled(Button)`
+  background: white;
+  color: #3b82f6;
+  
+  &:hover {
+    background: #f9fafb;
+  }
+`
+
+const Footer = styled.footer`
+  border-top: 1px solid #e5e7eb;
+  padding: 2rem 0;
+`
+
+const FooterContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+`
+
+const FooterLogo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+`
+
+const FooterText = styled.p`
+  font-size: 0.875rem;
+  color: #6b7280;
+`
+
+export default function LandingPage() {
+  const navigate = useNavigate()
+  const handleHome = () => navigate('/home')
+  return (
+    <div style={{ minHeight: "100vh", background: "white" }}>
+      <Header>
+        <Container>
+          <HeaderContent>
+            <Logo>
+              <FaCode size={32} color="#3b82f6" />
+              <LogoText>Code Conclave</LogoText>
+            </Logo>
+            <Button onClick={handleHome}>Get Started</Button>
+          </HeaderContent>
+        </Container>
+      </Header>
+
+      <HeroSection>
+        <Container>
+          <HeroTitle>Code, Collaborate, Create</HeroTitle>
+          <HeroDescription>
+            A full-stack web application for editing and sharing code with support for multiple languages and Jupyter
+            notebooks. Build, edit, and collaborate in real-time.
+          </HeroDescription>
+          <ButtonGroup>
+            <Button size="lg" onClick={handleHome}>Try for Free</Button>
+            <Button variant="outline" size="lg">
+              View Demo
+            </Button>
+          </ButtonGroup>
+        </Container>
+      </HeroSection>
+
+      <FeaturesSection>
+        <Container>
+          <SectionTitle>Key Features</SectionTitle>
+          <FeaturesGrid>
+            <FeatureCard>
+              <FeatureIcon>
+                <Code size={32} />
+              </FeatureIcon>
+              <FeatureTitle>Multi-Language Support</FeatureTitle>
+              <FeatureDescription>JavaScript, Python, HTML, CSS, and many more languages supported</FeatureDescription>
+            </FeatureCard>
+
+            <FeatureCard>
+              <FeatureIcon>
+                <FileText size={32} />
+              </FeatureIcon>
+              <FeatureTitle>Jupyter Notebooks</FeatureTitle>
+              <FeatureDescription>Edit and visualize .ipynb files directly in your browser</FeatureDescription>
+            </FeatureCard>
+
+            <FeatureCard>
+              <FeatureIcon>
+                <Users size={32} />
+              </FeatureIcon>
+              <FeatureTitle>Real-time Collaboration</FeatureTitle>
+              <FeatureDescription>Share projects and collaborate with your team in real-time</FeatureDescription>
+            </FeatureCard>
+
+            <FeatureCard>
+              <FeatureIcon>
+                <Database size={32} />
+              </FeatureIcon>
+              <FeatureTitle>File System</FeatureTitle>
+              <FeatureDescription>Create, edit, and organize files and folders with ease</FeatureDescription>
+            </FeatureCard>
+
+            <FeatureCard>
+              <FeatureIcon>
+                <Shield size={32} />
+              </FeatureIcon>
+              <FeatureTitle>Secure Authentication</FeatureTitle>
+              <FeatureDescription>Secure login and registration system with JWT tokens</FeatureDescription>
+            </FeatureCard>
+
+            <FeatureCard>
+              <FeatureIcon>
+                <Zap size={32} />
+              </FeatureIcon>
+              <FeatureTitle>Responsive Design</FeatureTitle>
+              <FeatureDescription>Works seamlessly on desktop and mobile devices</FeatureDescription>
+            </FeatureCard>
+          </FeaturesGrid>
+        </Container>
+      </FeaturesSection>
+
+      <TechSection>
+        <Container>
+          <SectionTitle>Built With Modern Technology</SectionTitle>
+          <TechGrid>
+            <TechCard>
+              <TechTitle>Frontend</TechTitle>
+              <TechDescription>Modern React-based user interface</TechDescription>
+              <BadgeContainer>
+                <Badge>React</Badge>
+                <Badge>Monaco Editor</Badge>
+                <Badge>Styled Components</Badge>
+                <Badge>React Router</Badge>
+                <Badge>Axios</Badge>
+              </BadgeContainer>
+            </TechCard>
+
+            <TechCard>
+              <TechTitle>Backend</TechTitle>
+              <TechDescription>Robust server-side architecture</TechDescription>
+              <BadgeContainer>
+                <Badge>Node.js</Badge>
+                <Badge>Express</Badge>
+                <Badge>MongoDB</Badge>
+                <Badge>Mongoose</Badge>
+                <Badge>JWT</Badge>
+              </BadgeContainer>
+            </TechCard>
+          </TechGrid>
+        </Container>
+      </TechSection>
+
+      <CTASection>
+        <Container>
+          <CTATitle>Ready to Start Coding?</CTATitle>
+          <CTADescription>Join developers worldwide using our multi-language code editor</CTADescription>
+          <CTAButton size="lg" onClick={handleHome}>Get Started Now</CTAButton>
+        </Container>
+      </CTASection>
+
+      <Footer>
+        <Container>
+          <FooterContent>
+            <FooterLogo>
+              <Code size={24} />
+              <span>Multi-Language Code Editor</span>
+            </FooterLogo>
+            <FooterText>Built with ❤️ for developers everywhere</FooterText>
+          </FooterContent>
+        </Container>
+      </Footer>
+    </div>
+  )
+}
