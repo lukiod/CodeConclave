@@ -1,9 +1,10 @@
 
 
 import styled from "styled-components"
-import { Code, FileText, Users, Zap, Database, Shield } from "lucide-react"
+import { Code, FileText, Users, Zap, Database, Shield, X } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { FaCode } from "react-icons/fa"
+import { useState } from "react"
 
 const Container = styled.div`
   max-width: 1200px;
@@ -250,8 +251,84 @@ const FooterText = styled.p`
   color: #6b7280;
 `
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+`
+
+const ModalContent = styled.div`
+  background: white;
+  border-radius: 0.5rem;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+`
+
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+`
+
+const ModalTitle = styled.h3`
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+`
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  color: #6b7280;
+  
+  &:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
+`
+
+const ModalBody = styled.div`
+  padding: 1.5rem;
+`
+
+const VideoContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0.375rem;
+  }
+`
+
 export default function LandingPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
+  const openModal = () => setIsModalOpen(true)
+  const closeModal = () => setIsModalOpen(false)
   const handleHome = () => navigate('/home')
   return (
     <div style={{ minHeight: "100vh", background: "white" }}>
@@ -276,7 +353,7 @@ export default function LandingPage() {
           </HeroDescription>
           <ButtonGroup>
             <Button size="lg" onClick={handleHome}>Try for Free</Button>
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" onClick={openModal}>
               View Demo
             </Button>
           </ButtonGroup>
@@ -388,6 +465,28 @@ export default function LandingPage() {
           </FooterContent>
         </Container>
       </Footer>
+      {isModalOpen && (
+        <ModalOverlay onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalHeader>
+              <ModalTitle>Code Conclave</ModalTitle>
+              <CloseButton onClick={closeModal}>
+                <X size={24} />
+              </CloseButton>
+            </ModalHeader>
+            <ModalBody>
+              <VideoContainer>
+                <iframe
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                  title="Multi-Language Code Editor Demo"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </VideoContainer>
+            </ModalBody>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </div>
   )
 }
