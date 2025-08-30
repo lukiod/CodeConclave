@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -14,7 +14,7 @@ import {
 
 const STORAGE_KEY = 'cc_sidebar_mini';
 
-const Sidebar = ({ isOpen }) => {
+const Sidebar = ({ isOpen, onClose }) => {
   const [mini, setMini] = useState(() => {
     try {
       return localStorage.getItem(STORAGE_KEY) === 'true';
@@ -35,22 +35,39 @@ const Sidebar = ({ isOpen }) => {
     } catch {}
   }, [mini]);
 
+  const toggleMini = useCallback(() => {
+    setMini(prev => !prev);
+  }, []);
+
+  const handleResetMini = useCallback(() => {
+    setMini(false);
+  }, []);
+
   useEffect(() => {
     const handler = (e) => {
       const isCmd = e.metaKey || e.ctrlKey;
       if (isCmd && (e.key === 'b' || e.key === 'B')) {
         e.preventDefault();
-        setMini((s) => !s);
+        toggleMini();
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, []);
+  }, [toggleMini]);
 
-  const toggleMini = () => setMini((s) => !s);
+  const handleNavClick = useCallback(() => {
+    if (window.innerWidth < 768 && onClose) {
+      onClose();
+    }
+  }, [onClose]);
 
   return (
-    <SidebarContainer isOpen={isOpen} $mini={mini} role="navigation" aria-label="Main sidebar">
+    <SidebarContainer
+      $isOpen={isOpen}
+      $mini={mini}
+      role="navigation"
+      aria-label="Main sidebar"
+    >
       <SidebarBrand $mini={mini}>
         <BrandLink to="/" aria-label="Go to home">
           <BrandIcon title="Code Editor">
@@ -62,7 +79,11 @@ const Sidebar = ({ isOpen }) => {
         <MiniToggle
           onClick={toggleMini}
           aria-pressed={mini}
-          title={mini ? 'Expand sidebar (Ctrl/Cmd + B)' : 'Collapse to icons (Ctrl/Cmd + B)'}
+          title={
+            mini
+              ? 'Expand sidebar (Ctrl/Cmd + B)'
+              : 'Collapse to icons (Ctrl/Cmd + B)'
+          }
         >
           {mini ? <FaChevronRight /> : <FaChevronLeft />}
         </MiniToggle>
@@ -70,14 +91,21 @@ const Sidebar = ({ isOpen }) => {
 
       <SidebarNav>
         <NavItem $mini={mini}>
-          <NavLink to="/dashboard" end>
+          <NavLink
+            to="/dashboard"
+            end
+            onClick={handleNavClick}
+          >
             <FaHome />
             <NavText $mini={mini}>Dashboard</NavText>
           </NavLink>
         </NavItem>
 
         <NavItem $mini={mini}>
-          <NavLink to="/shared">
+          <NavLink
+            to="/shared"
+            onClick={handleNavClick}
+          >
             <FaShareAlt />
             <NavText $mini={mini}>Shared with me</NavText>
           </NavLink>
@@ -86,14 +114,20 @@ const Sidebar = ({ isOpen }) => {
         <NavDivider />
 
         <NavItem $mini={mini}>
-          <NavLink to="/settings">
+          <NavLink
+            to="/settings"
+            onClick={handleNavClick}
+          >
             <FaCog />
             <NavText $mini={mini}>Settings</NavText>
           </NavLink>
         </NavItem>
 
         <NavItem $mini={mini}>
-          <NavLink to="/help">
+          <NavLink
+            to="/help"
+            onClick={handleNavClick}
+          >
             <FaQuestionCircle />
             <NavText $mini={mini}>Help</NavText>
           </NavLink>
@@ -105,7 +139,10 @@ const Sidebar = ({ isOpen }) => {
           <FooterText $mini={mini}>Code Editor v1.0.0</FooterText>
         </FooterLeft>
 
-        <FooterAction onClick={() => setMini(false)} title="Reset to full sidebar">
+        <FooterAction
+          onClick={handleResetMini}
+          title="Reset to full sidebar"
+        >
           <FaCompressArrowsAlt />
         </FooterAction>
       </SidebarFooter>
@@ -113,12 +150,14 @@ const Sidebar = ({ isOpen }) => {
   );
 };
 
-/* Styled components -> edited BrandText, NavText and FooterText so mobile always shows full text */
-const SidebarContainer = styled.div`
+/* Styled components with proper prop filtering */
+const SidebarContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})`
   --full-width: 250px;
   --mini-width: 72px;
-  width: ${(p) => (p.$mini ? 'var(--mini-width)' : 'var(--full-width)')};
-  min-width: ${(p) => (p.$mini ? 'var(--mini-width)' : 'var(--full-width)')};
+  width: ${p => (p.$mini ? 'var(--mini-width)' : 'var(--full-width)')};
+  min-width: ${p => (p.$mini ? 'var(--mini-width)' : 'var(--full-width)')};
   transition: width 220ms ease, transform 220ms ease;
   display: flex;
   flex-direction: column;
@@ -130,16 +169,21 @@ const SidebarContainer = styled.div`
   background-color: var(--color-surface);
   border-right: 1px solid var(--color-border);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  transition: transform 300ms ease-in-out;
 
-  transform: translateX(${(p) => (p.isOpen ? '0' : '-100%')});
+  transform: translateX(${p => (p.$isOpen ? '0' : '-100%')});
+
   @media (min-width: 768px) {
     transform: translateX(0);
     position: static;
     box-shadow: none;
+    transition: none;
   }
 `;
 
-const SidebarBrand = styled.div`
+const SidebarBrand = styled.div.withConfig({
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})`
   padding: 12px;
   display: flex;
   align-items: center;
@@ -147,7 +191,7 @@ const SidebarBrand = styled.div`
   border-bottom: 1px solid var(--color-border);
   justify-content: space-between;
 
-  ${(p) =>
+  ${p =>
     p.$mini &&
     `
     padding-left: 12px;
@@ -180,8 +224,9 @@ const BrandIcon = styled.span`
   }
 `;
 
-/* ---- FIXED: show brand text on mobile always; hide on desktop to avoid duplicate with top Navbar ---- */
-const BrandText = styled.span`
+const BrandText = styled.span.withConfig({
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})`
   white-space: nowrap;
 
   /* show on small screens (mobile) */
@@ -224,7 +269,9 @@ const SidebarNav = styled.ul`
   overflow: auto;
 `;
 
-const NavItem = styled.li`
+const NavItem = styled.li.withConfig({
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})`
   a {
     display: flex;
     align-items: center;
@@ -232,7 +279,7 @@ const NavItem = styled.li`
     padding: 10px 14px;
     color: var(--color-text-secondary);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px;
     border-radius: 8px;
     margin: 4px 8px;
     transition: background 120ms ease;
@@ -260,7 +307,7 @@ const NavItem = styled.li`
 
   /* center icons when container is mini (desktop only) */
   @media (min-width: 768px) {
-    ${(p) =>
+    ${p =>
       p.$mini &&
       `
       a { justify-content: center; padding-left: 0; padding-right: 0; }
@@ -269,14 +316,15 @@ const NavItem = styled.li`
   }
 `;
 
-/* ---- FIXED: show nav text on mobile even if mini = true ---- */
-const NavText = styled.span`
+const NavText = styled.span.withConfig({
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
   /* if mini on desktop hide text */
-  ${(p) =>
+  ${p =>
     p.$mini &&
     `
     @media (min-width: 768px) {
@@ -296,7 +344,9 @@ const NavDivider = styled.div`
   margin: 10px 8px;
 `;
 
-const SidebarFooter = styled.div`
+const SidebarFooter = styled.div.withConfig({
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -304,7 +354,7 @@ const SidebarFooter = styled.div`
   padding: 10px;
   border-top: 1px solid var(--color-border);
 
-  ${(p) =>
+  ${p =>
     p.$mini &&
     `
     padding-left: 8px;
@@ -318,12 +368,13 @@ const FooterLeft = styled.div`
   gap: 8px;
 `;
 
-/* ---- FIXED: show footer text on mobile even if mini = true ---- */
-const FooterText = styled.div`
+const FooterText = styled.div.withConfig({
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})`
   font-size: 12px;
   color: var(--color-text-tertiary);
 
-  ${(p) =>
+  ${p =>
     p.$mini &&
     `
     @media (min-width: 768px) {
