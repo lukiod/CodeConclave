@@ -13,6 +13,8 @@ const ProjectCard = ({ project, onDelete, onRename, onShare, isOwner }) => {
   const [newName, setNewName] = useState(project.name);
   const renameInputRef = useRef(null);
   const menuRef = useRef(null);
+  const menuAreaRef = useRef(null);
+  const containerRef = useRef(null);
   const navigate = useNavigate();
   
   // Focus rename input when it becomes visible
@@ -83,14 +85,24 @@ const ProjectCard = ({ project, onDelete, onRename, onShare, isOwner }) => {
     }
   };
   
-  // Keep a small helper in case you want to programmatically navigate (not strictly needed)
-  const handleNavigate = (e) => {
-    // If renaming is active, don't navigate
-    if (isRenaming) {
-      e && e.preventDefault();
-      return;
+  // If user clicks the card container (outside the menu), navigate to project
+  const handleContainerClick = (e) => {
+    // Ignore clicks that originated from menu area or interactive controls
+    if (isRenaming) return;
+    if (menuAreaRef.current && menuAreaRef.current.contains(e.target)) return;
+    navigate(`/projects/${project._id}`);
+  };
+
+  // Keyboard support: Enter or Space opens the project (unless renaming or menu area focused)
+  const handleContainerKeyDown = (e) => {
+    if (isRenaming) return;
+    const { key } = e;
+    if (key === 'Enter' || key === ' ') {
+      // if focus is inside menu area, don't trigger
+      if (menuAreaRef.current && menuAreaRef.current.contains(document.activeElement)) return;
+      e.preventDefault();
+      navigate(`/projects/${project._id}`);
     }
-    // Let Link handle navigation by default when clicking the <Link> elements.
   };
 
   // Format the creation date
@@ -99,11 +111,22 @@ const ProjectCard = ({ project, onDelete, onRename, onShare, isOwner }) => {
     : 'Unknown date';
   
   return (
-    <CardContainer>
+    <CardContainer
+      ref={containerRef}
+      onClick={handleContainerClick}
+      tabIndex={0}
+      role="link"
+      aria-label={`Open project ${project.name}`}
+      onKeyDown={handleContainerKeyDown}
+    >
       <CardContent>
         <CardHeader>
-          {/* Left side: clickable area (link) containing icon + title */}
-          <HeaderLeft as={CardLink} to={`/projects/${project._id}`} onClick={handleNavigate}>
+          {/* Left side: clickable area (icon + title). kept as a Link for semantics. */}
+          <HeaderLeft as={CardLink} to={`/projects/${project._id}`} onClick={(e) => {
+            // Prevent duplicate navigation when container click also fires
+            // Let Link handle it; no extra work required.
+            if (isRenaming) e.preventDefault();
+          }}>
             <CardIcon>
               <FaCode />
             </CardIcon>
@@ -126,7 +149,7 @@ const ProjectCard = ({ project, onDelete, onRename, onShare, isOwner }) => {
           </HeaderLeft>
 
           {/* Menu button lives outside the Link so the dropdown is not inside the anchor */}
-          <MenuArea>
+          <MenuArea ref={menuAreaRef}>
             <MenuButton
               onClick={handleMenuClick}
               aria-label="Project options"
@@ -158,7 +181,10 @@ const ProjectCard = ({ project, onDelete, onRename, onShare, isOwner }) => {
         </CardHeader>
 
         {/* Clickable description + footer area — also wrapped with Link so clicking them opens project */}
-        <ContentLink to={`/projects/${project._id}`} onClick={handleNavigate}>
+        <ContentLink to={`/projects/${project._id}`} onClick={(e) => {
+          if (isRenaming) e.preventDefault();
+          // allow Link to handle navigation otherwise
+        }}>
           <CardDescription>
             {project.description || 'No description provided'}
           </CardDescription>
@@ -207,6 +233,11 @@ const CardContainer = styled.div`
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.12); /* subtle focus ring */
   }
 `;
 
@@ -320,7 +351,7 @@ const MenuButton = styled.button`
 const MenuDropdown = styled.div`
   position: absolute;
   top: calc(100% + 6px); /* just below the button */
-  right: 0;
+  right: 12px; /* <-- nudged inside the card so it doesn't overlap rounded corner */
   background-color: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: 8px;
