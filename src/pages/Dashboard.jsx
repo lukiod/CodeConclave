@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react'; 
 import styled from 'styled-components';
 import { getProjects, createProject, deleteProject, updateProject } from '../services/projectService';
 import ProjectCard from '../components/Shared/ProjectCard';
@@ -236,15 +236,18 @@ const Controls = styled.div`
   }
 `;
 
+/* --- Updated SearchBar and SearchInput styles --- */
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+  height: 36px; /* consistent control height */
   background-color: var(--color-background);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 0 10px;
-  
+  box-sizing: border-box;
+
   @media (min-width: 768px) {
     width: 250px;
   }
@@ -254,16 +257,30 @@ const SearchIcon = styled.div`
   color: var(--color-text-tertiary);
   display: flex;
   align-items: center;
+  margin-right: 8px;
+  flex: 0 0 auto;
 `;
 
 const SearchInput = styled.input`
   border: none;
-  padding: 8px 10px;
-  flex-grow: 1;
+  padding: 0;
+  height: 100%;
+  width: 100%;
   outline: none;
   font-size: 14px;
   background: transparent;
   color: var(--color-text-primary);
+  flex: 1 1 auto;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+    opacity: 0.9;
+  }
+
+  &:focus {
+    box-shadow: none;
+  }
 `;
 
 const FilterGroup = styled.div`
