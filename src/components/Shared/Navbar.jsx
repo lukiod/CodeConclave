@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaCode, FaBars, FaUserCircle, FaSignOutAlt, FaChevronDown } from 'react-icons/fa';
+import { FaCode, FaBars, FaUserCircle, FaSignOutAlt, FaChevronDown, FaQuestionCircle } from 'react-icons/fa';
 import { AuthContext } from '../../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
@@ -45,6 +45,10 @@ const Navbar = ({ toggleSidebar }) => {
                 <small>{currentUser?.email}</small>
               </UserInfo>
               <DropdownDivider />
+              <DropdownItem as={Link} to="/help">
+                <FaQuestionCircle />
+                Help & Support
+              </DropdownItem>
               <DropdownItem onClick={handleLogout}>
                 <FaSignOutAlt />
                 Sign Out
