@@ -434,13 +434,15 @@ const EmptyStateButton = styled.button`
   }
 `;
 
-const ErrorMessage = styled.div`
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--color-danger);
+const ErrorMessage = styled.div.attrs({
+  role: 'alert',
+  'aria-live': 'polite'
+})`
+  background-color: #FFF5F5;
+  color: #C53030;
   padding: 12px 16px;
   border-radius: 4px;
   margin-bottom: 20px;
-  border-left: 4px solid var(--color-danger);
+  border-left: 4px solid #C53030;
 `;
-
 export default Dashboard;

@@ -2,19 +2,23 @@ import styled, { keyframes, css } from 'styled-components';
 import { FaSpinner, FaCode, FaFolder } from 'react-icons/fa';
 
 // Generic Loading Spinner
-export const LoadingSpinner = ({ size = '20px', color = 'var(--color-primary, #3182ce)' }) => (
-  <SpinnerIcon size={size} color={color}>
-    <FaSpinner />
+export const LoadingSpinner = ({ 
+  size = '20px', 
+  color = 'var(--color-primary, #3182ce)', 
+  label = 'Loading' 
+}) => (
+  <SpinnerIcon size={size} color={color} role="status" aria-label={label}>
+    <FaSpinner aria-hidden="true" />
   </SpinnerIcon>
 );
 
 // Loading component with message
 export const LoadingWithMessage = ({ message = 'Loading...', icon }) => (
-  <LoadingContainer>
+  <LoadingContainer role="status" aria-live="polite">
     {icon ? (
       <LoadingIcon>{icon}</LoadingIcon>
     ) : (
-      <LoadingSpinner size="24px" />
+      <LoadingSpinner size="24px" label={message} />
     )}
     <LoadingMessage>{message}</LoadingMessage>
   </LoadingContainer>
@@ -42,18 +46,26 @@ export const ProjectCardSkeleton = () => (
 // File explorer loading skeleton
 export const FileExplorerSkeleton = () => (
   <FileSkeletonContainer>
-    {Array(5).fill(0).map((_, index) => (
-      <FileSkeletonItem key={index} indent={Math.floor(Math.random() * 3)}>
-        <FaFolder style={{ color: '#a0aec0' }} />
-        <SkeletonLine width="150px" height="16px" />
-      </FileSkeletonItem>
-    ))}
+    {Array(5)
+      .fill(0)
+      .map((_, index) => (
+        <FileSkeletonItem key={index} indent={Math.floor(Math.random() * 3)}>
+          <FaFolder style={{ color: '#a0aec0' }} />
+          <SkeletonLine width="150px" height="16px" />
+        </FileSkeletonItem>
+      ))}
   </FileSkeletonContainer>
 );
 
 // Button loading state
 export const ButtonSpinner = ({ children, isLoading, ...props }) => (
-  <button {...props} disabled={isLoading || props.disabled}>
+  <button
+    {...props}
+    type={props.type || 'button'}
+    disabled={isLoading || props.disabled}
+    aria-busy={isLoading}
+    aria-disabled={isLoading || props.disabled}
+  >
     {isLoading ? (
       <ButtonContent>
         <LoadingSpinner size="14px" color="currentColor" />
@@ -88,7 +100,7 @@ const SpinnerIcon = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  
+
   svg {
     width: ${props => props.size};
     height: ${props => props.size};

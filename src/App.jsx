@@ -29,8 +29,8 @@ const App = () => {
 
   if (loading) {
     return (
-      <LoadingScreen $isDarkMode={isDarkMode}>
-        <LoadingSpinner size="50px" />
+      <LoadingScreen $isDarkMode={isDarkMode} role="status" aria-live="polite" aria-label="Initializing CodeConclave">
+        <LoadingSpinner size="50px" label="Initializing CodeConclave" />
         <LoadingText $isDarkMode={isDarkMode}>Initializing CodeConclave</LoadingText>
         <LoadingSubtext $isDarkMode={isDarkMode}>Almost there...</LoadingSubtext>
       </LoadingScreen>
@@ -135,6 +135,8 @@ const LoadingText = styled.h2`
   font-weight: 600;
   color: ${props => props.$isDarkMode ? 'white' : '#2d3748'};
   transition: color 0.3s ease;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
 `;
 
 const LoadingSubtext = styled.p`

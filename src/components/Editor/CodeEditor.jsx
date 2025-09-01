@@ -2,12 +2,14 @@
 import { useRef, useEffect, useContext, useState } from 'react';
 import styled from 'styled-components';
 import Editor from '@monaco-editor/react';
-import * as monaco from 'monaco-editor';
 import { EditorContext } from '../../contexts/EditorContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { SUPPORTED_LANGUAGES } from '../../config/constants';
 import { FaPlay, FaSpinner, FaKeyboard, FaCode } from 'react-icons/fa';
-import { executeSandboxedCode, executeCode } from '../../services/codeRunnerService';
+import {
+  executeSandboxedCode,
+  executeCode,
+} from '../../services/codeRunnerService';
 import ExecutionResult from './ExecutionResult';
 
 const CodeEditor = ({ file }) => {
@@ -17,7 +19,7 @@ const CodeEditor = ({ file }) => {
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
-  
+
   useEffect(() => {
     // Focus editor when active file changes
     if (editorRef.current) {
@@ -27,13 +29,15 @@ const CodeEditor = ({ file }) => {
 
   // Keyboard shortcuts handler
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Only handle shortcuts when editor is focused or no specific element is focused
+    const handleKeyDown = e => {
+      // Only handle shortcuts when Monaco has focus or the event target is inside it
       const activeElement = document.activeElement;
-      const isEditorFocused = activeElement?.classList?.contains('monaco-editor') || 
-                             activeElement === document.body;
-
+      const inEditor = activeElement?.closest?.('.monaco-editor');
+      const isEditorFocused = editorRef.current?.hasTextFocus?.() || !!inEditor;
       if (!isEditorFocused) return;
+
+      // If shortcuts panel is open, ignore all shortcuts except Escape
+      if (showShortcuts && e.key !== 'Escape') return;
 
       const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
       const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
@@ -50,7 +54,7 @@ const CodeEditor = ({ file }) => {
       // });
 
       if (cmdOrCtrl) {
-        switch(e.key.toLowerCase()) {
+        switch (e.key.toLowerCase()) {
           case 's': // Save
             e.preventDefault();
             if (file && saveCurrentFile) {
@@ -73,7 +77,7 @@ const CodeEditor = ({ file }) => {
             break;
         }
       }
-      
+
       // ESC key handlers
       if (e.key === 'Escape') {
         if (showShortcuts) {
@@ -86,74 +90,92 @@ const CodeEditor = ({ file }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [file, isExecuting, showShortcuts, executionResult, saveCurrentFile]);
+  }, [
+    file,
+    isExecuting,
+    showShortcuts,
+    editorRef,
+    executionResult,
+    saveCurrentFile,
+  ]);
 
-  const handleEditorDidMount = (editor) => {
+  const handleEditorDidMount = (editor, monacoInstance) => {
     editorRef.current = editor;
     editor.focus();
-    
-    // Add custom Monaco keyboard shortcuts
-    // Use monaco.KeyMod instead of editor.KeyMod
+
+    // Add custom Monaco keyboard shortcuts using the passed monacoInstance
     try {
       editor.addAction({
         id: 'run-code',
         label: 'Run Code',
         keybindings: [
           // Ctrl+Enter or Cmd+Enter
-          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter
+          monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.Enter,
         ],
         run: () => {
           if (isExecutable() && !isExecuting) {
             handleRunCode();
           }
-        }
+        },
       });
     } catch (error) {
       console.log('Could not add Monaco keyboard shortcut:', error);
-      // Fallback - just focus the editor
     }
   };
 
   // Determine language from file extension
   const getLanguage = () => {
     if (!file || !file.extension) return 'plaintext';
-    
+
     const extension = file.extension.toLowerCase();
-    const language = SUPPORTED_LANGUAGES.find(lang => 
+    const language = SUPPORTED_LANGUAGES.find(lang =>
       lang.extensions.includes(extension)
     );
-    
+
     return language ? language.id : 'plaintext';
   };
 
   const handleRunCode = async () => {
     if (!file || !editorRef.current || isExecuting) return;
-    
+
     setIsExecuting(true);
     setExecutionResult(null);
-    
+
     try {
       const code = editorRef.current.getValue();
       const language = getLanguage();
-      
+
       let result;
-      
+
+      // Try server-side execution first
       // Try server-side execution first
       try {
         result = await executeCode(code, language);
       } catch (serverError) {
-        console.log('Server execution failed, falling back to sandbox:', serverError);
-        // Fall back to client-side execution for JavaScript
-        result = await executeSandboxedCode(code, language);
+        console.log(
+          'Server execution failed, falling back to sandbox:',
+          serverError
+        );
+        // Fall back to client-side execution only for JavaScript/TypeScript
+        if (language === 'javascript' || language === 'typescript') {
+          result = await executeSandboxedCode(code, language);
+        } else {
+          result = {
+            success: false,
+            output: null,
+            error: 'Offline fallback is only available for JavaScript.',
+            executionTime: 0,
+          };
+        }
       }
-      
+
       setExecutionResult(result);
     } catch (error) {
       setExecutionResult({
         success: false,
         output: null,
         error: error.message || 'Unknown error during code execution',
-        executionTime: 0
+        executionTime: 0,
       });
     } finally {
       setIsExecuting(false);
@@ -162,10 +184,9 @@ const CodeEditor = ({ file }) => {
 
   const isExecutable = () => {
     if (!file) return false;
-    
     const language = getLanguage();
-    // Client-side supports JS, server-side supports more languages
-    return true;
+    // Disable for obvious non-runnable text formats; allow others (server validates)
+    return !['plaintext', 'markdown'].includes(language);
   };
 
   const closeExecutionResult = () => {
@@ -175,10 +196,13 @@ const CodeEditor = ({ file }) => {
   if (!file) {
     return (
       <EmptyState>
-        <FaCode style={{ fontSize: '2rem', color: '#a0aec0', marginBottom: '1rem' }} />
+        <FaCode
+          style={{ fontSize: '2rem', color: '#a0aec0', marginBottom: '1rem' }}
+        />
         <p>Select a file to edit</p>
         <ShortcutsHint>
-          Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd> to view keyboard shortcuts
+          Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd> to view
+          keyboard shortcuts
         </ShortcutsHint>
       </EmptyState>
     );
@@ -188,21 +212,28 @@ const CodeEditor = ({ file }) => {
     <EditorContainer>
       <EditorToolbar>
         <FileInfo>
-          <FileName>{file.name}{file.extension}</FileName>
+          <FileName>
+            {file.name}
+            {file.extension}
+          </FileName>
           <FileLanguage>{getLanguage()}</FileLanguage>
         </FileInfo>
         <ToolbarActions>
-          <ShortcutsButton 
+          <ShortcutsButton
             onClick={() => setShowShortcuts(!showShortcuts)}
             title="Keyboard shortcuts (Ctrl+Shift+/)"
             isActive={showShortcuts}
           >
             <FaKeyboard />
           </ShortcutsButton>
-          <RunButton 
-            onClick={handleRunCode} 
+          <RunButton
+            onClick={handleRunCode}
             disabled={isExecuting || !isExecutable()}
-            title={!isExecutable() ? "This file type cannot be executed" : "Run code (Ctrl+Enter)"}
+            title={
+              !isExecutable()
+                ? 'This file type cannot be executed'
+                : 'Run code (Ctrl+Enter)'
+            }
           >
             {isExecuting ? (
               <>
@@ -216,15 +247,15 @@ const CodeEditor = ({ file }) => {
           </RunButton>
         </ToolbarActions>
       </EditorToolbar>
-      
+
       {/* Remove the old shortcuts panel from inside EditorContainer */}
-      
+
       <EditorWrapper>
         <Editor
           height="100%"
           language={getLanguage()}
           value={file.content}
-          theme={isDarkMode ? "vs-dark" : "light"}
+          theme={isDarkMode ? 'vs-dark' : 'light'}
           onChange={value => handleFileChange(value)}
           onMount={handleEditorDidMount}
           options={{
@@ -245,8 +276,8 @@ const CodeEditor = ({ file }) => {
             find: {
               addExtraSpaceOnTop: false,
               autoFindInSelection: 'never',
-              seedSearchStringFromSelection: 'always'
-            }
+              seedSearchStringFromSelection: 'always',
+            },
           }}
         />
       </EditorWrapper>
@@ -284,10 +315,10 @@ const CodeEditor = ({ file }) => {
           </ShortcutsPanel>
         </>
       )}
-      
+
       {executionResult && (
-        <ExecutionResult 
-          result={executionResult} 
+        <ExecutionResult
+          result={executionResult}
           onClose={closeExecutionResult}
           language={getLanguage()}
         />
@@ -320,7 +351,7 @@ const EditorToolbar = styled.div`
   padding: 8px 12px;
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
-  
+
   @media (max-width: 600px) {
     flex-direction: column;
     align-items: flex-start;
@@ -359,8 +390,9 @@ const ShortcutsButton = styled.button`
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background-color: ${props => props.isActive ? 'var(--color-primary)' : 'transparent'};
-  color: ${props => props.isActive ? 'white' : 'var(--color-text-secondary)'};
+  background-color: ${props =>
+    props.isActive ? 'var(--color-primary)' : 'transparent'};
+  color: ${props => (props.isActive ? 'white' : 'var(--color-text-secondary)')};
   border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
@@ -368,7 +400,10 @@ const ShortcutsButton = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background-color: ${props => props.isActive ? 'var(--color-primary-dark)' : 'var(--color-surface-light)'};
+    background-color: ${props =>
+      props.isActive
+        ? 'var(--color-primary-dark)'
+        : 'var(--color-surface-light)'};
   }
 `;
 
@@ -377,26 +412,32 @@ const RunButton = styled.button`
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background-color: ${props => props.disabled ? 'var(--color-border)' : 'var(--color-primary)'};
-  color: ${props => props.disabled ? 'var(--color-text-tertiary)' : 'white'};
+  background-color: ${props =>
+    props.disabled ? 'var(--color-border)' : 'var(--color-primary)'};
+  color: ${props => (props.disabled ? 'var(--color-text-tertiary)' : 'white')};
   border: none;
   border-radius: 4px;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
   font-size: 12px;
   font-weight: 500;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: ${props => props.disabled ? 'var(--color-border)' : 'var(--color-primary-dark)'};
+    background-color: ${props =>
+      props.disabled ? 'var(--color-border)' : 'var(--color-primary-dark)'};
   }
-  
+
   .spinner {
     animation: spin 1s linear infinite;
   }
-  
+
   @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -409,10 +450,14 @@ const ShortcutsBackdrop = styled.div`
   background: rgba(0, 0, 0, 0.5);
   z-index: 9999;
   animation: fadeIn 0.2s ease-out;
-  
+
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
@@ -429,13 +474,13 @@ const ShortcutsPanel = styled.div`
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   min-width: 350px;
   max-width: 400px;
-  
+
   /* Add backdrop blur effect */
   backdrop-filter: blur(4px);
-  
+
   /* Add a subtle animation */
   animation: fadeInScale 0.3s ease-out;
-  
+
   @keyframes fadeInScale {
     from {
       opacity: 0;
@@ -491,7 +536,7 @@ const EmptyState = styled.div`
   background: var(--color-surface);
   color: var(--color-text-secondary);
   font-size: 16px;
-  
+
   p {
     margin: 0 0 1rem 0;
   }
@@ -500,7 +545,7 @@ const EmptyState = styled.div`
 const ShortcutsHint = styled.div`
   font-size: 12px;
   color: var(--color-text-tertiary);
-  
+
   kbd {
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
