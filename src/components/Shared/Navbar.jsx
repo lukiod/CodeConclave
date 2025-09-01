@@ -126,8 +126,9 @@ const NavbarLeft = styled.div`
 `;
 
 const MenuButton = styled.button`
-  background-color: transparent;
+  background: transparent;
   color: var(--color-text-primary);
+  padding: 12px;
   border: none;
   font-size: 22px;
   display: flex;
@@ -142,7 +143,11 @@ const MenuButton = styled.button`
   }
 
   @media (min-width: 768px) {
+
     display: none;
+=======
+    display: none; 
+
   }
 `;
 
