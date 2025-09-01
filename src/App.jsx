@@ -18,6 +18,7 @@ import ResetPassword from './pages/ResetPassword';
 // Components
 import ProtectedRoute from './components/Shared/ProtectedRoute';
 import Layout from './components/Shared/Layout';
+import Navbar from './components/Navbar';
 
 const App = () => {
   const { loading, currentUser } = useContext(AuthContext);
@@ -26,6 +27,7 @@ const App = () => {
     return (
       <LoadingScreen>
         <Spinner />
+        <Navbar />
         <LoadingText>Loading...</LoadingText>
       </LoadingScreen>
     );
