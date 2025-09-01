@@ -123,6 +123,7 @@ const Login = (props) => {
               type="button"
               onClick={togglePasswordVisibility}
               aria-label={showPassword ? "Hide password" : "Show password"}
+              title={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
             </PasswordToggle>
@@ -136,10 +137,10 @@ const Login = (props) => {
           )}
         </FormGroup>
 
-        <ForgotPassword type="button" onClick={props.onForgotPassword}>
+        <ForgotPasswordLink type="button" onClick={props.onForgotPassword}>
           Forgot password?
-        </ForgotPassword>
-        <Button type="submit" disabled={isSubmitting}>
+        </ForgotPasswordLink>
+        <Button type="submit" disabled={isSubmitting} title="Sign in to your account">
           {isSubmitting ? 'Logging in...' : 'Log In'}
         </Button>
       </Form>
@@ -221,7 +222,8 @@ const PasswordToggle = styled.button`
   }
 `;
 
-const ForgotPassword = styled.button`
+// FIXED: Renamed from ForgotPassword to ForgotPasswordLink to avoid naming conflict
+const ForgotPasswordLink = styled.button`
   background: none;
   border: none;
   font-size: 0.875rem;
@@ -256,6 +258,7 @@ const Button = styled.button`
     cursor: not-allowed;
   }
 `;
+
 const ErrorAlert = styled.div`
   background-color: #fed7d7;
   color: #c53030;
@@ -264,6 +267,7 @@ const ErrorAlert = styled.div`
   margin-bottom: 1rem;
   font-size: 0.9rem;
 `;
+
 const ErrorWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -271,6 +275,7 @@ const ErrorWrapper = styled.div`
   margin-top: 0.25rem;
   color: #fc8181;
 `;
+
 const InlineError = styled.span`
   font-size: 0.8rem;
 `;

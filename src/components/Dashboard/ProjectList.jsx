@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { getProjects, deleteProject } from '../../services/projectService';
 import { AuthContext } from '../../contexts/AuthContext';
 import ProjectCard from '../Shared/ProjectCard';
+import { ProjectCardSkeleton } from '../Shared/LoadingStates';
 
 const ProjectList = ({ filter = 'all', searchTerm = '' }) => {
   const [projects, setProjects] = useState([]);
@@ -67,7 +68,11 @@ const ProjectList = ({ filter = 'all', searchTerm = '' }) => {
     });
 
   if (isLoading) {
-    return <Loading>Loading projects...</Loading>;
+    return (
+      <ProjectGrid>
+        {Array(4).fill(0).map((_, i) => <ProjectCardSkeleton key={i} />)}
+      </ProjectGrid>
+    );
   }
 
   if (error) {
@@ -108,12 +113,6 @@ const ProjectGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
-`;
-
-const Loading = styled.div`
-  text-align: center;
-  padding: 2rem;
-  color: #718096;
 `;
 
 const ErrorMessage = styled.div`
