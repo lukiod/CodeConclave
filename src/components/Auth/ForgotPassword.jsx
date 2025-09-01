@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { isValidEmail } from '../../utils/validators';
 import { requestPasswordReset } from '../../services/authService';
@@ -8,12 +8,14 @@ const ForgotPassword = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const emailInputRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!isValidEmail(email)) {
       setError('Please enter a valid email address');
+      emailInputRef.current?.focus();
       return;
     }
     
@@ -36,13 +38,14 @@ const ForgotPassword = (props) => {
 
   return (
     <FormContainer>
-      {error && <ErrorAlert>{error}</ErrorAlert>}
-      {message && <SuccessAlert>{message}</SuccessAlert>}
+      {error && <ErrorAlert role="alert">{error}</ErrorAlert>}
+      {message && <SuccessAlert role="alert">{message}</SuccessAlert>}
       
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} noValidate>
         <FormGroup>
           <Label htmlFor="email">Email</Label>
           <Input
+            ref={emailInputRef}
             type="email"
             id="email"
             name="email"
@@ -50,7 +53,10 @@ const ForgotPassword = (props) => {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="Enter your email address"
+            aria-invalid={!!error}
+            aria-describedby={error ? "email-error-msg" : undefined}
           />
+           {error && <ErrorText id="email-error-msg">{error}</ErrorText>}
         </FormGroup>
         
         <FormText>
@@ -93,7 +99,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => props['aria-invalid'] ? '#e53e3e' : '#e2e8f0'};
   border-radius: 0.25rem;
   font-size: 1rem;
   background-color: #2d3748;
@@ -105,8 +111,8 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: ${props => props['aria-invalid'] ? '#e53e3e' : '#3182ce'};
+    box-shadow: 0 0 0 3px ${props => props['aria-invalid'] ? 'rgba(229, 62, 62, 0.2)' : 'rgba(49, 130, 206, 0.2)'};
   }
 `;
 
@@ -168,6 +174,12 @@ const BackToLogin = styled.button`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  color: #e53e3e;
 `;
 
 export default ForgotPassword;

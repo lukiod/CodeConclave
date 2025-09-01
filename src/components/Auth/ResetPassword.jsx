@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import api from '../../services/api';
@@ -12,6 +12,8 @@ const ResetPassword = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
 
   useEffect(() => {
     const verifyTokenAndOTP = async () => {
@@ -36,6 +38,7 @@ const ResetPassword = () => {
     
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      confirmPasswordRef.current?.focus();
       return;
     }
     
@@ -57,29 +60,37 @@ const ResetPassword = () => {
   return (
     <FormContainer>
       <h2>Reset Password</h2>
-      {error && <ErrorAlert>{error}</ErrorAlert>}
-      {message && <SuccessAlert>{message}</SuccessAlert>}
+      {error && <ErrorAlert role="alert">{error}</ErrorAlert>}
+      {message && <SuccessAlert role="alert">{message}</SuccessAlert>}
       
       {isVerified ? (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} noValidate>
           <FormGroup>
-            <Label>New Password</Label>
+            <Label htmlFor="password">New Password</Label>
             <Input
+              ref={passwordRef}
               type="password"
+              id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              aria-invalid={!!error}
             />
           </FormGroup>
           
           <FormGroup>
-            <Label>Confirm Password</Label>
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
+              ref={confirmPasswordRef}
               type="password"
+              id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              aria-invalid={!!error}
+              aria-describedby={error ? "password-error" : undefined}
             />
+            {error && <ErrorText id="password-error">{error}</ErrorText>}
           </FormGroup>
           
           <Button type="submit" disabled={isSubmitting}>
@@ -121,7 +132,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => props['aria-invalid'] ? '#e53e3e' : '#e2e8f0'};
   border-radius: 0.25rem;
   font-size: 1rem;
   background-color: #2d3748;
@@ -133,8 +144,8 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: ${props => props['aria-invalid'] ? '#e53e3e' : '#3182ce'};
+    box-shadow: 0 0 0 3px ${props => props['aria-invalid'] ? 'rgba(229, 62, 62, 0.2)' : 'rgba(49, 130, 206, 0.2)'};
   }
 `;
 
@@ -185,4 +196,10 @@ const LoadingMessage = styled.div`
   font-size: 1rem;
 `;
 
-export default ResetPassword; 
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  color: #e53e3e;
+`;
+
+export default ResetPassword;

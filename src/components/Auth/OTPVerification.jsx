@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { verifyOTP, resetPassword } from '../../services/authService';
 
@@ -10,6 +10,9 @@ const OTPVerification = ({ resetToken, onBack }) => {
   const [message, setMessage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [verificationToken, setVerificationToken] = useState(null);
+  const otpRef = useRef(null);
+  const newPasswordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
 
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
@@ -31,6 +34,7 @@ const OTPVerification = ({ resetToken, onBack }) => {
     
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match');
+      confirmPasswordRef.current?.focus();
       return;
     }
     
@@ -50,47 +54,60 @@ const OTPVerification = ({ resetToken, onBack }) => {
     <FormContainer>
       <BackButton onClick={onBack}>← Back</BackButton>
       <h2>Verify OTP</h2>
-      {error && <ErrorAlert>{error}</ErrorAlert>}
-      {message && <SuccessAlert>{message}</SuccessAlert>}
+      {error && <ErrorAlert role="alert">{error}</ErrorAlert>}
+      {message && <SuccessAlert role="alert">{message}</SuccessAlert>}
 
       {!verificationToken ? (
-        <Form onSubmit={handleVerifyOTP}>
+        <Form onSubmit={handleVerifyOTP} noValidate>
           <FormGroup>
-            <Label>OTP Code</Label>
+            <Label htmlFor="otp">OTP Code</Label>
             <Input
+              ref={otpRef}
               type="text"
+              id="otp"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               placeholder="Enter 6-digit OTP"
               required
+              aria-invalid={!!error}
+              aria-describedby={error ? "otp-error" : undefined}
             />
+            {error && <ErrorText id="otp-error">{error}</ErrorText>}
           </FormGroup>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Verifying...' : 'Verify OTP'}
           </Button>
         </Form>
       ) : (
-        <Form onSubmit={handlePasswordReset}>
+        <Form onSubmit={handlePasswordReset} noValidate>
           <FormGroup>
-            <Label>New Password</Label>
+            <Label htmlFor="newPassword">New Password</Label>
             <Input
+              ref={newPasswordRef}
               type="password"
+              id="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter new password"
               required
+              aria-invalid={!!error}
             />
           </FormGroup>
           
           <FormGroup>
-            <Label>Confirm Password</Label>
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
+              ref={confirmPasswordRef}
               type="password"
+              id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm new password"
               required
+              aria-invalid={!!error}
+              aria-describedby={error ? "password-error" : undefined}
             />
+            {error && <ErrorText id="password-error">{error}</ErrorText>}
           </FormGroup>
           
           <Button type="submit" disabled={isSubmitting}>
@@ -141,7 +158,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => props['aria-invalid'] ? '#e53e3e' : '#e2e8f0'};
   border-radius: 0.25rem;
   font-size: 1rem;
   background-color: #2d3748;
@@ -153,8 +170,8 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: ${props => props['aria-invalid'] ? '#e53e3e' : '#3182ce'};
+    box-shadow: 0 0 0 3px ${props => props['aria-invalid'] ? 'rgba(229, 62, 62, 0.2)' : 'rgba(49, 130, 206, 0.2)'};
   }
 `;
 
@@ -198,4 +215,10 @@ const SuccessAlert = styled.div`
   font-size: 0.9rem;
 `;
 
-export default OTPVerification; 
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  color: #e53e3e;
+`;
+
+export default OTPVerification;

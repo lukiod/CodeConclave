@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import styled from 'styled-components';
@@ -18,6 +18,10 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register, error, setError } = useContext(AuthContext);
   const navigate = useNavigate();
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -77,6 +81,15 @@ const Register = () => {
     e.preventDefault();
     
     if (!validateForm()) {
+      if (!validateUsername(formData.username).isValid) {
+        usernameRef.current?.focus();
+      } else if (!isValidEmail(formData.email)) {
+        emailRef.current?.focus();
+      } else if (!validatePassword(formData.password).isValid) {
+        passwordRef.current?.focus();
+      } else if (formData.password !== formData.confirmPassword) {
+        confirmPasswordRef.current?.focus();
+      }
       return;
     }
     
@@ -97,12 +110,13 @@ const Register = () => {
 
   return (
     <FormContainer>
-      {error && <ErrorAlert>{error}</ErrorAlert>}
+      {error && <ErrorAlert role="alert">{error}</ErrorAlert>}
       
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} noValidate>
         <FormGroup>
           <Label htmlFor="username">Username</Label>
           <Input
+            ref={usernameRef}
             type="text"
             id="username"
             name="username"
@@ -110,13 +124,16 @@ const Register = () => {
             onChange={handleChange}
             placeholder="Choose a username"
             isInvalid={!!errors.username}
+            aria-invalid={!!errors.username}
+            aria-describedby={errors.username ? "username-error" : undefined}
           />
-          {errors.username && <ErrorText>{errors.username}</ErrorText>}
+          {errors.username && <ErrorText id="username-error" role="alert">{errors.username}</ErrorText>}
         </FormGroup>
         
         <FormGroup>
           <Label htmlFor="email">Email</Label>
           <Input
+            ref={emailRef}
             type="email"
             id="email"
             name="email"
@@ -124,14 +141,17 @@ const Register = () => {
             onChange={handleChange}
             placeholder="Enter your email"
             isInvalid={!!errors.email}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
           />
-          {errors.email && <ErrorText>{errors.email}</ErrorText>}
+          {errors.email && <ErrorText id="email-error" role="alert">{errors.email}</ErrorText>}
         </FormGroup>
         
         <FormGroup>
           <Label htmlFor="password">Password</Label>
           <PasswordInputWrapper>
             <PasswordInput
+              ref={passwordRef}
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
@@ -139,6 +159,8 @@ const Register = () => {
               onChange={handleChange}
               placeholder="Create a password"
               isInvalid={!!errors.password}
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? "password-error" : "password-requirements"}
             />
             <PasswordToggle
               type="button"
@@ -148,25 +170,25 @@ const Register = () => {
               {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
             </PasswordToggle>
           </PasswordInputWrapper>
-          {errors.password && <ErrorText>{errors.password}</ErrorText>}
+          {errors.password && <ErrorText id="password-error" role="alert">{errors.password}</ErrorText>}
           
-          <PasswordRequirements>
+          <PasswordRequirements id="password-requirements">
             <RequirementTitle>Password must contain:</RequirementTitle>
             <RequirementList>
               <RequirementItem $valid={formData.password.length >= 8}>
-                • At least 8 characters
+                {formData.password.length >= 8 ? '✓' : '✗'} At least 8 characters
               </RequirementItem>
               <RequirementItem $valid={/[a-z]/.test(formData.password)}>
-                • One lowercase letter (a-z)
+                {/[a-z]/.test(formData.password) ? '✓' : '✗'} One lowercase letter (a-z)
               </RequirementItem>
               <RequirementItem $valid={/[A-Z]/.test(formData.password)}>
-                • One uppercase letter (A-Z)
+                {/[A-Z]/.test(formData.password) ? '✓' : '✗'} One uppercase letter (A-Z)
               </RequirementItem>
               <RequirementItem $valid={/[0-9]/.test(formData.password)}>
-                • One number (0-9)
+                {/[0-9]/.test(formData.password) ? '✓' : '✗'} One number (0-9)
               </RequirementItem>
               <RequirementItem $valid={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password)}>
-                • One special character (!@#$%^&*()_+-=[]{'{}'}|;:,.{'<>'}?)
+                {/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password) ? '✓' : '✗'} One special character (!@#$%^&*()_+-=[]{'{}'}|;:,.{'<>'}?)
               </RequirementItem>
             </RequirementList>
           </PasswordRequirements>
@@ -176,6 +198,7 @@ const Register = () => {
           <Label htmlFor="confirmPassword">Confirm Password</Label>
           <PasswordInputWrapper>
             <PasswordInput
+              ref={confirmPasswordRef}
               type={showConfirmPassword ? "text" : "password"}
               id="confirmPassword"
               name="confirmPassword"
@@ -183,6 +206,8 @@ const Register = () => {
               onChange={handleChange}
               placeholder="Confirm your password"
               isInvalid={!!errors.confirmPassword}
+              aria-invalid={!!errors.confirmPassword}
+              aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
             />
             <PasswordToggle
               type="button"
@@ -192,7 +217,7 @@ const Register = () => {
               {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
             </PasswordToggle>
           </PasswordInputWrapper>
-          {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
+          {errors.confirmPassword && <ErrorText id="confirmPassword-error" role="alert">{errors.confirmPassword}</ErrorText>}
         </FormGroup>
         
         <RegisterButton type="submit" disabled={isSubmitting}>
