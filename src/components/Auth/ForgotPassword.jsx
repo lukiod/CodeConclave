@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { isValidEmail } from '../../utils/validators';
 import { requestPasswordReset } from '../../services/authService';
@@ -7,17 +7,21 @@ const ForgotPassword = (props) => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
+  const [emailError, setEmailError] = useState(null);
+  const [formError, setFormError] = useState(null);
+  const emailInputRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!isValidEmail(email)) {
-      setError('Please enter a valid email address');
+     setEmailError('Please enter a valid email address');
+      emailInputRef.current?.focus();
       return;
     }
     
-    setError(null);
+    setEmailError(null);
+    setFormError(null);
     setMessage(null);
     setIsSubmitting(true);
     
@@ -28,7 +32,7 @@ const ForgotPassword = (props) => {
         props.onSuccess(response.data.token);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to request password reset');
+       setFormError(err.response?.data?.message || 'Failed to request password reset');
     } finally {
       setIsSubmitting(false);
     }
@@ -36,29 +40,64 @@ const ForgotPassword = (props) => {
 
   return (
     <FormContainer>
-      {error && <ErrorAlert>{error}</ErrorAlert>}
-      {message && <SuccessAlert>{message}</SuccessAlert>}
+      {formError && (
+        <ErrorAlert 
+          role="alert" 
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          {formError}
+        </ErrorAlert>
+      )}
+      {message && (
+        <SuccessAlert 
+          role="alert" 
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {message}
+        </SuccessAlert>
+      )}
       
-      <Form onSubmit={handleSubmit}>
+     <Form onSubmit={handleSubmit} noValidate>
         <FormGroup>
           <Label htmlFor="email">Email</Label>
           <Input
+            ref={emailInputRef}
             type="email"
             id="email"
             name="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+             const v = e.target.value;
+             setEmail(v);
+             // Clear field error as user corrects input
+             if (emailError && isValidEmail(v)) setEmailError(null);
+            }}
             required
             placeholder="Enter your email address"
+            aria-required="true"
+            aria-invalid={!!emailError}
+            aria-describedby={emailError ? "email-error-msg email-help" : "email-help"}
           />
-        </FormGroup>
+           {emailError && <ErrorText id="email-error-msg">{emailError}</ErrorText>}
+         </FormGroup>
         
-        <FormText>
+        
+        <FormText id="email-help">
           Enter your email address and we'll send you instructions to reset your password.
         </FormText>
         
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Sending...' : 'Reset Password'}
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          aria-busy={isSubmitting}
+        >
+          {isSubmitting ? (
+            <span aria-live="polite" aria-atomic="true">Sending...</span>
+          ) : (
+            'Reset Password'
+          )}
         </Button>
       </Form>
       
@@ -93,7 +132,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid ${props => props['aria-invalid'] ? '#e53e3e' : '#e2e8f0'};
   border-radius: 0.25rem;
   font-size: 1rem;
   background-color: #2d3748;
@@ -105,8 +144,8 @@ const Input = styled.input`
   
   &:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+    border-color: ${props => props['aria-invalid'] ? '#e53e3e' : '#3182ce'};
+    box-shadow: 0 0 0 3px ${props => props['aria-invalid'] ? 'rgba(229, 62, 62, 0.2)' : 'rgba(49, 130, 206, 0.2)'};
   }
 `;
 
@@ -168,6 +207,12 @@ const BackToLogin = styled.button`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  color: #e53e3e;
 `;
 
 export default ForgotPassword;

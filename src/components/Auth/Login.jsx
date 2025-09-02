@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import styled from 'styled-components';
@@ -16,6 +16,8 @@ const Login = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login, error, setError } = useContext(AuthContext);
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -68,6 +70,11 @@ const Login = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
+      if (!isValidEmail(formData.email)) {
+        emailInputRef.current?.focus();
+      } else if (!formData.password) {
+        passwordInputRef.current?.focus();
+      }
       return;
     }
     setIsSubmitting(true);
@@ -85,11 +92,12 @@ const Login = (props) => {
 
   return (
     <FormContainer>
-      {error && <ErrorAlert>{error}</ErrorAlert>}
-      <Form onSubmit={handleSubmit}>
+      {error && <ErrorAlert role="alert">{error}</ErrorAlert>}
+      <Form onSubmit={handleSubmit} noValidate>
         <FormGroup>
           <Label htmlFor="email">Email</Label>
           <Input
+            ref={emailInputRef}
             type="email"
             id="email"
             name="email"
@@ -97,11 +105,14 @@ const Login = (props) => {
             onChange={handleChange}
             placeholder="Enter your email"
             $hasError={!!formErrors.email}
+            aria-required="true"
+            aria-invalid={!!formErrors.email}
+            aria-describedby={formErrors.email ? "email-error" : undefined}
           />
 
           {formErrors.email && (
-            <ErrorWrapper>
-              <FaTimesCircle />
+            <ErrorWrapper id="email-error" role="alert">
+              <FaTimesCircle aria-hidden="true" />
               <InlineError>{formErrors.email}</InlineError>
             </ErrorWrapper>
           )}
@@ -111,6 +122,7 @@ const Login = (props) => {
           <Label htmlFor="password">Password</Label>
           <PasswordInputWrapper>
             <PasswordInput
+              ref={passwordInputRef}
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
@@ -118,6 +130,9 @@ const Login = (props) => {
               onChange={handleChange}
               placeholder="Enter your password"
               $hasError={!!formErrors.password}
+              aria-required="true"
+              aria-invalid={!!formErrors.password}
+              aria-describedby={formErrors.password ? "password-error" : undefined}
             />
             <PasswordToggle
               type="button"
@@ -129,8 +144,8 @@ const Login = (props) => {
           </PasswordInputWrapper>
 
           {formErrors.password && (
-            <ErrorWrapper>
-              <FaTimesCircle />
+            <ErrorWrapper id="password-error" role="alert">
+              <FaTimesCircle aria-hidden="true" />
               <InlineError>{formErrors.password}</InlineError>
             </ErrorWrapper>
           )}
