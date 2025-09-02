@@ -148,7 +148,6 @@ const CodeEditor = ({ file }) => {
       let result;
 
       // Try server-side execution first
-      // Try server-side execution first
       try {
         result = await executeCode(code, language);
       } catch (serverError) {
