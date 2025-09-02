@@ -124,6 +124,7 @@ const Register = () => {
             onChange={handleChange}
             placeholder="Choose a username"
             isInvalid={!!errors.username}
+            aria-required="true"
             aria-invalid={!!errors.username}
             aria-describedby={errors.username ? "username-error" : undefined}
           />
@@ -141,6 +142,7 @@ const Register = () => {
             onChange={handleChange}
             placeholder="Enter your email"
             isInvalid={!!errors.email}
+            aria-required="true"
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? "email-error" : undefined}
           />
@@ -159,8 +161,9 @@ const Register = () => {
               onChange={handleChange}
               placeholder="Create a password"
               isInvalid={!!errors.password}
+              aria-required="true"
               aria-invalid={!!errors.password}
-              aria-describedby={errors.password ? "password-error" : "password-requirements"}
+              aria-describedby={errors.password ? "password-error password-requirements" : "password-requirements"}
             />
             <PasswordToggle
               type="button"
@@ -172,7 +175,7 @@ const Register = () => {
           </PasswordInputWrapper>
           {errors.password && <ErrorText id="password-error" role="alert">{errors.password}</ErrorText>}
           
-          <PasswordRequirements id="password-requirements">
+          <PasswordRequirements id="password-requirements" aria-live="polite" aria-atomic="false">
             <RequirementTitle>Password must contain:</RequirementTitle>
             <RequirementList>
               <RequirementItem $valid={formData.password.length >= 8}>
@@ -206,6 +209,7 @@ const Register = () => {
               onChange={handleChange}
               placeholder="Confirm your password"
               isInvalid={!!errors.confirmPassword}
+              aria-required="true"
               aria-invalid={!!errors.confirmPassword}
               aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
             />

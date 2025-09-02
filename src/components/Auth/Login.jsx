@@ -105,6 +105,7 @@ const Login = (props) => {
             onChange={handleChange}
             placeholder="Enter your email"
             $hasError={!!formErrors.email}
+            aria-required="true"
             aria-invalid={!!formErrors.email}
             aria-describedby={formErrors.email ? "email-error" : undefined}
           />
@@ -129,6 +130,7 @@ const Login = (props) => {
               onChange={handleChange}
               placeholder="Enter your password"
               $hasError={!!formErrors.password}
+              aria-required="true"
               aria-invalid={!!formErrors.password}
               aria-describedby={formErrors.password ? "password-error" : undefined}
             />

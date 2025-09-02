@@ -38,8 +38,24 @@ const ForgotPassword = (props) => {
 
   return (
     <FormContainer>
-      {error && <ErrorAlert role="alert">{error}</ErrorAlert>}
-      {message && <SuccessAlert role="alert">{message}</SuccessAlert>}
+      {error && (
+        <ErrorAlert 
+          role="alert" 
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          {error}
+        </ErrorAlert>
+      )}
+      {message && (
+        <SuccessAlert 
+          role="alert" 
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {message}
+        </SuccessAlert>
+      )}
       
       <Form onSubmit={handleSubmit} noValidate>
         <FormGroup>
@@ -53,6 +69,7 @@ const ForgotPassword = (props) => {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="Enter your email address"
+            aria-required="true"
             aria-invalid={!!error}
             aria-describedby={error ? "email-error-msg" : undefined}
           />
@@ -63,8 +80,16 @@ const ForgotPassword = (props) => {
           Enter your email address and we'll send you instructions to reset your password.
         </FormText>
         
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Sending...' : 'Reset Password'}
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          aria-busy={isSubmitting}
+        >
+          {isSubmitting ? (
+            <span aria-live="polite" aria-atomic="true">Sending...</span>
+          ) : (
+            'Reset Password'
+          )}
         </Button>
       </Form>
       
