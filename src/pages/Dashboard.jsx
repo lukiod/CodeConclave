@@ -4,6 +4,7 @@ import { getProjects, createProject, deleteProject, updateProject } from '../ser
 import ProjectCard from '../components/Shared/ProjectCard';
 import NewProjectModal from '../components/Dashboard/NewProjectModal';
 import ShareModal from '../components/Editor/ShareModal';
+import { LoadingWithMessage, ProjectCardSkeleton } from '../components/Shared/LoadingStates';
 import { FaPlus, FaFilter, FaSearch } from 'react-icons/fa';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -104,10 +105,44 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <LoadingContainer>
-        <LoadingSpinner />
-        <p>Loading projects...</p>
-      </LoadingContainer>
+      <DashboardContainer>
+        <Header>
+          <Title>My Projects</Title>
+          <Controls>
+            <SearchBar>
+              <SearchIcon>
+                <FaSearch />
+              </SearchIcon>
+              <SearchInput
+                type="text"
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                disabled
+              />
+            </SearchBar>
+            <FilterGroup>
+              <FilterLabel>
+                <FaFilter />
+                <span>Filter:</span>
+              </FilterLabel>
+              <FilterSelect value={filterType} onChange={(e) => setFilterType(e.target.value)} disabled>
+                <option value="all">All Projects</option>
+                <option value="owned">My Projects</option>
+                <option value="shared">Shared With Me</option>
+              </FilterSelect>
+            </FilterGroup>
+            <NewProjectButton disabled>
+              <FaPlus />
+              <span>New Project</span>
+            </NewProjectButton>
+          </Controls>
+        </Header>
+
+        <ProjectsGrid>
+          {Array(6).fill(0).map((_, i) => <ProjectCardSkeleton key={i} />)}
+        </ProjectsGrid>
+      </DashboardContainer>
     );
   }
 
@@ -236,12 +271,11 @@ const Controls = styled.div`
   }
 `;
 
-/* --- Updated SearchBar and SearchInput styles --- */
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  height: 36px; /* consistent control height */
+  height: 36px;
   background-color: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -281,6 +315,11 @@ const SearchInput = styled.input`
   &:focus {
     box-shadow: none;
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 const FilterGroup = styled.div`
@@ -314,6 +353,11 @@ const FilterSelect = styled.select`
   &:focus {
     border-color: var(--color-primary);
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 const NewProjectButton = styled.button`
@@ -330,8 +374,14 @@ const NewProjectButton = styled.button`
   cursor: pointer;
   transition: background-color 0.2s;
   
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: var(--color-primary-dark);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--color-border);
   }
   
   svg {
@@ -384,38 +434,15 @@ const EmptyStateButton = styled.button`
   }
 `;
 
-const ErrorMessage = styled.div`
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--color-danger);
+const ErrorMessage = styled.div.attrs({
+  role: 'alert',
+  'aria-live': 'polite'
+})`
+  background-color: #FFF5F5;
+  color: #C53030;
   padding: 12px 16px;
   border-radius: 4px;
   margin-bottom: 20px;
-  border-left: 4px solid var(--color-danger);
+  border-left: 4px solid #C53030;
 `;
-
-const LoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 300px;
-  color: var(--color-text-secondary);
-`;
-
-const LoadingSpinner = styled.div`
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--color-border);
-  border-radius: 50%;
-  border-top-color: var(--color-primary);
-  animation: spin 1s ease-in-out infinite;
-  margin-bottom: 16px;
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-`;
-
 export default Dashboard;

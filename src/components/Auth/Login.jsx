@@ -4,13 +4,12 @@ import { AuthContext } from '../../contexts/AuthContext';
 import styled from 'styled-components';
 import { isValidEmail } from '../../utils/validators';
 import { FaTimesCircle } from 'react-icons/fa';
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 
-
-const Login = (props) => {
+const Login = props => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [formErrors, setFormErrors] = useState({ email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,7 +20,7 @@ const Login = (props) => {
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
@@ -29,7 +28,10 @@ const Login = (props) => {
 
     if (name === 'email') {
       if (value.length > 0 && !isValidEmail(value)) {
-        setFormErrors({ ...formErrors, email: 'Please enter a valid email address.' });
+        setFormErrors({
+          ...formErrors,
+          email: 'Please enter a valid email address.',
+        });
       } else {
         setFormErrors({ ...formErrors, email: '' });
       }
@@ -42,7 +44,6 @@ const Login = (props) => {
     } else if (formErrors[name]) {
       setFormErrors({ ...formErrors, [name]: '' });
     }
-
   };
 
   const togglePasswordVisibility = () => {
@@ -67,8 +68,9 @@ const Login = (props) => {
     return isValid;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    if (isSubmitting) return; // added this guard to prevent multiple submissions
     if (!validateForm()) {
       if (!isValidEmail(formData.email)) {
         emailInputRef.current?.focus();
@@ -78,7 +80,7 @@ const Login = (props) => {
       return;
     }
     setIsSubmitting(true);
-    
+
     try {
       await login(formData);
       navigate('/dashboard');
@@ -88,7 +90,6 @@ const Login = (props) => {
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <FormContainer>
@@ -124,6 +125,7 @@ const Login = (props) => {
             <PasswordInput
               ref={passwordInputRef}
               type={showPassword ? "text" : "password"}
+
               id="password"
               name="password"
               value={formData.password}
@@ -137,7 +139,8 @@ const Login = (props) => {
             <PasswordToggle
               type="button"
               onClick={togglePasswordVisibility}
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
             >
               {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
             </PasswordToggle>
@@ -151,10 +154,14 @@ const Login = (props) => {
           )}
         </FormGroup>
 
-        <ForgotPassword type="button" onClick={props.onForgotPassword}>
+        <ForgotPasswordLink type="button" onClick={props.onForgotPassword}>
           Forgot password?
-        </ForgotPassword>
-        <Button type="submit" disabled={isSubmitting}>
+        </ForgotPasswordLink>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          title="Sign in to your account"
+        >
           {isSubmitting ? 'Logging in...' : 'Log In'}
         </Button>
       </Form>
@@ -191,11 +198,11 @@ const Input = styled.input`
   font-size: 1rem;
   background-color: #2d3748;
   color: #e2e8f0;
-  
+
   &::placeholder {
     color: #a0aec0;
   }
-  
+
   &:focus {
     outline: none;
     border-color: ${props => (props.$hasError ? '#fc8181' : '#3182ce')};
@@ -225,18 +232,19 @@ const PasswordToggle = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   &:hover {
     color: #e2e8f0;
   }
-  
+
   &:focus {
     outline: none;
     color: #3182ce;
   }
 `;
 
-const ForgotPassword = styled.button`
+// FIXED: Renamed from ForgotPassword to ForgotPasswordLink to avoid naming conflict
+const ForgotPasswordLink = styled.button`
   background: none;
   border: none;
   font-size: 0.875rem;
@@ -244,7 +252,7 @@ const ForgotPassword = styled.button`
   text-align: right;
   margin-top: -0.5rem;
   cursor: pointer;
-  
+
   &:hover {
     text-decoration: underline;
   }
@@ -261,17 +269,21 @@ const Button = styled.button`
   cursor: pointer;
   transition: background-color 0.2s;
   margin-top: 0.5rem;
-  
+
   &:hover:not(:disabled) {
     background-color: #2c5282;
   }
-  
+
   &:disabled {
     background-color: #a0aec0;
     cursor: not-allowed;
   }
 `;
-const ErrorAlert = styled.div`
+
+const ErrorAlert = styled.div.attrs({
+  role: 'alert',
+  'aria-live': 'polite',
+})`
   background-color: #fed7d7;
   color: #c53030;
   padding: 0.75rem;
@@ -279,6 +291,7 @@ const ErrorAlert = styled.div`
   margin-bottom: 1rem;
   font-size: 0.9rem;
 `;
+
 const ErrorWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -286,6 +299,7 @@ const ErrorWrapper = styled.div`
   margin-top: 0.25rem;
   color: #fc8181;
 `;
+
 const InlineError = styled.span`
   font-size: 0.8rem;
 `;
