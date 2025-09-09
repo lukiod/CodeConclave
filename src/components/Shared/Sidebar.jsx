@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import styled from 'styled-components';
+
 import {
   FaHome,
   FaShareAlt,
@@ -10,6 +11,8 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaCompressArrowsAlt,
+  FaPlayCircle, 
+  FaBook,
 } from 'react-icons/fa';
 
 const STORAGE_KEY = 'cc_sidebar_mini';
@@ -70,6 +73,13 @@ const Sidebar = ({ isOpen }) => {
 
       <SidebarNav>
         <NavItem $mini={mini}>
+          <NavLink to="/getting-started">
+            <FaBook />
+            <NavText $mini={mini}>Getting Started</NavText>
+          </NavLink>
+        </NavItem>
+
+        <NavItem $mini={mini}>
           <NavLink to="/dashboard" end>
             <FaHome />
             <NavText $mini={mini}>Dashboard</NavText>
@@ -96,6 +106,14 @@ const Sidebar = ({ isOpen }) => {
           <NavLink to="/help">
             <FaQuestionCircle />
             <NavText $mini={mini}>Help</NavText>
+          </NavLink>
+        </NavItem>
+        <NavDivider />
+
+        <NavItem $mini={mini}>
+          <NavLink to="/settings">
+            <FaCog />
+            <NavText $mini={mini}>Settings</NavText>
           </NavLink>
         </NavItem>
       </SidebarNav>

@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import styled from 'styled-components';
 
+
 // Pages
 import LandingPage from './pages/Landingpage';
 import HomePage from './pages/Homepage';
@@ -14,6 +15,7 @@ import SharedProjects from './pages/SharedProjects';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 import ResetPassword from './pages/ResetPassword';
+import GettingStarted from './pages/GettingStarted';
 
 // Components
 import ProtectedRoute from './components/Shared/ProtectedRoute';
@@ -35,40 +37,39 @@ const App = () => {
     <Routes>
       {/* Landing Page - The initial animated page */}
       <Route path="/" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <LandingPage />
+        currentUser ? <Navigate to="/getting-started" replace /> : <LandingPage />
       } />
-      
-      {/* Home Page - With Login/Register tabs */}
-      <Route path="/home" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <HomePage />
-      } />
-
-      
-      <Route path="/reset-password" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <ResetPassword />
-      } />
-
-      {/* Auth Routes (for direct access) */}
-      <Route path="/login" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <Login />
-      } />
-      <Route path="/register" element={
-        currentUser ? <Navigate to="/dashboard" replace /> : <Register />
-      } />
-      
-      {/* Protected Routes */}
-      <Route path="/" element={
+      <Route element={
         <ProtectedRoute>
           <Layout />
         </ProtectedRoute>
       }>
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="getting-started" element={<GettingStarted />} />
         <Route path="projects/:projectId" element={<ProjectEditor />} />
         <Route path="shared" element={<SharedProjects />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
       
-      <Route path="*" element={<NotFound />} />
+      {/* Home Page - With Login/Register tabs */}
+      <Route path="/home" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <HomePage />
+      } />
+
+      
+      <Route path="/reset-password" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <ResetPassword />
+      } />
+
+      {/* Auth Routes (for direct access) */}
+      <Route path="/login" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <Login />
+      } />
+      <Route path="/register" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <Register />
+      } />
+      
     </Routes>
   );
 };

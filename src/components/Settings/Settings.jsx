@@ -23,6 +23,8 @@ import {
   FaList
 } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
+import GoogleDriveIntegration from "./GoogleDriveIntegration";
+ 
 
 const Settings = () => {
   const { currentUser } = useContext(AuthContext);

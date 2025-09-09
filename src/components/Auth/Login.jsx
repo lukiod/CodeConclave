@@ -74,7 +74,7 @@ const Login = (props) => {
     
     try {
       await login(formData);
-      navigate('/dashboard');
+      navigate('/getting-started');
     } catch (err) {
       console.error('Login error:', err);
     } finally {
