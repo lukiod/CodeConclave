@@ -39,86 +39,45 @@ const App = () => {
   }
 
   return (
-    <ErrorBoundary fallbackMessage="The application encountered an unexpected error. Please refresh the page to continue.">
-      <Routes>
-        {/* Landing Page */}
-        <Route path="/" element={
-          currentUser ? <Navigate to="/getting-started" replace /> : <LandingPage />
-        } />
-
-        {/* Home Page */}
-        <Route path="/home" element={
-          currentUser ? <Navigate to="/getting-started" replace /> : (
-            <ErrorBoundary fallbackMessage="Error loading Home page.">
-              <HomePage />
-            </ErrorBoundary>
-          )
-        } />
-
-        {/* Password Reset */}
-        <Route path="/reset-password" element={
-          currentUser ? <Navigate to="/getting-started" replace /> : (
-            <ErrorBoundary fallbackMessage="Error loading password reset page.">
-              <ResetPassword />
-            </ErrorBoundary>
-          )
-        } />
-
-        {/* Auth Routes */}
-        <Route path="/login" element={
-          currentUser ? <Navigate to="/getting-started" replace /> : (
-            <ErrorBoundary fallbackMessage="Error loading login page.">
-              <Login />
-            </ErrorBoundary>
-          )
-        } />
-        <Route path="/register" element={
-          currentUser ? <Navigate to="/getting-started" replace /> : (
-            <ErrorBoundary fallbackMessage="Error loading registration page.">
-              <Register />
-            </ErrorBoundary>
-          )
-        } />
-
-        {/* Protected Routes */}
-        <Route path="/" element={
-          <ProtectedRoute>
-            <ErrorBoundary fallbackMessage="Error loading main application layout.">
-              <Layout />
-            </ErrorBoundary>
-          </ProtectedRoute>
-        }>
-          <Route path="dashboard" element={
-            <ErrorBoundary fallbackMessage="Error loading dashboard. Please try refreshing the page.">
-              <Dashboard />
-            </ErrorBoundary>
-          } />
-          <Route path="getting-started" element={
-            <ErrorBoundary fallbackMessage="Error loading Getting Started page.">
-              <GettingStarted />
-            </ErrorBoundary>
-          } />
-          <Route path="projects/:projectId" element={
-            <ErrorBoundary fallbackMessage="Error loading project editor. Please try reopening the project.">
-              <ProjectEditor />
-            </ErrorBoundary>
-          } />
-          <Route path="shared" element={
-            <ErrorBoundary fallbackMessage="Error loading shared projects.">
-              <SharedProjects />
-            </ErrorBoundary>
-          } />
-          <Route path="settings" element={
-            <ErrorBoundary fallbackMessage="Error loading settings page.">
-              <Settings />
-            </ErrorBoundary>
-          } />
-        </Route>
-
-        {/* Catch-all 404 */}
+    <Routes>
+      {/* Landing Page - The initial animated page */}
+      <Route path="/" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <LandingPage />
+      } />
+      <Route element={
+        <ProtectedRoute>
+          <Layout />
+        </ProtectedRoute>
+      }>
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="getting-started" element={<GettingStarted />} />
+        <Route path="projects/:projectId" element={<ProjectEditor />} />
+        <Route path="shared" element={<SharedProjects />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
-      </Routes>
-    </ErrorBoundary>
+      </Route>
+      {/* Catch-all 404 for unauthenticated/public paths */}
+      <Route path="*" element={<NotFound />} />
+      
+      {/* Home Page - With Login/Register tabs */}
+      <Route path="/home" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <HomePage />
+      } />
+
+      
+      <Route path="/reset-password" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <ResetPassword />
+      } />
+
+      {/* Auth Routes (for direct access) */}
+      <Route path="/login" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <Login />
+      } />
+      <Route path="/register" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <Register />
+      } />
+      
+    </Routes>
   );
 };
 
