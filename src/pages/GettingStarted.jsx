@@ -17,11 +17,14 @@ const GettingStarted = () => {
   const [projectDescription, setProjectDescription] = useState("");
   const [visibility, setVisibility] = useState("private");
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleNext = async () => {
-  if (currentStep === 3) {
+    if (currentStep === 3) {
+    if (isSubmitting) return;
     if (projectName.trim()) {
       try {
+        setIsSubmitting(true);
         const projectData = {
           name: projectName,
           description: projectDescription,
@@ -34,11 +37,13 @@ const GettingStarted = () => {
         console.error("Error creating project:", err);
         alert("Failed to create project. Please try again.");
         return;
+        } finally {
++        setIsSubmitting(false);
       }
     }
     navigate("/dashboard");
   } else {
-    setCurrentStep(currentStep + 1);
+     setCurrentStep((s) => s + 1);
   }
 };
 
@@ -92,7 +97,7 @@ const GettingStarted = () => {
                 <p>Sync projects with your Google Drive.</p>
                 <ConnectBtn
                   onClick={() => {
-                    window.open("https://drive.google.com", "_blank");
+                    window.open("https://drive.google.com", "_blank", "noopener,noreferrer");
                   }}
                 >
                   Connect Google Drive
@@ -163,7 +168,11 @@ const GettingStarted = () => {
               Back
             </Button>
           )}
-          <Button onClick={handleNext}>
+          <Button
+            onClick={handleNext}
+            disabled={isSubmitting || (currentStep === 3 && !projectName.trim())}
+            aria-busy={isSubmitting}
+          >
             {currentStep === 3 ? "Create Project" : "Next"}
           </Button>
         </Actions>

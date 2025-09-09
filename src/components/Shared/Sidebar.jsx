@@ -94,7 +94,6 @@ const Sidebar = ({ isOpen }) => {
         </NavItem>
 
         <NavDivider />
-
         <NavItem $mini={mini}>
           <NavLink to="/settings">
             <FaCog />
@@ -106,14 +105,6 @@ const Sidebar = ({ isOpen }) => {
           <NavLink to="/help">
             <FaQuestionCircle />
             <NavText $mini={mini}>Help</NavText>
-          </NavLink>
-        </NavItem>
-        <NavDivider />
-
-        <NavItem $mini={mini}>
-          <NavLink to="/settings">
-            <FaCog />
-            <NavText $mini={mini}>Settings</NavText>
           </NavLink>
         </NavItem>
         <NavDivider />
