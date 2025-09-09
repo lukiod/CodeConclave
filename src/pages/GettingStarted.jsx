@@ -6,7 +6,7 @@ import { createProject } from "../services/projectService";
 
 // steps config
 const steps = [
-  { id: 1, title: "How CodeConcl Works", description: "Learn the basics of how CodeConcl works and explore the features." },
+  { id: 1, title: "How CodeConclave Works", description: "Learn the basics of how CodeConclave works and explore the features."},
   { id: 2, title: "Connect Google Drive", description: "Connect your Google Drive to save and sync your projects." },
   { id: 3, title: "Create Your Project", description: "Start your first project and explore the editor." },
 ];
@@ -83,7 +83,7 @@ const GettingStarted = () => {
             <p>{steps[1].description}</p>
             <IntegrationBox>
               <Column>
-                <h3>CodeConcl Storage</h3>
+                <h3>CodeConclave Storage</h3>
                 <p>Your default workspace to store projects.</p>
                 <StorageBox>Available Space: 5GB</StorageBox>
               </Column>

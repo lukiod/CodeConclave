@@ -51,6 +51,8 @@ const App = () => {
         <Route path="settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Route>
+      {/* Catch-all 404 for unauthenticated/public paths */}
+      <Route path="*" element={<NotFound />} />
       
       {/* Home Page - With Login/Register tabs */}
       <Route path="/home" element={

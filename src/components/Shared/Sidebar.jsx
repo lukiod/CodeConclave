@@ -116,6 +116,7 @@ const Sidebar = ({ isOpen }) => {
             <NavText $mini={mini}>Settings</NavText>
           </NavLink>
         </NavItem>
+        <NavDivider />
       </SidebarNav>
 
       <SidebarFooter $mini={mini}>
