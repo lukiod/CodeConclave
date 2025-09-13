@@ -1,8 +1,8 @@
+// src/App.jsx
 import { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import styled from 'styled-components';
-
 
 // Pages
 import LandingPage from './pages/Landingpage';
@@ -35,10 +35,30 @@ const App = () => {
 
   return (
     <Routes>
-      {/* Landing Page - The initial animated page */}
+      {/* Landing Page */}
       <Route path="/" element={
         currentUser ? <Navigate to="/getting-started" replace /> : <LandingPage />
       } />
+
+      {/* Home Page */}
+      <Route path="/home" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <HomePage />
+      } />
+
+      {/* Password Reset */}
+      <Route path="/reset-password" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <ResetPassword />
+      } />
+
+      {/* Auth Routes */}
+      <Route path="/login" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <Login />
+      } />
+      <Route path="/register" element={
+        currentUser ? <Navigate to="/getting-started" replace /> : <Register />
+      } />
+
+      {/* Protected Routes */}
       <Route element={
         <ProtectedRoute>
           <Layout />
@@ -51,29 +71,11 @@ const App = () => {
         <Route path="settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Route>
-      
-      {/* Home Page - With Login/Register tabs */}
-      <Route path="/home" element={
-        currentUser ? <Navigate to="/getting-started" replace /> : <HomePage />
-      } />
-
-      
-      <Route path="/reset-password" element={
-        currentUser ? <Navigate to="/getting-started" replace /> : <ResetPassword />
-      } />
-
-      {/* Auth Routes (for direct access) */}
-      <Route path="/login" element={
-        currentUser ? <Navigate to="/getting-started" replace /> : <Login />
-      } />
-      <Route path="/register" element={
-        currentUser ? <Navigate to="/getting-started" replace /> : <Register />
-      } />
-      
     </Routes>
   );
 };
 
+// Loading styles
 const LoadingScreen = styled.div`
   display: flex;
   flex-direction: column;
@@ -91,7 +93,7 @@ const Spinner = styled.div`
   border-top-color: #3182ce;
   animation: spin 1s ease-in-out infinite;
   margin-bottom: 20px;
-  
+
   @keyframes spin {
     to {
       transform: rotate(360deg);
