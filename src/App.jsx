@@ -1,9 +1,8 @@
-// src/App.jsx
 import { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
-import { useTheme } from './contexts/ThemeContext';
 import styled from 'styled-components';
+
 
 // Pages
 import LandingPage from './pages/Landingpage';
@@ -21,19 +20,15 @@ import GettingStarted from './pages/GettingStarted';
 // Components
 import ProtectedRoute from './components/Shared/ProtectedRoute';
 import Layout from './components/Shared/Layout';
-import ErrorBoundary from './components/Shared/ErrorBoundary';
-import { LoadingSpinner } from './components/Shared/LoadingStates';
 
 const App = () => {
   const { loading, currentUser } = useContext(AuthContext);
-  const { isDarkMode } = useTheme();
 
   if (loading) {
     return (
-      <LoadingScreen $isDarkMode={isDarkMode} role="status" aria-live="polite" aria-label="Initializing CodeConclave">
-        <LoadingSpinner size="50px" label="Initializing CodeConclave" />
-        <LoadingText $isDarkMode={isDarkMode}>Initializing CodeConclave</LoadingText>
-        <LoadingSubtext $isDarkMode={isDarkMode}>Almost there...</LoadingSubtext>
+      <LoadingScreen>
+        <Spinner />
+        <LoadingText>Loading...</LoadingText>
       </LoadingScreen>
     );
   }
@@ -56,8 +51,6 @@ const App = () => {
         <Route path="settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Route>
-      {/* Catch-all 404 for unauthenticated/public paths */}
-      <Route path="*" element={<NotFound />} />
       
       {/* Home Page - With Login/Register tabs */}
       <Route path="/home" element={
@@ -87,39 +80,28 @@ const LoadingScreen = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: ${props => props.$isDarkMode 
-    ? 'linear-gradient(to bottom, #0f172a, #051933)'
-    : 'linear-gradient(to bottom, #f8fafc, #e2e8f0)'
-  };
-  color: ${props => props.$isDarkMode ? 'white' : '#1a202c'};
-  transition: background 0.3s ease, color 0.3s ease;
+  background-color: #ffffff;
 `;
 
-const LoadingText = styled.h2`
-  font-size: 1.5rem;
-  margin: 1rem 0 0.5rem 0;
-  font-weight: 600;
-  color: ${props => props.$isDarkMode ? 'white' : '#2d3748'};
-  transition: color 0.3s ease;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-`;
-
-const LoadingSubtext = styled.p`
-  font-size: 1rem;
-  margin: 0;
-  color: ${props => props.$isDarkMode ? 'rgba(255, 255, 255, 0.8)' : '#718096'};
-  animation: pulse 2s ease-in-out infinite;
-  transition: color 0.3s ease;
+const Spinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #3182ce;
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 20px;
   
-  @keyframes pulse {
-    0%, 100% { 
-      opacity: ${props => props.$isDarkMode ? '0.8' : '0.9'}; 
-    }
-    50% { 
-      opacity: ${props => props.$isDarkMode ? '0.4' : '0.5'}; 
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
     }
   }
+`;
+
+const LoadingText = styled.p`
+  font-size: 1.2rem;
+  color: #4a5568;
 `;
 
 export default App;
