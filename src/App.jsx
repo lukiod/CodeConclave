@@ -39,17 +39,32 @@ const App = () => {
   return (
     <Routes>
       {/* Landing Page */}
-      <Route path="/" element={currentUser ? <Navigate to="/getting-started" replace /> : <LandingPage />} />
+      <Route
+        path="/"
+        element={currentUser ? <Navigate to="/getting-started" replace /> : <LandingPage />}
+      />
 
       {/* Home Page */}
-      <Route path="/home" element={currentUser ? <Navigate to="/getting-started" replace /> : <HomePage />} />
+      <Route
+        path="/home"
+        element={currentUser ? <Navigate to="/getting-started" replace /> : <HomePage />}
+      />
 
       {/* Password Reset */}
-      <Route path="/reset-password" element={currentUser ? <Navigate to="/getting-started" replace /> : <ResetPassword />} />
+      <Route
+        path="/reset-password"
+        element={currentUser ? <Navigate to="/getting-started" replace /> : <ResetPassword />}
+      />
 
       {/* Auth Routes */}
-      <Route path="/login" element={currentUser ? <Navigate to="/getting-started" replace /> : <Login />} />
-      <Route path="/register" element={currentUser ? <Navigate to="/getting-started" replace /> : <Register />} />
+      <Route
+        path="/login"
+        element={currentUser ? <Navigate to="/getting-started" replace /> : <Login />}
+      />
+      <Route
+        path="/register"
+        element={currentUser ? <Navigate to="/getting-started" replace /> : <Register />}
+      />
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
@@ -73,7 +88,8 @@ const LoadingScreen = styled.div`
   height: 100vh;
   background: ${props => props.$isDarkMode 
     ? 'linear-gradient(to bottom, #0f172a, #051933)'
-    : 'linear-gradient(to bottom, #f8fafc, #e2e8f0)'};
+    : 'linear-gradient(to bottom, #f8fafc, #e2e8f0)'
+  };
   color: ${props => props.$isDarkMode ? 'white' : '#1a202c'};
 `;
 
