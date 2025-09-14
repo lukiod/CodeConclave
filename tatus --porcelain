@@ -1,0 +1,5 @@
+warning: in the working copy of 'src/components/Editor/FileExplorer.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/Shared/Layout.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/pages/ProjectEditor.jsx', LF will be replaced by CRLF the next time Git touches it
+src/components/Shared/Sidebar.jsx
+src/pages/GettingStarted.jsx

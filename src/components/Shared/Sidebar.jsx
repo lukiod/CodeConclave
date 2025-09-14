@@ -1,5 +1,5 @@
 // src/components/Shared/Sidebar.jsx
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -8,113 +8,101 @@ import {
   FaCog,
   FaQuestionCircle,
   FaCode,
-  FaChevronLeft,
-  FaChevronRight,
-  FaCompressArrowsAlt,
   FaBook,
 } from 'react-icons/fa';
 
-const STORAGE_KEY = 'cc_sidebar_mini';
-
 const Sidebar = ({ isOpen, onClose }) => {
-  const [mini, setMini] = useState(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEY) === 'true';
-    } catch {
-      return false;
-    }
-  });
-
-  const firstRender = useRef(true);
-
-  useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    try {
-      localStorage.setItem(STORAGE_KEY, mini ? 'true' : 'false');
-    } catch {}
-  }, [mini]);
-
-  const toggleMini = useCallback(() => setMini(prev => !prev), []);
-  const handleResetMini = useCallback(() => setMini(false), []);
-
-  useEffect(() => {
-    const handler = e => {
-      if ((e.metaKey || e.ctrlKey) && (e.key === 'b' || e.key === 'B')) {
-        e.preventDefault();
-        toggleMini();
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [toggleMini]);
+  const [isHovered, setIsHovered] = useState(false);
+  const hoverTimeoutRef = useRef(null);
 
   const handleNavClick = useCallback(() => {
     if (window.innerWidth < 768 && onClose) onClose();
   }, [onClose]);
 
+  const handleMouseEnter = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setIsHovered(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    // Small delay to prevent flickering when mouse moves quickly
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 50);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <SidebarContainer $isOpen={isOpen} $mini={mini} role="navigation" aria-label="Main sidebar">
-      <SidebarBrand $mini={mini}>
+    <SidebarContainer 
+      $isOpen={isOpen} 
+      $isHovered={isHovered} 
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      role="navigation" 
+      aria-label="Main sidebar"
+    >
+      <SidebarBrand $isHovered={isHovered}>
         <BrandLink to="/" aria-label="Go to home">
           <BrandIcon title="Code Editor"><FaCode /></BrandIcon>
-          <BrandText $mini={mini}>Code Editor</BrandText>
+          <BrandText $isHovered={isHovered}>Code Editor</BrandText>
         </BrandLink>
-        <MiniToggle onClick={toggleMini} aria-pressed={mini} title={mini ? 'Expand sidebar (Ctrl/Cmd + B)' : 'Collapse to icons (Ctrl/Cmd + B)'}>
-          {mini ? <FaChevronRight /> : <FaChevronLeft />}
-        </MiniToggle>
       </SidebarBrand>
 
       <SidebarNav>
-        <NavItem $mini={mini}>
+        <NavItem $isHovered={isHovered}>
           <NavLink to="/getting-started" onClick={handleNavClick}>
             <FaBook />
-            <NavText $mini={mini}>Getting Started</NavText>
+            <NavText $isHovered={isHovered}>Getting Started</NavText>
           </NavLink>
         </NavItem>
 
-        <NavItem $mini={mini}>
+        <NavItem $isHovered={isHovered}>
           <NavLink to="/dashboard" end onClick={handleNavClick}>
             <FaHome />
-            <NavText $mini={mini}>Dashboard</NavText>
+            <NavText $isHovered={isHovered}>Dashboard</NavText>
           </NavLink>
         </NavItem>
 
-        <NavItem $mini={mini}>
+        <NavItem $isHovered={isHovered}>
           <NavLink to="/shared" onClick={handleNavClick}>
             <FaShareAlt />
-            <NavText $mini={mini}>Shared with me</NavText>
+            <NavText $isHovered={isHovered}>Shared with me</NavText>
           </NavLink>
         </NavItem>
 
         <NavDivider />
 
-        <NavItem $mini={mini}>
+        <NavItem $isHovered={isHovered}>
           <NavLink to="/settings" onClick={handleNavClick}>
             <FaCog />
-            <NavText $mini={mini}>Settings</NavText>
+            <NavText $isHovered={isHovered}>Settings</NavText>
           </NavLink>
         </NavItem>
 
-        <NavItem $mini={mini}>
+        <NavItem $isHovered={isHovered}>
           <NavLink to="/help" onClick={handleNavClick}>
             <FaQuestionCircle />
-            <NavText $mini={mini}>Help</NavText>
+            <NavText $isHovered={isHovered}>Help</NavText>
           </NavLink>
         </NavItem>
 
         <NavDivider />
       </SidebarNav>
 
-      <SidebarFooter $mini={mini}>
+      <SidebarFooter $isHovered={isHovered}>
         <FooterLeft>
-          <FooterText $mini={mini}>Code Editor v1.0.0</FooterText>
+          <FooterText $isHovered={isHovered}>Code Editor v1.0.0</FooterText>
         </FooterLeft>
-        <FooterAction onClick={handleResetMini} title="Reset to full sidebar">
-          <FaCompressArrowsAlt />
-        </FooterAction>
       </SidebarFooter>
     </SidebarContainer>
   );
@@ -124,9 +112,10 @@ const Sidebar = ({ isOpen, onClose }) => {
 const SidebarContainer = styled.div.withConfig({ shouldForwardProp: prop => !prop.startsWith('$') })`
   --full-width: 250px;
   --mini-width: 72px;
-  width: ${p => (p.$mini ? 'var(--mini-width)' : 'var(--full-width)')};
-  min-width: ${p => (p.$mini ? 'var(--mini-width)' : 'var(--full-width)')};
-  transition: width 220ms ease, transform 220ms ease;
+  width: ${p => (p.$isHovered ? 'var(--full-width)' : 'var(--mini-width)')};
+  min-width: ${p => (p.$isHovered ? 'var(--full-width)' : 'var(--mini-width)')};
+  transition: width 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -143,7 +132,7 @@ const SidebarContainer = styled.div.withConfig({ shouldForwardProp: prop => !pro
     transform: translateX(0);
     position: static;
     box-shadow: none;
-    transition: none;
+    transition: width 150ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 `;
 
@@ -154,7 +143,7 @@ const SidebarBrand = styled.div.withConfig({ shouldForwardProp: prop => !prop.st
   gap: 10px;
   border-bottom: 1px solid var(--color-border);
   justify-content: space-between;
-  ${p => p.$mini && `padding-left: 12px; padding-right: 8px;`}
+  ${p => !p.$isHovered && `padding-left: 12px; padding-right: 8px;`}
 `;
 
 const BrandLink = styled(Link)`
@@ -181,24 +170,19 @@ const BrandIcon = styled.span`
 
 const BrandText = styled.span.withConfig({ shouldForwardProp: prop => !prop.startsWith('$') })`
   white-space: nowrap;
-  @media (max-width: 767px) { display: inline; }
-  @media (min-width: 768px) { display: none; }
+  transition: opacity 120ms ease, transform 120ms ease;
+  @media (max-width: 767px) { 
+    display: inline; 
+    opacity: 1;
+    transform: translateX(0);
+  }
+  @media (min-width: 768px) { 
+    opacity: ${p => p.$isHovered ? '1' : '0'};
+    transform: ${p => p.$isHovered ? 'translateX(0)' : 'translateX(-10px)'};
+    pointer-events: ${p => p.$isHovered ? 'auto' : 'none'};
+  }
 `;
 
-const MiniToggle = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  &:hover { background: var(--color-surface); }
-  @media (max-width: 720px) { display: none; }
-`;
 
 const SidebarNav = styled.ul`
   list-style: none;
@@ -231,7 +215,7 @@ const NavItem = styled.li.withConfig({ shouldForwardProp: prop => !prop.startsWi
     svg { font-size: 16px; color: var(--color-text-tertiary); flex-shrink: 0; }
   }
   @media (min-width: 768px) {
-    ${p => p.$mini && `a { justify-content: center; padding-left:0; padding-right:0; } a svg { margin-right:0; }`}
+    ${p => !p.$isHovered && `a { justify-content: center; padding-left:0; padding-right:0; } a svg { margin-right:0; }`}
   }
 `;
 
@@ -239,8 +223,17 @@ const NavText = styled.span.withConfig({ shouldForwardProp: prop => !prop.starts
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  ${p => p.$mini && `@media (min-width:768px){display:none;}`}
-  @media (max-width: 767px) { display: inline; }
+  transition: opacity 120ms ease, transform 120ms ease;
+  @media (max-width: 767px) { 
+    display: inline; 
+    opacity: 1;
+    transform: translateX(0);
+  }
+  @media (min-width: 768px) { 
+    opacity: ${p => p.$isHovered ? '1' : '0'};
+    transform: ${p => p.$isHovered ? 'translateX(0)' : 'translateX(-10px)'};
+    pointer-events: ${p => p.$isHovered ? 'auto' : 'none'};
+  }
 `;
 
 const NavDivider = styled.div`
@@ -256,7 +249,7 @@ const SidebarFooter = styled.div.withConfig({ shouldForwardProp: prop => !prop.s
   gap: 8px;
   padding: 10px;
   border-top: 1px solid var(--color-border);
-  ${p => p.$mini && `padding-left: 8px; padding-right: 8px;`}
+  ${p => !p.$isHovered && `padding-left: 8px; padding-right: 8px;`}
 `;
 
 const FooterLeft = styled.div`
@@ -268,22 +261,18 @@ const FooterLeft = styled.div`
 const FooterText = styled.div.withConfig({ shouldForwardProp: prop => !prop.startsWith('$') })`
   font-size: 12px;
   color: var(--color-text-tertiary);
-  ${p => p.$mini && `@media (min-width:768px){display:none;}`}
-  @media (max-width: 767px) { display: block; }
+  transition: opacity 120ms ease, transform 120ms ease;
+  @media (max-width: 767px) { 
+    display: block; 
+    opacity: 1;
+    transform: translateX(0);
+  }
+  @media (min-width: 768px) { 
+    opacity: ${p => p.$isHovered ? '1' : '0'};
+    transform: ${p => p.$isHovered ? 'translateX(0)' : 'translateX(-10px)'};
+    pointer-events: ${p => p.$isHovered ? 'auto' : 'none'};
+  }
 `;
 
-const FooterAction = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  &:hover { background: var(--color-surface); }
-`;
 
 export default Sidebar;

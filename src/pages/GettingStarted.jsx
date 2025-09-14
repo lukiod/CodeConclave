@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { CheckCircle, Lock, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createProject } from "../services/projectService";
+import { googleDriveService } from "../services/googleDriveService";
 
 // steps config
 const steps = [
@@ -18,6 +19,100 @@ const GettingStarted = () => {
   const [visibility, setVisibility] = useState("private");
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Google Drive state management
+  const [googleDriveStatus, setGoogleDriveStatus] = useState({
+    isConnected: false,
+    tokenExpiry: null
+  });
+  const [isLoadingGoogleDrive, setIsLoadingGoogleDrive] = useState(false);
+  const [googleDriveError, setGoogleDriveError] = useState('');
+  const [googleDriveSuccess, setGoogleDriveSuccess] = useState('');
+
+  // Load Google Drive status on component mount
+  useEffect(() => {
+    const initializeGoogleDrive = async () => {
+      // Handle any OAuth callback from Google
+      await handleGoogleDriveCallback();
+      
+      // Fetch the latest connection status
+      await loadGoogleDriveStatus();
+    };
+
+    initializeGoogleDrive();
+  }, []);
+
+  const loadGoogleDriveStatus = async () => {
+    try {
+      setIsLoadingGoogleDrive(true);
+      const status = await googleDriveService.getConnectionStatus();
+      setGoogleDriveStatus(status);
+    } catch (error) {
+      setGoogleDriveError('Failed to load Google Drive status');
+    } finally {
+      setIsLoadingGoogleDrive(false);
+    }
+  };
+
+  const handleGoogleDriveConnect = async () => {
+    setIsLoadingGoogleDrive(true);
+    setGoogleDriveError('');
+    try {
+      const authUrl = await googleDriveService.getAuthUrl();
+      if (authUrl) {
+        window.location.href = authUrl;
+      } else {
+        throw new Error('Did not receive a valid authorization URL.');
+      }
+    } catch (error) {
+      setGoogleDriveError('Failed to start Google Drive connection.');
+      setIsLoadingGoogleDrive(false);
+    }
+  };
+
+  const handleGoogleDriveCallback = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const googleDriveStatusParam = urlParams.get('googleDrive');
+    const tokensParam = urlParams.get('tokens');
+    const authCode = urlParams.get('code');
+
+    if (googleDriveStatusParam === 'connected' && tokensParam) {
+      try {
+        const tokens = JSON.parse(decodeURIComponent(tokensParam));
+        await googleDriveService.saveTokens(
+          tokens.access_token,
+          tokens.refresh_token,
+          tokens.expiry_date
+        );
+        
+        setGoogleDriveSuccess('Google Drive connected successfully!');
+        setGoogleDriveStatus({ isConnected: true, tokenExpiry: tokens.expiry_date });
+        
+        // Clear URL parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return true;
+      } catch (error) {
+        setGoogleDriveError('Failed to save Google Drive tokens');
+      }
+    } else if (googleDriveStatusParam === 'error') {
+      setGoogleDriveError('Failed to connect to Google Drive');
+      // Clear URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return true;
+    } else if (authCode) {
+      try {
+        const tokens = await googleDriveService.exchangeCodeForTokens(authCode);
+        setGoogleDriveSuccess('Google Drive connected successfully!');
+        setGoogleDriveStatus({ isConnected: true, tokenExpiry: tokens.expiry_date });
+      } catch (error) {
+        setGoogleDriveError('Failed to complete Google Drive connection');
+      } finally {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      return true;
+    }
+    return false;
+  };
 
   const handleNext = async () => {
     if (currentStep === 3) {
@@ -86,6 +181,10 @@ const GettingStarted = () => {
           <Block>
             <h2>{steps[1].title}</h2>
             <p>{steps[1].description}</p>
+            
+            {googleDriveError && <ErrorAlert>{googleDriveError}</ErrorAlert>}
+            {googleDriveSuccess && <SuccessAlert>{googleDriveSuccess}</SuccessAlert>}
+            
             <IntegrationBox>
               <Column>
                 <h3>CodeConclave Storage</h3>
@@ -95,12 +194,14 @@ const GettingStarted = () => {
               <Column>
                 <h3>Google Drive</h3>
                 <p>Sync projects with your Google Drive.</p>
+                <ConnectionStatus $connected={googleDriveStatus.isConnected}>
+                  {googleDriveStatus.isConnected ? 'Connected' : 'Not Connected'}
+                </ConnectionStatus>
                 <ConnectBtn
-                  onClick={() => {
-                    window.open("https://drive.google.com", "_blank", "noopener,noreferrer");
-                  }}
+                  onClick={handleGoogleDriveConnect}
+                  disabled={isLoadingGoogleDrive}
                 >
-                  Connect Google Drive
+                  {isLoadingGoogleDrive ? 'Connecting...' : 'Connect Google Drive'}
                 </ConnectBtn>
               </Column>
             </IntegrationBox>
@@ -285,10 +386,45 @@ const ConnectBtn = styled.button`
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+  transition: background-color 0.2s;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: #2563eb;
   }
+
+  &:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+  }
+`;
+
+const ConnectionStatus = styled.span`
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  background-color: ${props => props.$connected ? '#c6f6d5' : '#fed7d7'};
+  color: ${props => props.$connected ? '#2f855a' : '#c53030'};
+`;
+
+const ErrorAlert = styled.div`
+  background-color: #fed7d7;
+  color: #c53030;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+`;
+
+const SuccessAlert = styled.div`
+  background-color: #c6f6d5;
+  color: #2f855a;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 `;
 
 const FormGroup = styled.div`
