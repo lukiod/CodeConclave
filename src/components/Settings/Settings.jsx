@@ -25,6 +25,8 @@ import {
   FaTimes,
 } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
+import GoogleDriveIntegration from "./GoogleDriveIntegration";
+ 
 
 const Settings = () => {
   const { currentUser } = useContext(AuthContext);
@@ -199,9 +201,11 @@ const Settings = () => {
   };
 
   const handleGoogleDriveCallback = async () => {
+  const handleGoogleDriveCallback = async () => {  
     const urlParams = new URLSearchParams(window.location.search);
     const googleDriveStatusParam = urlParams.get('googleDrive');
     const tokensParam = urlParams.get('tokens');
+    const authCode = urlParams.get('code');
 
     if (googleDriveStatusParam === 'connected' && tokensParam) {
       try {
@@ -235,6 +239,20 @@ const Settings = () => {
       return true; // It was a callback, though a failed one
     }
     return false; // Not a callback
+  };
+  if (authCode) {
+      try {
+        const tokens = await googleDriveService.exchangeCodeForTokens(authCode);
+        setGoogleDriveSuccess('Google Drive connected successfully!');
+        setGoogleDriveStatus({ isConnected: true, tokenExpiry: tokens.expiry_date });
+      } catch (error) {
+        setGoogleDriveError('Failed to complete Google Drive connection');
+      } finally {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      return true;
+    }
+    return false;
   };
 
   const handleInputChange = e => {
