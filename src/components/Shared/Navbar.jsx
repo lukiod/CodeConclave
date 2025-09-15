@@ -1,18 +1,61 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaCode, FaBars, FaUserCircle, FaSignOutAlt, FaChevronDown } from 'react-icons/fa';
+import { FaCode, FaBars, FaUserCircle, FaSignOutAlt, FaChevronDown, FaQuestionCircle } from 'react-icons/fa';
 import { AuthContext } from '../../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
+
+// Custom hook for click outside detection
+const useClickOutside = (ref, handler) => {
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        handler();
+      }
+    };
+
+    // Add event listener for clicks
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    // Cleanup
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, handler]);
+};
 
 const Navbar = ({ toggleSidebar }) => {
   const { currentUser, logout } = useContext(AuthContext);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const userDropdownRef = useRef(null);
   const navigate = useNavigate();
 
+  // Close dropdown when clicking outside
+  useClickOutside(userDropdownRef, () => setShowUserMenu(false));
+
+  // Close dropdown when pressing Escape key
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && showUserMenu) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showUserMenu]);
+
   const handleLogout = () => {
+    setShowUserMenu(false); // Close dropdown first
     logout();
     navigate('/home');
+  };
+
+  const toggleUserMenu = () => {
+    setShowUserMenu(!showUserMenu);
   };
 
   return (
@@ -31,11 +74,19 @@ const Navbar = ({ toggleSidebar }) => {
 
       <NavbarRight>
         <ThemeToggle />
-        <UserDropdown>
-          <UserButton onClick={() => setShowUserMenu(!showUserMenu)}>
+        <UserDropdown ref={userDropdownRef}>
+          <UserButton 
+            onClick={toggleUserMenu}
+            $isOpen={showUserMenu}
+            aria-expanded={showUserMenu}
+            aria-haspopup="true"
+            aria-label="User menu"
+          >
             <FaUserCircle />
             <UserName>{currentUser?.username || 'User'}</UserName>
-            <FaChevronDown size={12} />
+            <ChevronIcon $isOpen={showUserMenu}>
+              <FaChevronDown size={12} />
+            </ChevronIcon>
           </UserButton>
 
           {showUserMenu && (
@@ -45,6 +96,10 @@ const Navbar = ({ toggleSidebar }) => {
                 <small>{currentUser?.email}</small>
               </UserInfo>
               <DropdownDivider />
+              <DropdownItem as={Link} to="/help">
+                <FaQuestionCircle />
+                Help & Support
+              </DropdownItem>
               <DropdownItem onClick={handleLogout}>
                 <FaSignOutAlt />
                 Sign Out
@@ -77,8 +132,9 @@ const NavbarLeft = styled.div`
 `;
 
 const MenuButton = styled.button`
-  background-color: transparent;
+  background: transparent;
   color: var(--color-text-primary);
+  padding: 12px;
   border: none;
   font-size: 18px;
   display: flex;
@@ -95,7 +151,7 @@ const MenuButton = styled.button`
   }
 
   @media (min-width: 768px) {
-    display: none; /* hide on desktop */
+    display: none; 
   }
 `;
 
@@ -128,16 +184,22 @@ const UserButton = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: transparent;
+  background-color: ${props => props.$isOpen ? 'var(--color-background)' : 'transparent'};
   color: var(--color-text-primary);
   border: none;
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 
   &:hover {
     background-color: var(--color-background);
   }
+
+  ${props => props.$isOpen && `
+    background-color: var(--color-background);
+    box-shadow: 0 0 0 2px var(--color-primary-light);
+  `}
 
   svg:first-child {
     font-size: 20px;
@@ -155,6 +217,13 @@ const UserName = styled.span`
   }
 `;
 
+const ChevronIcon = styled.span`
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
+`;
+
 const DropdownMenu = styled.div`
   position: absolute;
   top: 100%;
@@ -167,6 +236,20 @@ const DropdownMenu = styled.div`
   margin-top: 5px;
   overflow: hidden;
   z-index: 100;
+  
+  /* Animation */
+  animation: dropdownSlideIn 0.2s ease-out;
+  
+  @keyframes dropdownSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const UserInfo = styled.div`
@@ -203,6 +286,7 @@ const DropdownItem = styled.button`
   color: var(--color-text-secondary);
   font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 
   &:hover {
     background-color: var(--color-background);
