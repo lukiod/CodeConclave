@@ -99,7 +99,7 @@ const Register = () => {
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...userData } = formData;
       await register(userData);
-      navigate('/dashboard');
+      navigate('/getting-started');
     } catch (err) {
       console.error('Registration error:', err);
       // Error is handled by AuthContext
