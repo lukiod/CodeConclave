@@ -1,121 +1,101 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { Terminal, Cpu, Globe, Command, ShieldCheck } from 'lucide-react';
 import Login from '../components/Auth/Login';
 import Register from '../components/Auth/Register';
 import ForgotPassword from '../components/Auth/ForgotPassword';
 import OTPVerification from '../components/Auth/OTPVerification';
-import { FaCode, FaLaptopCode, FaUserFriends, FaLayerGroup, FaFlask } from 'react-icons/fa';
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useState('login');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showOTPVerification, setShowOTPVerification] = useState(false);
-  const [verificationUserId, setVerificationUserId] = useState(null);
-  const [loaded, setLoaded] = useState(false);
   const [resetToken, setResetToken] = useState(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setLoaded(true), 100);
+    setLoaded(true);
   }, []);
 
   return (
-    <HomeContainer>
-      <BackgroundWrapper>
-        <BackgroundGradient />
-        <CodePatternOverlay />
-      </BackgroundWrapper>
+    <PageContainer>
+      <BackgroundOverlay />
+      <ContentWrapper loaded={loaded}>
 
-      <ContentContainer loaded={loaded}>
         <LeftPanel>
-          <LogoContainer>
+          <LogoSection>
             <LogoIcon>
-              <FaCode />
+              <Command size={40} color="#3b82f6" />
             </LogoIcon>
-            <LogoText>Code Conclave</LogoText>
-          </LogoContainer>
-          
-          <FeaturesList>
-            <Feature>
-              <FeatureIcon>
-                <FaLaptopCode />
-              </FeatureIcon>
-              <FeatureContent>
-                <FeatureName>Multiple Languages</FeatureName>
-                <FeatureDescription>
-                  Support for JavaScript, Python, HTML, CSS and many more
-                </FeatureDescription>
-              </FeatureContent>
-            </Feature>
-            
-            <Feature>
-              <FeatureIcon>
-                <FaFlask />
-              </FeatureIcon>
-              <FeatureContent>
-                <FeatureName>Jupyter Notebooks</FeatureName>
-                <FeatureDescription>
-                  Built-in support for .ipynb files with interactive cells
-                </FeatureDescription>
-              </FeatureContent>
-            </Feature>
-            
-            <Feature>
-              <FeatureIcon>
-                <FaUserFriends />
-              </FeatureIcon>
-              <FeatureContent>
-                <FeatureName>Collaboration</FeatureName>
-                <FeatureDescription>
-                  Share your projects with team members and collaborate
-                </FeatureDescription>
-              </FeatureContent>
-            </Feature>
-            
-            <Feature>
-              <FeatureIcon>
-                <FaLayerGroup />
-              </FeatureIcon>
-              <FeatureContent>
-                <FeatureName>Project Management</FeatureName>
-                <FeatureDescription>
-                  Organize your code into projects with multiple files
-                </FeatureDescription>
-              </FeatureContent>
-            </Feature>
-          </FeaturesList>
+            <BrandTitle>CodeConclave</BrandTitle>
+            <BrandSubtitle>AI-Native Development Environment</BrandSubtitle>
+          </LogoSection>
+
+          <FeatureList>
+            <FeatureItem delay="0.1s">
+              <IconBox color="#60a5fa"><Terminal size={20} /></IconBox>
+              <div>
+                <FeatureTitle>Cloud Terminal</FeatureTitle>
+                <FeatureText>Full bash access. Deploy instantly.</FeatureText>
+              </div>
+            </FeatureItem>
+
+            <FeatureItem delay="0.2s">
+              <IconBox color="#a78bfa"><Cpu size={20} /></IconBox>
+              <div>
+                <FeatureTitle>AI Co-Pilot</FeatureTitle>
+                <FeatureText>Context-aware code generation.</FeatureText>
+              </div>
+            </FeatureItem>
+
+            <FeatureItem delay="0.3s">
+              <IconBox color="#34d399"><Globe size={20} /></IconBox>
+              <div>
+                <FeatureTitle>Global Edge</FeatureTitle>
+                <FeatureText>Low-latency workspace anywhere.</FeatureText>
+              </div>
+            </FeatureItem>
+          </FeatureList>
+
+          <TrustBadge>
+            <ShieldCheck size={16} color="#10b981" />
+            <span>Enterprise-Grade Security</span>
+          </TrustBadge>
         </LeftPanel>
-        
+
         <RightPanel>
-          <AuthContainer>
+          <AuthCard>
             {!showForgotPassword && !showOTPVerification ? (
               <>
-                <TabContainer>
-                  <TabButton 
+                <TabHeader>
+                  <TabButton
                     $isActive={activeTab === 'login'}
                     onClick={() => setActiveTab('login')}
                   >
                     Log In
                   </TabButton>
-                  <TabButton 
+                  <TabButton
                     $isActive={activeTab === 'register'}
                     onClick={() => setActiveTab('register')}
                   >
                     Sign Up
                   </TabButton>
-                </TabContainer>
-                
-                {activeTab === 'login' && (
-                  <Login 
-                    onForgotPassword={() => {
-                      setShowForgotPassword(true);
-                      setActiveTab(null);
-                    }}
-                  />
-                )}
-                {activeTab === 'register' && <Register />}
+                </TabHeader>
+
+                <FormArea>
+                  {activeTab === 'login' && (
+                    <Login
+                      onForgotPassword={() => {
+                        setShowForgotPassword(true);
+                        setActiveTab(null);
+                      }}
+                    />
+                  )}
+                  {activeTab === 'register' && <Register />}
+                </FormArea>
               </>
             ) : showOTPVerification ? (
-              <OTPVerification 
+              <OTPVerification
                 resetToken={resetToken}
                 onBack={() => {
                   setShowOTPVerification(false);
@@ -123,7 +103,7 @@ const HomePage = () => {
                 }}
               />
             ) : (
-              <ForgotPassword 
+              <ForgotPassword
                 onBack={() => {
                   setShowForgotPassword(false);
                   setActiveTab('login');
@@ -135,236 +115,263 @@ const HomePage = () => {
                 }}
               />
             )}
-          </AuthContainer>
+          </AuthCard>
         </RightPanel>
-      </ContentContainer>
-      
+
+      </ContentWrapper>
+
       <Footer>
-        <FooterText>© {new Date().getFullYear()} Code Conclave. All rights reserved.</FooterText>
+        <p>© 2024 CodeConclave. All systems operational.</p>
       </Footer>
-    </HomeContainer>
+    </PageContainer>
   );
 };
 
-// Animations
+// -- Animations --
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-const gradient = keyframes`
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+const float = keyframes`
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
 `;
 
-// Styled Components
-const HomeContainer = styled.div`
+// -- Styled Components --
+const PageContainer = styled.div`
   min-height: 100vh;
+  background-color: #0f172a;
+  color: white;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #ffffff;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
 `;
 
-const BackgroundWrapper = styled.div`
+const BackgroundOverlay = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1), transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1), transparent 40%);
   z-index: 0;
-`;
-
-const BackgroundGradient = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(120deg, #0f172a, #1e293b, #0f172a);
-  background-size: 200% 200%;
-  animation: ${gradient} 15s ease infinite;
-`;
-
-const CodePatternOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.1;
-`;
-
-const ContentContainer = styled.div`
-  display: flex;
-  flex: 1;
-  z-index: 1;
-  opacity: ${props => (props.loaded ? 1 : 0)};
-  transform: translateY(${props => (props.loaded ? 0 : '20px')});
-  transition: opacity 0.8s ease, transform 0.8s ease;
   
-  @media (max-width: 992px) {
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.2;
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+`;
+
+const ContentWrapper = styled.div`
+  z-index: 1;
+  max-width: 1000px;
+  width: 90%;
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  justify-content: center;
+  opacity: ${props => (props.loaded ? 1 : 0)};
+  transition: opacity 1s ease;
+  padding: 40px 0;
+
+  @media (max-width: 900px) {
     flex-direction: column;
+    gap: 3rem;
   }
 `;
 
 const LeftPanel = styled.div`
-  flex: 5;
-  background-color: rgba(30, 41, 59, 0.8);
-  backdrop-filter: blur(10px);
-  padding: 3rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  animation: ${fadeIn} 1s ease forwards;
-  border-right: 1px solid rgba(99, 102, 241, 0.2);
+  flex: 1;
+  max-width: 450px;
+  animation: ${fadeIn} 0.8s ease-out;
   
-  @media (max-width: 992px) {
-    padding: 2rem;
-    border-right: none;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+  @media (max-width: 900px) {
+    text-align: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
   }
 `;
 
-const LogoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const LogoSection = styled.div`
   margin-bottom: 3rem;
 `;
 
 const LogoIcon = styled.div`
+  margin-bottom: 1rem;
+  display: inline-block;
+  padding: 0.75rem;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  animation: ${float} 6s ease-in-out infinite;
+`;
+
+const BrandTitle = styled.h1`
   font-size: 2.5rem;
-  margin-right: 1rem;
-  color: #60a5fa;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin: 0 0 0.5rem;
+  color: white;
 `;
 
-const LogoText = styled.h1`
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0;
-  color: #60a5fa;
-`;
-
-const FeaturesList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  width: 100%;
-  max-width: 500px;
-`;
-
-const Feature = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 1.5rem;
-  animation: ${fadeIn} 1s ease forwards;
-  animation-delay: ${props => 0.2 + props.index * 0.1}s;
-  text-align: left;
-`;
-
-const FeatureIcon = styled.div`
-  font-size: 1.8rem;
-  color: #60a5fa;
-  background-color: rgba(96, 165, 250, 0.1);
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-`;
-
-const FeatureContent = styled.div`
-  flex: 1;
-`;
-
-const FeatureName = styled.h3`
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: #f8fafc;
-`;
-
-const FeatureDescription = styled.p`
+const BrandSubtitle = styled.p`
+  font-size: 1.1rem;
   color: #94a3b8;
-  line-height: 1.5;
   margin: 0;
 `;
 
-const RightPanel = styled.div`
-  flex: 4;
+const FeatureList = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  animation: ${fadeIn} 1s ease forwards;
-  animation-delay: 0.3s;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
   
-  @media (max-width: 992px) {
-    padding: 1rem;
+  @media (max-width: 900px) {
+    align-items: center;
+    text-align: left; /* Keep text aligned left inside the centered container */
   }
 `;
 
-const AuthContainer = styled.div`
-  background-color: rgba(30, 41, 59, 0.9);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 12px;
-  padding: 2rem;
-  width: 100%;
-  max-width: 450px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+const FeatureItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: ${fadeIn} 0.8s ease-out backwards;
+  animation-delay: ${props => props.delay};
 `;
 
-const TabContainer = styled.div`
+const IconBox = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
   display: flex;
-  margin-bottom: 2rem;
+  align-items: center;
+  justify-content: center;
+  color: ${props => props.color};
+  flex-shrink: 0;
+`;
+
+const FeatureTitle = styled.h3`
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 0.25rem;
+`;
+
+const FeatureText = styled.p`
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin: 0;
+`;
+
+const TrustBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 99px;
+  color: #34d399;
+  font-size: 0.85rem;
+  font-weight: 500;
+`;
+
+const RightPanel = styled.div`
+  flex: 1;
+  max-width: 420px;
   width: 100%;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  background: rgba(15, 23, 42, 0.5);
+  animation: ${fadeIn} 0.8s ease-out backwards;
+  animation-delay: 0.4s;
+`;
+
+const AuthCard = styled.div`
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+`;
+
+const TabHeader = styled.div`
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 2rem;
 `;
 
 const TabButton = styled.button`
   flex: 1;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 10px;
+  font-size: 0.95rem;
   font-weight: 600;
-  background-color: ${props => props.$isActive ? '#60a5fa' : 'transparent'};
-  color: ${props => props.$isActive ? 'white' : '#cbd5e1'};
   border: none;
+  background: ${props => props.$isActive ? '#3b82f6' : 'transparent'};
+  color: ${props => props.$isActive ? 'white' : '#94a3b8'};
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
   
   &:hover {
-    background-color: ${props => props.$isActive ? '#3b82f6' : 'rgba(96, 165, 250, 0.1)'};
-    color: ${props => props.$isActive ? 'white' : '#60a5fa'};
+    color: white;
   }
 `;
 
-const FormContainer = styled.div`
-  width: 100%;
+const FormArea = styled.div`
+  /* Overrides for children components to fit dark theme if needed */
+  & form {
+    gap: 1.25rem;
+  }
+  
+  & input {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    
+    &:focus {
+      border-color: #3b82f6;
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+  
+  & label {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+  }
 `;
 
 const Footer = styled.footer`
-  text-align: center;
-  padding: 1.5rem;
-  background-color: rgba(15, 23, 42, 0.5);
-  border-top: 1px solid rgba(99, 102, 241, 0.1);
-  z-index: 1;
-`;
-
-const FooterText = styled.p`
-  color: #94a3b8;
-  font-size: 0.9rem;
-  margin: 0;
+  position: absolute;
+  bottom: 1rem;
+  color: #475569;
+  font-size: 0.8rem;
+  font-family: 'Fira Code', monospace;
+  
+  @media (max-width: 900px) {
+    position: relative;
+    margin-top: 2rem;
+  }
 `;
 
 export default HomePage;

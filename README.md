@@ -1,133 +1,66 @@
-<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/0710e86a-e1ff-47ca-a302-db90eb9a3213" />
 
-# Multi-Language Code Editor
+# CodeConclave v2.0
 
-A full-stack web application for editing and sharing code with support for multiple languages and Jupyter notebooks (.ipynb files).
+> **Run While you sleep.**
 
-## Features
+CodeConclave is an AI-native development environment designed to multiply engineering output. It combines a full cloud terminal, intelligent refactoring agents, and a global edge network into a single, cohesive workspace. 
 
-- **Multi-language support**: JavaScript, Python, HTML, CSS, and many more
-- **Jupyter Notebook (.ipynb) support**: Edit and visualize Jupyter notebooks directly in the browser
-- **Real-time collaboration**: Share your projects with collaborators
-- **File system**: Create, edit, and organize files and folders
-- **User authentication**: Secure login and registration system
-- **Project management**: Create, edit, and delete projects
-- **Responsive design**: Works on desktop and mobile devices
+We built this because switching between your IDE, terminal, and AI tools breaks flow. CodeConclave brings them all together—your code never leaves your private VPC, but your capacity to ship scales infinitely.
 
-## Technology Stack
+---
 
-### Frontend
+### ⚡ Core Capabilities
 
-- React
-- Monaco Editor (code editor)
-- Styled Components (styling)
-- React Router (navigation)
-- Axios (API requests)
+- **Cloud Terminal**: A fully persistent bash environment. Install packages, run servers, and deploy instantly without configuring local environments.
+- **AI Co-Pilot**: Context-aware code generation that understands your entire file structure, not just the open file.
+- **Jupyter Integration**: Native support for `.ipynb` notebooks for data science workflows alongside your web application code.
+- **Global Edge**: Low-latency workspace streaming from the nearest edge node.
 
-### Backend
+### 🛠️ Architecture
 
-- Node.js
-- Express
-- MongoDB (database)
-- Mongoose (ODM)
-- JSON Web Tokens (authentication)
+Built with a modern stack designed for performance and security:
+- **Frontend**: React + Vite for sub-millisecond interaction.
+- **Editor**: Custom implementation of Monaco Editor (VS Code core).
+- **Styling**: Styled-components for themeable, component-scoped CSS.
+- **Backend**: Node.js microservices handling auth, file systems, and LLM orchestration.
+- **Infrastructure**: Dockerized containers orchestrated for isolation and security.
 
-### Deployment
+### 🚀 Quick Start
 
-- Vercel (hosting)
-- MongoDB Atlas (database hosting)
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn
-- MongoDB (local or Atlas)
-
-### Installation
-
-1. Clone the repository
-
-   ```
-   git clone https://github.com/yourusername/code-editor-project.git
-   cd code-editor-project
-   ```
-2. Install dependencies for client and server
-
-   ```
-   # Install client dependencies
-   cd client
-   npm install
-
-   # Install server dependencies
-   cd ../server
+1. **Clone & Install**
+   ```bash
+   git clone https://github.com/yourusername/CodeConclave.git
+   cd CodeConclave
    npm install
    ```
-3. Set up environment variables
 
-   - Create a `.env` file in the server directory based on the provided `.env.example`
-   - Fill in your MongoDB URI, JWT secret, and other required variables
-4. Start the development servers
+2. **Environment Setup**
+   Copy `.env.example` to `.env` and add your keys. You'll need a MongoDB URI and JWT Secret at minimum.
 
-   ```
-   # Start the backend server
-   cd server
-   npm run dev
-
-   # In a separate terminal, start the frontend
-   cd client
+3. **Launch**
+   ```bash
    npm run dev
    ```
-5. Open your browser and navigate to `http://localhost:3000`
+   Visit `http://localhost:5173` to enter the enclave.
 
-## Project Structure
+---
 
-```
-code-editor-project/
-├── client/                 # Frontend React application
-│   ├── public/             # Static files
-│   └── src/                # Source code
-│       ├── assets/         # Images, icons, etc.
-│       ├── components/     # Reusable UI components
-│       ├── contexts/       # React context providers
-│       ├── hooks/          # Custom React hooks
-│       ├── pages/          # Page components
-│       ├── services/       # API service calls
-│       └── utils/          # Utility functions
-│
-│
-├── api/                    # Serverless functions for Vercel
-│   └── index.js            # API entry point
-│
-└── vercel.json             # Vercel deployment configuration
-```
+### 🔒 Security Code
 
-## Deployment
+Your code integrity is paramount.
+- **Zero-Knowledge**: We don't train on your private repos.
+- **VPC Isolation**: Each workspace runs in an isolated container.
 
-This project is configured for deployment on Vercel. Follow these steps to deploy:
+---
 
-1. Create a Vercel account if you don't have one
-2. Install the Vercel CLI: `npm install -g vercel`
-3. Run `vercel login` and follow the prompts
-4. From the project root, run `vercel` to deploy
-5. Set up the required environment variables in Vercel's dashboard
+### Contributing
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+We are open-source at heart. If you want to improve the terminal emulation or add new AI agents:
+1. Fork the repo.
+2. Create a feature branch (`git checkout -b feature/amazing-agent`).
+3. Commit your changes.
+4. Open a generic Pull Request.
 
-## API Documentation
+### License
 
-For detailed API documentation, see [API.md](API.md).
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- [Monaco Editor](https://microsoft.github.io/monaco-editor/) for the code editing capabilities
-- [React Split](https://github.com/nathancahill/split) for resizable panel layouts
+MIT © 2024 CodeConclave. Created by Mohak.
